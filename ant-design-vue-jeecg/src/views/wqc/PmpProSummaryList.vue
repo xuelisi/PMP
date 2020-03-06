@@ -108,6 +108,41 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import PmpTaskSummaryModal from './modules/PmpProSummaryModal'
 
+  const tableHeaders = [
+      {
+        title: '#',
+        dataIndex: '',
+        key:'rowIndex',
+        width:60,
+        align:"center",
+        customRender:function (t,r,index) {
+          return parseInt(index)+1;
+        }
+      },
+      {
+        title:'任务id',
+        align:"center",
+        dataIndex: 'projectid'
+      },
+    {
+      title:'任务小结',
+      align:"center",
+      dataIndex: 'content',
+      scopedSlots: {customRender: 'htmlSlot'}
+    },
+    {
+      title:'提交时间',
+      align:"center",
+      dataIndex: 'createTime'
+    },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        align:"center",
+        scopedSlots: { customRender: 'action' }
+      }
+    ]
+
   export default {
     name: "PmpTaskSummaryList",
     mixins:[JeecgListMixin],
@@ -118,35 +153,7 @@
       return {
         description: '任务小结管理页面',
         // 表头
-        columns: [
-          {
-            title: '#',
-            dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
-            }
-          },
-          {
-            title:'任务id',
-            align:"center",
-            dataIndex: 'projectid'
-          },
-          {
-            title:'任务小结',
-            align:"center",
-            dataIndex: 'content',
-            scopedSlots: {customRender: 'htmlSlot'}
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' }
-          }
-        ],
+        columns: tableHeaders,
         url: {
           list: "/summary/pmpTaskSummary/list",
           delete: "/summary/pmpTaskSummary/delete",
