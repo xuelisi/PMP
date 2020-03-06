@@ -16,7 +16,7 @@ import org.jeecg.common.aspect.annotation.Dict;
 /**
  * @Description: 项目主表
  * @Author: jeecg-boot
- * @Date:   2020-02-26
+ * @Date:   2020-03-03
  * @Version: V1.0
  */
 @Data
@@ -52,9 +52,6 @@ public class PmpProjectManage implements Serializable {
 	/**项目名称*/
 	@Excel(name = "项目名称", width = 15)
     private String projectname;
-	/**项目编号*/
-	@Excel(name = "项目编号", width = 15)
-    private String projectnumber;
 	/**项目类型*/
 	@Excel(name = "项目类型", width = 15)
     private String projecttype;

@@ -6,9 +6,9 @@
         <a-col :span="2">
           <a-dropdown>
             <a-menu slot="overlay" @click="handleMenuClick">
-              <a-menu-item key="1">普通视图</a-menu-item>
+              <a-menu-item key="1">表格视图</a-menu-item>
               <a-menu-item key="2">分类视图</a-menu-item>
-              <a-menu-item key="3">表格视图</a-menu-item>
+              <a-menu-item key="3">普通视图</a-menu-item>
             </a-menu>
             <a-button style="margin-left: 8px">
               视图
@@ -274,7 +274,8 @@
         @change="handleTableChange"
       >
         <template slot="projectname" slot-scope="text">
-          <a @click="hreftwo">{{text}}</a>
+          <!-- <a @click="hreftwo">{{text}}</a> -->
+          <router-link :to="{ name: 'myproject_task' }">{{text}}</router-link>
         </template>
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
@@ -339,8 +340,8 @@ export default {
   data() {
     return {
       description: '项目主表管理页面',
-      is_list: true,
-      is_table: false,
+      is_list: false,
+      is_table: true,
       // 表头
       columns: [
         {
@@ -409,11 +410,11 @@ export default {
   },
   methods: {
     initDictConfig() {},
-    hreftwo() {
-      this.$router.push({ path: 'myproject_task' })
-    },
+    // hreftwo() {
+    //   this.$router.push({ path: '/jeecg/project/myproject_task' })
+    // },
     handleMenuClick(e) {
-      if (e.key == 3) {
+      if (e.key == 1) {
         this.is_list = false
         this.is_table = true
       } else if (e.key == 2) {

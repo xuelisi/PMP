@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.project.tree.entity.PmpZuzhitu;
+import org.jeecg.modules.project.tree.service.IPmpZuzhituService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -36,16 +38,17 @@ import com.alibaba.fastjson.JSON;
  /**
  * @Description: 项目主表
  * @Author: jeecg-boot
- * @Date:   2020-02-26
+ * @Date:   2020-03-03
  * @Version: V1.0
  */
 @RestController
-@RequestMapping("/projectmanage/pmpProjectManage")
+@RequestMapping("/pmp/pmpProjectManage")
 @Slf4j
 public class PmpProjectManageController extends JeecgController<PmpProjectManage, IPmpProjectManageService> {
 	@Autowired
 	private IPmpProjectManageService pmpProjectManageService;
-	
+	@Autowired
+	private IPmpZuzhituService pmpZuZhiTuService;
 	/**
 	 * 分页列表查询
 	 *
@@ -75,6 +78,17 @@ public class PmpProjectManageController extends JeecgController<PmpProjectManage
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody PmpProjectManage pmpProjectManage) {
 		pmpProjectManageService.save(pmpProjectManage);
+		PmpZuzhitu pmpZuzhitu = new PmpZuzhitu();
+		pmpZuzhitu.setCreateBy(pmpProjectManage.getCreateBy());
+		pmpZuzhitu.setCreateTime(pmpProjectManage.getCreateTime());
+		pmpZuzhitu.setUpdateBy(pmpProjectManage.getUpdateBy());
+		pmpZuzhitu.setUpdateTime(pmpProjectManage.getUpdateTime());
+		pmpZuzhitu.setSysOrgCode(pmpProjectManage.getSysOrgCode());
+		pmpZuzhitu.setLeftVal(1);
+		pmpZuzhitu.setRightVal(2);
+		pmpZuzhitu.setParentnodeId(pmpProjectManage.getId());
+		pmpZuzhitu.setProjectId(pmpProjectManage.getId());
+		pmpZuZhiTuService.save(pmpZuzhitu);
 		return Result.ok("添加成功！");
 	}
 	
@@ -101,7 +115,35 @@ public class PmpProjectManageController extends JeecgController<PmpProjectManage
 		pmpProjectManageService.removeById(id);
 		return Result.ok("删除成功!");
 	}
-	
+
+	 /**
+	  *   通过id禁用
+	  *
+	  * @param id
+	  * @return
+	  */
+	 @GetMapping(value = "/disable")
+	 public Result<?> disable(@RequestParam(name="id",required=true) String id) {
+		 PmpProjectManage pmpProjectManage = pmpProjectManageService.getById(id);
+		 pmpProjectManage.setIsdelete(1);
+		 pmpProjectManageService.updateById(pmpProjectManage);
+		 return Result.ok("禁用成功!");
+	 }
+
+	 /**
+	  *   通过id启用
+	  *
+	  * @param id
+	  * @return
+	  */
+	 @GetMapping(value = "/enable")
+	 public Result<?> enable(@RequestParam(name="id",required=true) String id) {
+		 PmpProjectManage pmpProjectManage = pmpProjectManageService.getById(id);
+		 pmpProjectManage.setIsdelete(0);
+		 pmpProjectManageService.updateById(pmpProjectManage);
+		 return Result.ok("启用成功!");
+	 }
+
 	/**
 	 *  批量删除
 	 *

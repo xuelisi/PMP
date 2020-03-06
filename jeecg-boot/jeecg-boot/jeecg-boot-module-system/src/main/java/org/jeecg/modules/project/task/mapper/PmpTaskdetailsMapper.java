@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 /**
  * @Description: 分发详情表
  * @Author: jeecg-boot
- * @Date:   2020-02-26
+ * @Date:   2020-03-04
  * @Version: V1.0
  */
 public interface PmpTaskdetailsMapper extends BaseMapper<PmpTaskdetails> {
