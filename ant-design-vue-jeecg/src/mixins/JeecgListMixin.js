@@ -4,7 +4,7 @@
  * data中url定义 list为查询列表  delete为删除单条记录  deleteBatch为批量删除
  */
 import { filterObj } from '@/utils/util';
-import { deleteAction, getAction,downFile } from '@/api/manage'
+import { deleteAction, getAction,putAction,downFile } from '@/api/manage'
 import Vue from 'vue'
 import { ACCESS_TOKEN } from "@/store/mutation-types"
 
@@ -183,10 +183,45 @@ export const JeecgListMixin = {
         }
       });
     },
+    handleDisable: function (id) {
+      if(!this.url.disable){
+        this.$message.error("请设置url.disable属性!")
+        return
+      }
+      var that = this;
+      getAction(that.url.disable, {id: id}).then((res) => {
+        if (res.success) {
+          that.$message.success(res.message);
+          that.loadData();
+        } else {
+          that.$message.warning(res.message);
+        }
+      });
+    },
+    handleEnable: function (id) {
+      if(!this.url.enable){
+        this.$message.error("请设置url.disable属性!")
+        return
+      }
+      var that = this;
+      getAction(that.url.enable, {id: id}).then((res) => {
+        if (res.success) {
+          that.$message.success(res.message);
+          that.loadData();
+        } else {
+          that.$message.warning(res.message);
+        }
+      });
+    },
     handleEdit: function (record) {
       this.$refs.modalForm.edit(record);
       this.$refs.modalForm.title = "编辑";
       this.$refs.modalForm.disableSubmit = false;
+    },
+    handleEditTaskDetail: function (record) {
+      this.$refs.modalForm1.edit(record);
+      this.$refs.modalForm1.title = "编辑";
+      this.$refs.modalForm1.disableSubmit = false;
     },
     handleAdd: function () {
       this.$refs.modalForm.add();
