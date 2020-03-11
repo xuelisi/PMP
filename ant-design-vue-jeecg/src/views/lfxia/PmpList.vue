@@ -58,7 +58,6 @@
     </div>
 
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
-    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
   </a-card>
 </template>
 
@@ -102,8 +101,8 @@ export default {
         }
       ],
       url: {
-        list: '/protree/pmpProject/rootList',
-        childList: '/protree/pmpProject/childList',
+        list: '/protree/pmpProjectXLF/rootList',
+        childList: '/protree/pmpProjectXLF/childList',
         delete: '/protree/pmpProject/delete',
         deleteBatch: '/protree/pmpProject/deleteBatch',
         exportXlsUrl: '/protree/pmpProject/exportXls',

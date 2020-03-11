@@ -37,6 +37,47 @@ public class PmpProjectXLFController extends JeecgController<PmpProject, IPmpPro
     @Autowired
     private PmpProjectMapper pmpProjectMapper;
 
+    /**
+     * 分页列表查询
+     *
+     * @param pmpProject
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    @GetMapping(value = "/rootList")
+    public Result<IPage<PmpProject>> queryRootPageList(PmpProject pmpProject,
+                                                       @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                       @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                       HttpServletRequest req) {
+        Result<IPage<PmpProject>> result = new Result<IPage<PmpProject>>();
+
+        //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------start
+        //QueryWrapper<SysCategory> queryWrapper = QueryGenerator.initQueryWrapper(sysCategory, req.getParameterMap());
+        QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
+        //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------end
+        if (oConvertUtils.isEmpty(pmpProject.getParentnode())) {
+            pmpProject.setParentnode("0");
+            queryWrapper.eq("parentnode", pmpProject.getParentnode());
+        }
+        Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+        IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
+
+    @GetMapping(value = "/childList")
+    public Result<List<PmpProject>> queryPageList(PmpProject pmpProject, HttpServletRequest req) {
+        Result<List<PmpProject>> result = new Result<List<PmpProject>>();
+        QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
+        List<PmpProject> list = pmpProjectService.list(queryWrapper);
+        result.setSuccess(true);
+        result.setResult(list);
+        return result;
+    }
+
     //综合查询
     @GetMapping(value = "/rootLists")
     public Result<IPage<PmpProject>> queryRootPageLists(PmpProject pmpProject,

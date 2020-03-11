@@ -392,7 +392,7 @@ export default {
       ],
       url: {
         list: '/protree/pmpProjectXLF/rootLists',
-        childList: '/protree/pmpProject/childList',
+        childList: '/protree/pmpProjectXLF/childList',
         delete: '/protree/pmpProject/delete',
         deleteBatch: '/protree/pmpProject/deleteBatch',
         exportXlsUrl: '/protree/pmpProject/exportXls',
