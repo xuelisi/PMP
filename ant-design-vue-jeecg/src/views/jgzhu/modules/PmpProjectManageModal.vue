@@ -10,29 +10,13 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-        <a-form-item label="项目头像" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            listType="picture-card"
-            :fileList="fileList"
-            @preview="handlePreview"
-            @change="handleChange"
-            v-decorator="['photo',  validatorRules.photo]"
-          >
-            <div v-if="fileList.length < 1">
-              <a-icon type="plus" />
-              <div class="ant-upload-text">上传头像</div>
-            </div>
-          </a-upload>
-          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%" :src="previewImage" />
-          </a-modal>
-          <!-- <j-upload v-decorator="['photo', validatorRules.photo]" :trigger-change="true"></j-upload> -->
+        <a-form-item label="项目图标" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <j-upload v-decorator="['photo', validatorRules.photo]" :trigger-change="true"></j-upload>
         </a-form-item>
         <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称"></a-input>
         </a-form-item>
-        <a-form-item label="项目类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
+         <a-form-item label="项目类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-row :gutter="24">
             <a-col :span="12">
               <j-dict-select-tag
@@ -63,8 +47,37 @@
             :trigger-change="true"
           />
         </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="起止日期">
-          <a-range-picker v-decorator="['range-picker', validatorRules.rangeConfig]" />
+        <a-form-item label="紧急程度" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <j-dict-select-tag
+            type="list"
+            v-decorator="['emergencylevel', validatorRules.emergencylevel]"
+            :trigger-change="true"
+            dictCode="urgent_level"
+            placeholder="请选择紧急程度"
+          />
+        </a-form-item>
+        <a-form-item label="起止日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
+           <!-- <a-range-picker v-decorator="['range-picker']" /> -->
+          <a-col :span="11">
+            <j-date
+              placeholder="请选择起始日期"
+              v-decorator="[ 'startdate', validatorRules.startdate]"
+              :trigger-change="true"
+              style="width: 100%"
+            />
+          </a-col>
+          <a-col :span="1" style="text-align:center"> - </a-col>
+          <a-col :span="12">
+            <j-date
+              placeholder="请选择结束日期"
+              v-decorator="[ 'enddate', validatorRules.enddate]"
+              :trigger-change="true"
+              style="width: 100%"
+            />
+          </a-col>
+        </a-form-item>
+        <a-form-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入备注"></a-input>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true"></j-upload>
@@ -93,11 +106,11 @@ export default {
   },
   data() {
     return {
+
       form: this.$form.createForm(this),
       title: '操作',
       width: 800,
       visible: false,
-      inputValue: 0,
       model: {},
       labelCol: {
         xs: { span: 24 },
@@ -107,27 +120,22 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      previewVisible: false,
-      previewImage: '',
-      fileList: [],
       confirmLoading: false,
       validatorRules: {
-        photo: { rules: [] },
+        photo: { rules: [{ required: true }] },
         projectname: { rules: [{ required: true, message: '请输入项目名称!' }] },
         projecttype: { rules: [{ required: true, message: '请输入项目类型!' }] },
-        projectcontent: { rules: [] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
-        emergencylevel: { rules: [] },
-        rangeConfig: {
-          rules: [{ type: 'array', required: true, message: '请选择起止日期!' }]
-        },
-        schedule: { rules: [] },
+        emergencylevel: { rules: [{ required: true, message: '请输入紧急程度!' }] },
+        startdate: { rules: [{ required: true, message: '请输入起始日期!' }] },
+        enddate: { rules: [{ required: true, message: '请输入结束日期!' }] },
+        remark: { rules: [] },
         annex: { rules: [] }
       },
       url: {
-        add: '/projectmanage/pmpProjectManage/add',
-        edit: '/projectmanage/pmpProjectManage/edit'
+        add: '/protree/pmpProject/addpro',
+        edit: '/protree/pmpProject/edit'
       }
     }
   },
@@ -151,12 +159,12 @@ export default {
             'principal',
             'participant',
             'emergencylevel',
-            range-picker[0].format('YYYY-MM-DD'),
-            range-picker[1].format('YYYY-MM-DD'),
+            'startdate',
+            'enddate',
             'schedule',
             'remark',
             'annex',
-            0
+            'isdelete'
           )
         )
       })
@@ -199,49 +207,28 @@ export default {
       })
     },
     handleCancel() {
-      this.previewVisible = false
       this.close()
     },
     popupCallback(row) {
       this.form.setFieldsValue(
         pick(
           row,
-           'photo',
-            'projectname',
-            'projecttype',
-            'projectcontent',
-            'principal',
-            'participant',
-            'emergencylevel',
-            range-picker[0].format('YYYY-MM-DD'),
-            range-picker[1].format('YYYY-MM-DD'),
-            'schedule',
-            'remark',
-            'annex',
-            0
+          'photo',
+          'projectname',
+          'projecttype',
+          'projectcontent',
+          'principal',
+          'participant',
+          'emergencylevel',
+          'startdate',
+          'enddate',
+          'schedule',
+          'remark',
+          'annex',
+          'isdelete'
         )
       )
-    },
-    handlePreview(file) {
-      this.previewImage = file.url || file.thumbUrl
-      this.previewVisible = true
-    },
-    handleChange({ fileList }) {
-      this.fileList = fileList
     }
   }
 }
 </script>
-
-<style>
-/* you can make up upload button and sample style by using stylesheets */
-.ant-upload-select-picture-card i {
-  font-size: 30px;
-  color: #999;
-}
-
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: #666;
-}
-</style>

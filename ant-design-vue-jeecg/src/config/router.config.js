@@ -1,4 +1,4 @@
-import { UserLayout, TabLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
+import { UserLayout, TabLayout, RouteView, BlankLayout, PageView,IframePageView,IframeFReprotView } from '@/components/layouts'
 
 /**
  * 走菜单，走权限控制
@@ -45,7 +45,6 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/dashboard/workplace',
     children: [
-
       // // dashboard
       // {
       //   path: '/dashboard',
@@ -352,38 +351,32 @@ export const constantRouterMap = [
         name: 'alteration',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Alteration')
       },
-      {
-        path: 'myproject_task',
-        name: 'myproject_task',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/jeecg/project/myproject_task')
-      },
     ]
   },
 
   // {
-  //   path: '/',
-  //   name: 'index',
+  //   path: '/jgzhu',
+  //   name: 'jgzhu',
   //   component: TabLayout,
-  //   meta: {title: '首页'},
-  //   redirect: '/dashboard/workplace',
+  //   meta: { title: '项目' },
   //   children: [
   //     {
-  //       path: '/online',
-  //       name: 'online',
-  //       redirect: '/online',
+  //       path: '/jgzhu/PmpProjectManageList',
+  //       name: 'PmpProjectManageList',
   //       component: RouteView,
-  //       meta: {title: '在线开发', icon: 'dashboard', permission: ['dashboard']},
+  //       meta: { title: '我的项目' },
   //       children: [
   //         {
-  //           path: '/online/auto/:code',
-  //           name: 'report',
-  //           component: () => import('@/views/modules/online/cgreport/OnlCgreportAutoList')
-  //         },
+  //           path: '/jgzhu/PmpTaskdetailsList/:id？',
+  //           name: 'PmpTaskdetailsList',
+  //           component: () => import('@/views/jgzhu/PmpTaskdetailsList'),
+  //           meta: { title: '我的任务' }
+  //         }
+
   //       ]
   //     },
   //   ]
   // },
-
   {
     path: '/test',
     component: BlankLayout,
