@@ -1,5 +1,6 @@
 package org.jeecg.modules.wqc.summary.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.system.entity.SysUser;
+import org.jeecg.modules.wqc.summary.entity.PmpComment;
+import org.jeecg.modules.wqc.summary.entity.PmpInfo;
+import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.entity.PmpTaskSummary;
 import org.jeecg.modules.wqc.summary.service.IPmpTaskSummaryService;
 
@@ -19,6 +24,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -31,7 +38,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 
  /**
  * @Description: 任务小结
@@ -55,18 +61,82 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
 	 * @param req
 	 * @return
 	 */
-	@GetMapping(value = "/list")
-	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<PmpTaskSummary> queryWrapper = QueryGenerator.initQueryWrapper(pmpTaskSummary, req.getParameterMap());
-		Page<PmpTaskSummary> page = new Page<PmpTaskSummary>(pageNo, pageSize);
-		IPage<PmpTaskSummary> pageList = pmpTaskSummaryService.page(page, queryWrapper);
-		return Result.ok(pageList);
-	}
-	
-	/**
+//	@GetMapping(value = "/list")
+//	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
+//								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+//								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+//								   HttpServletRequest req) {
+//		QueryWrapper<PmpTaskSummary> queryWrapper = QueryGenerator.initQueryWrapper(pmpTaskSummary, req.getParameterMap());
+//		Page<PmpTaskSummary> page = new Page<PmpTaskSummary>(pageNo, pageSize);
+//		IPage<PmpTaskSummary> pageList = pmpTaskSummaryService.page(page, queryWrapper);
+//		return Result.ok(pageList);
+//	}
+	 @RequestMapping(value = "/list", method = RequestMethod.GET)
+	 public Result<IPage<PmpTaskSummary>> queryPageList(PmpTaskSummary summary,
+												 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+												 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+												 HttpServletRequest req) {
+		 Result<IPage<PmpTaskSummary>> result = new Result<IPage<PmpTaskSummary>>();
+		 QueryWrapper<PmpTaskSummary> queryWrapper = QueryGenerator.initQueryWrapper(summary, req.getParameterMap());
+		 Page<PmpTaskSummary> page = new Page<PmpTaskSummary>(pageNo, pageSize);
+		 String projectid = req.getParameter("projectid");
+		 IPage<PmpTaskSummary> pageList = pmpTaskSummaryService.getSummaryByProjectId(page, projectid);
+
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
+
+	 @RequestMapping(value = "/info", method = RequestMethod.GET)
+	 public Result<PmpInfo> queryPmpInfo(@RequestParam(name="projectid",required=true) String projectid) {
+		 Result<PmpInfo> result = new Result<PmpInfo>();
+		 PmpInfo tmp = pmpTaskSummaryService.getPmpInfoByProjectID(projectid);
+
+		 if (null == tmp) {
+			 result.error500("未找到对应实体");
+		 } else {
+			 result.setResult(tmp);
+			 result.setSuccess(true);
+		 }
+		 return result;
+	 }
+
+	 @RequestMapping(value = "/summary", method = RequestMethod.GET)
+	 public Result<List<PmpSummary>> queryPmpSummary(@RequestParam(name="taskid",required=true) String taskid) {
+		 Result<List<PmpSummary>> result = new Result<>();
+		 List<PmpSummary> tmp = pmpTaskSummaryService.getPmpSummaryByTaskID(taskid);
+
+		 result.setResult(tmp);
+		 result.setSuccess(true);
+
+		 return result;
+	 }
+
+//	 //测试使用，暂存在问题，使用上面同名函数
+//	 @RequestMapping(value = "/summary", method = RequestMethod.GET)
+//	 public Object queryPmpSummary(@RequestParam(name="taskid",required=true) String taskid) {
+//		 Result<List<PmpSummary>> result = new Result<>();
+//		 List<PmpSummary> tmp = pmpTaskSummaryService.getPmpSummaryByTaskID(taskid);
+//
+//		 List<JSONObject> jsonObjects = new ArrayList<>();
+//		 for (PmpSummary l : tmp) {
+//			 JSONObject jsonObject = new JSONObject();
+//			 try {
+//				 jsonObject.put("title", l.getCreateTime());
+//				 jsonObject.put("description", l.getCreateBy() + ": " + l.getContent());
+//			 } catch (NumberFormatException e) {
+//				 jsonObject.put("title", "");
+//				 jsonObject.put("description", "");
+//			 }
+//			 jsonObjects.add(jsonObject);
+//		 }
+//
+//		 log.info("---------" + jsonObjects);
+//
+//		 return jsonObjects;
+//	 }
+
+	 /**
 	 *   添加
 	 *
 	 * @param pmpTaskSummary
