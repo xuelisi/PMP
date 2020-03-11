@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.project.protree.mapper.PmpProjectMapper">
+    <select id="updateMyNode" resultType="java.lang.String" statementType="CALLABLE">
+	   {call dbo.UpdateSubNode(
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{parentNodeId,jdbcType=VARCHAR,mode=IN},
+	    #{id,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="isDelteSubNode" resultType="java.lang.String" statementType="CALLABLE">
+	   {call dbo.isDelteSubNode(
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{id,jdbcType=VARCHAR,mode=IN},
+	    #{isdelete,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="IsSuperior" resultType="java.lang.Integer" statementType="CALLABLE">
+	   {call dbo.IsSuperior(
+	    #{id,jdbcType=VARCHAR,mode=IN},
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+</mapper>
