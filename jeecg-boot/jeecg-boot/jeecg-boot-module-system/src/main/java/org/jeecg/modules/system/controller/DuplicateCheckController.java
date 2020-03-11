@@ -59,4 +59,5 @@ public class DuplicateCheckController {
 			return Result.error("该值不可用，系统中已存在！");
 		}
 	}
+
 }

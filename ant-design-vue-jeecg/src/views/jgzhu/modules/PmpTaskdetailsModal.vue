@@ -10,7 +10,11 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item label="名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入名称"></a-input>
+          <a-input
+            v-decorator="[ 'taskname', validatorRules.taskname]"
+            placeholder="请输入名称"
+            :read-only="readOnly"
+          ></a-input>
         </a-form-item>
         <a-form-item label="任务内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
@@ -37,7 +41,6 @@
               <a-slider
                 :min="0"
                 :max="100"
-                v-model="inputValue"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
               />
@@ -47,7 +50,6 @@
                 :min="0"
                 :max="100"
                 style="marginLeft: 16px"
-                v-model="inputValue"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
               />
@@ -94,8 +96,10 @@
         </a-form-item>
       </a-form>
     </a-spin>
-    <a-button type="primary" @click="handleOk">确定</a-button>
-    <a-button type="primary" @click="handleCancel">取消</a-button>
+    <a-row :style="{textAlign:'right'}">
+      <a-button :style="{marginRight: '8px'}" @click="handleCancel">关闭</a-button>
+      <a-button :disabled="disableSubmit" @click="handleOk" type="primary">确定</a-button>
+    </a-row>
   </a-drawer>
 </template>
 
@@ -118,7 +122,8 @@ export default {
   },
   data() {
     return {
-      inputValue: 0,
+      disableSubmit:false,
+      readOnly: true,
       form: this.$form.createForm(this),
       title: '操作',
       width: 800,
@@ -134,7 +139,7 @@ export default {
       },
       confirmLoading: false,
       validatorRules: {
-        projectname: { rules: [{ required: true, message: '请输入名称!' }] },
+        taskname: { rules: [{ required: true, message: '请输入名称!' }] },
         projectcontent: { rules: [] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
@@ -147,7 +152,7 @@ export default {
         annex: { rules: [] }
       },
       url: {
-        add: '/task/pmpTaskdetails/add',
+        add: '/protree/pmpProject/addtask',
         edit: '/protree/pmpProject/edit'
       }
     }
@@ -165,7 +170,7 @@ export default {
         this.form.setFieldsValue(
           pick(
             this.model,
-            'projectname',
+            'taskname',
             'projectcontent',
             'principal',
             'participant',
@@ -183,6 +188,7 @@ export default {
     },
     close() {
       this.$emit('close')
+      this.disableSubmit = false
       this.visible = false
     },
     handleOk() {
@@ -207,7 +213,7 @@ export default {
             .then(res => {
               if (res.success) {
                 that.$message.success(res.message)
-                that.$emit('ok')
+                that.submitSuccess(formData)
               } else {
                 that.$message.warning(res.message)
               }
@@ -226,7 +232,7 @@ export default {
       this.form.setFieldsValue(
         pick(
           row,
-          'projectname',
+          'taskname',
           'projectcontent',
           'principal',
           'participant',
@@ -240,6 +246,40 @@ export default {
           'isdelete'
         )
       )
+    },
+    submitSuccess(formData) {
+      if (!formData.id) {
+        let treeData = this.$refs.treeSelect.getCurrTreeData()
+        this.expandedRowKeys = []
+        this.getExpandKeysByPid(formData[this.pidField], treeData, treeData)
+        this.$emit('ok', formData, this.expandedRowKeys.reverse())
+      } else {
+        this.$emit('ok', formData)
+      }
+    },
+    getExpandKeysByPid(pid, arr, all) {
+      if (pid && arr && arr.length > 0) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].key == pid) {
+            this.expandedRowKeys.push(arr[i].key)
+            this.getExpandKeysByPid(arr[i]['parentId'], all, all)
+          } else {
+            this.getExpandKeysByPid(pid, arr[i].children, all)
+          }
+        }
+      }
+    },
+    validateMyCode(rule, value, callback) {
+      let params = {
+        parentnodeId: this.form.getFieldValue('parentnode')
+      }
+      getAction(this.url.checkCode, params).then(res => {
+        if (res.success) {
+          callback()
+        } else {
+          callback(res.message)
+        }
+      })
     }
   }
 }

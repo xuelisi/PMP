@@ -189,7 +189,7 @@ public class SysCategoryController {
       * 导出excel
    *
    * @param request
-   * @param response
+   * @param sysCategory
    */
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, SysCategory sysCategory) {

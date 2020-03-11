@@ -16,5 +16,11 @@ public interface IPmpProjectService extends IService<PmpProject> {
     /**根节点父ID的值*/
     public static final String ROOT_PID_VALUE = "0";
 
+    void updateMyNode(String projectname, String parentNodeId, String id);
+
+    void isDelteSubNode(String projectname, String id, String isdelete);
+
+    Integer IsSuperior(String id, String principal);
+
     void addSysCategory(PmpProject pmpProject);
 }

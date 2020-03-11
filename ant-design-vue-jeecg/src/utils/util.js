@@ -1,6 +1,17 @@
 import * as api from '@/api/api'
 import { isURL } from '@/utils/validate'
 
+export function isContainPrincipal(principals, value){
+  debugger
+  let strArray = principals.split(',')
+  for(var i=0;i<strArray.length;i++){
+    if(strArray[i] == value){
+      return true
+    }
+  }
+  return false
+}
+
 export function timeFix() {
   const time = new Date()
   const hour = time.getHours()
