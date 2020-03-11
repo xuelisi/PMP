@@ -122,7 +122,12 @@ export default {
       },
       confirmLoading: false,
       validatorRules: {
-        photo: { rules: [{ required: true }] },
+        photo: { rules: [
+          
+          // { required: true }
+          
+          
+          ] },
         projectname: { rules: [{ required: true, message: '请输入项目名称!' }] },
         projecttype: { rules: [{ required: true, message: '请输入项目类型!' }] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },

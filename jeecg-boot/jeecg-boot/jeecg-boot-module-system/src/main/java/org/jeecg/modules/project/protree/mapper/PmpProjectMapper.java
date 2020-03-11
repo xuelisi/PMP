@@ -14,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface PmpProjectMapper extends BaseMapper<PmpProject> {
 
+    public List<PmpProject>  getCountInfo();
 }

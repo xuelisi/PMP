@@ -1,72 +1,14 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
-          <a-col :md="6" :sm="8">
-            <a-form-item label="名称">
-              <a-input placeholder="请输入名称" v-model="queryParam.projectname"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="负责人">
-              <a-input placeholder="请输入负责人" v-model="queryParam.principal"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="是否禁用">
-              <a-select placeholder="请选择是否禁用" v-model="queryParam.isdelete" allowClear>
-                <a-select-option value="0">正常</a-select-option>
-                <a-select-option value="1">禁用</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button
-                type="primary"
-                @click="searchReset"
-                icon="reload"
-                style="margin-left: 8px"
-              >重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
-        <a-row :gutter="24">
-          <a-col :md="6" :sm="8">
-            <a-form-item label="总进度">
-              <a-input-number
-                placeholder="请输入总进度"
-                :min="0"
-                :max="100"
-                class="inputnum"
-                v-model="queryParam.schedule"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="开始日期">
-              <j-date placeholder="请选择开始日期" class="inputnum" v-model="queryParam.startdate"></j-date>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="结束日期">
-              <j-date placeholder="请选择结束日期" class="inputnum" v-model="queryParam.enddate"></j-date>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
     <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-button @click="handleAdd" icon="plus">添加任务</a-button>
+    <!-- <div class="table-operator">
+       <a-button @click="handleAdd" icon="plus">添加任务</a-button> -->
       <!--<a-button type="primary" icon="download" @click="handleExportXls('分类字典')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>-->
-      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -76,8 +18,7 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown>
-    </div>
+      </a-dropdown> </div>  -->
 
     <!-- table区域-begin -->
     <div>
@@ -124,70 +65,40 @@
 <script>
 import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import PmpTaskListModal from './modules/PmpTaskListModal'
-import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import JDate from '@/components/jeecg/JDate.vue'
+//src\views\jgzhu\modules\PmpTaskListModal.vue
+//import PmpTaskListModal from '@/jgzhu/modules/PmpTaskListModal'
+import PmpTaskListModal from '@views/jgzhu/modules/PmpTaskListModal'
 import { initDictOptions, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'SysCategoryList',
   mixins: [JeecgListMixin],
   components: {
-    PmpTaskListModal,
     JDate,
-    PmpTaskdetailsModal
+    PmpTaskListModal
   },
   data() {
     return {
-      description: '任务管理页面',
+      description: '任务编码页面',
       // 表头
       columns: [
         {
           title: '名称',
           align: 'left',
-          dataIndex: 'projectname',
-          scopedSlots: { customRender: 'projectname' }
+          dataIndex: 'taskname'
+        
         },
         {
-          title: '负责人',
+          title: '任务编码',
           align: 'center',
-          dataIndex: 'principal'
-        },
-        {
-          title: '总进度',
-          align: 'center',
-          dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
-        },
-        {
-          title: '起始日期',
-          align: 'center',
-          dataIndex: 'startdate',
-          customRender: function(text) {
-            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
-        },
-        {
-          title: '结束日期',
-          align: 'center',
-          dataIndex: 'enddate',
-          customRender: function(text) {
-            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
-        },
+          dataIndex: 'projectcode'
+        },    
         {
           title: '是否禁用',
           align: 'center',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          align: 'center',
-          scopedSlots: { customRender: 'action' }
         }
       ],
       url: {
@@ -233,11 +144,7 @@ export default {
             let result = res.result
             if (Number(result.total) > 0) {
               this.ipagination.total = Number(result.total)
-              if (res.message == '1') {
-                this.dataSource = this.getDataByResult(res.result.records)
-              } else {
-                this.dataSource = res.result.records
-              }
+              this.dataSource = this.getDataByResult(res.result.records)
               resolve()
             } else {
               this.ipagination.total = 0
