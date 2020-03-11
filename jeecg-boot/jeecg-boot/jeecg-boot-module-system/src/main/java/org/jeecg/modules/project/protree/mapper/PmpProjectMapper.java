@@ -21,4 +21,6 @@ public interface PmpProjectMapper extends BaseMapper<PmpProject> {
 
     //调用存储过程
     Integer IsSuperior(@Param("id") String id, @Param("principal") String principal);
+
+    public List<PmpProject>  getCountInfo();
 }
