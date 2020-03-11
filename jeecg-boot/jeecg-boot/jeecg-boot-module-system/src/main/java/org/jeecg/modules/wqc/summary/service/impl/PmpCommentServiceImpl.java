@@ -24,7 +24,7 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
     private PmpCommentMapper mapper;
 
     //根据小结id，查询批阅信息
-    public List<PmpComment> getPmpCommentByTaskID(String taskid) {
-        return mapper.getPmpCommentByTaskID(taskid);
+    public List<PmpComment> getPmpCommentByTaskID(String taskid, String username) {
+        return mapper.getPmpCommentByTaskID(taskid, username);
     }
 }

@@ -1,0 +1,277 @@
+<template>
+  <a-modal
+    :title="title"
+    :width="width"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @ok="handleOk"
+    @cancel="handleCancel"
+    cancelText="关闭">
+    <a-spin :spinning="confirmLoading">
+
+      <a-row>
+        <a-col>
+
+          <div class="scroll-wrap">
+            <a-list size="small" split="false">
+              <a-list-item :key="index" v-for="(item, index) in allCmtData">
+                <a-list-item-meta :description="item.description">
+                  <a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>
+                  <a slot="title">{{ item.title }}</a>
+                </a-list-item-meta>
+                <div slot="actions">
+                  <a-popover title="详情">
+                    <template slot="content">
+                      <p>{{item.details}}</p>
+                    </template>
+                    <a>详情</a>
+                    <!--<a-button type="primary">Hover me</a-button>-->
+                  </a-popover>
+                </div>
+              </a-list-item>
+            </a-list>
+          </div>
+
+          <!--<a-tabs defaultActiveKey="1" @change="callback">-->
+            <!--<a-tab-pane tab="评论情况" key="1">-->
+              <!--<div class="scroll-wrap">-->
+                <!--<a-list size="small" split="false">-->
+                  <!--<a-list-item :key="index" v-for="(item, index) in allCmtData">-->
+                    <!--<a-list-item-meta :description="item.description">-->
+                      <!--<a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>-->
+                      <!--<a slot="title">{{ item.title }}</a>-->
+                    <!--</a-list-item-meta>-->
+                    <!--<div slot="actions">-->
+                        <!--<a-popover title="详情" style="max-width:100px;">-->
+                          <!--<template slot="content">-->
+                            <!--<p>{{item.details}}</p>-->
+                          <!--</template>-->
+                          <!--<a>详情</a>-->
+                          <!--&lt;!&ndash;<a-button type="primary">Hover me</a-button>&ndash;&gt;-->
+                        <!--</a-popover>-->
+                    <!--</div>-->
+                  <!--</a-list-item>-->
+                <!--</a-list>-->
+              <!--</div>-->
+            <!--</a-tab-pane>-->
+
+            <!--<a-tab-pane tab="我的评论" key="2" forceRender>-->
+              <!--<div class="scroll-wrap">-->
+                <!--<a-list size="small" split="false">-->
+                  <!--<a-list-item :key="index" v-for="(item, index) in ownerCmtData">-->
+                    <!--<a-list-item-meta :description="item.description">-->
+                      <!--<a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>-->
+                      <!--<a slot="title">{{ item.title }}</a>-->
+                    <!--</a-list-item-meta>-->
+                    <!--<div slot="actions">-->
+                      <!--<a>修改</a>-->
+                    <!--</div>-->
+                    <!--<div slot="actions">-->
+                      <!--<a>删除</a>-->
+                    <!--</div>-->
+                  <!--</a-list-item>-->
+                <!--</a-list>-->
+              <!--</div>-->
+            <!--</a-tab-pane>-->
+          <!--</a-tabs>-->
+        </a-col>
+        <a-col>
+          <a-form :form="form" >
+            <a-form-item label="任务id" :labelCol="labelCol" :wrapperCol="wrapperCol" style="display:none">
+              <a-input v-decorator="[ 'taskid', validatorRules.taskid]" placeholder="请输入任务id"></a-input>
+            </a-form-item>
+            <a-form-item label="评论" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <!--<j-editor v-decorator="['content',{trigger:'input'}]"/>-->
+              <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
+                          :autosize="{ minRows: 3}"></a-textarea>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
+
+    </a-spin>
+  </a-modal>
+</template>
+
+<script>
+
+  import pick from 'lodash.pick'
+  import { httpAction } from '@/api/manage'
+  import JEditor from '@/components/jeecg/JEditor'
+  import { validateDuplicateValue } from '@/utils/util'
+  import ATextarea from "ant-design-vue/es/input/TextArea";
+  import { deleteAction, getAction,downFile } from '@/api/manage'
+
+  export default {
+    name: "PmpCommentModal",
+    components: {
+      ATextarea,
+      JEditor,
+    },
+    data () {
+      return {
+        allCmtData: [],
+        ownerCmtData: [],
+        form: this.$form.createForm(this),
+        title:"操作",
+        width:800,
+        visible: false,
+        model: {},
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 5 },
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16 },
+        },
+        confirmLoading: false,
+        validatorRules: {
+          taskid: {rules: [
+          ]},
+          content: {rules: [
+          ]},
+        },
+        url: {
+          list: "/summary/pmpComment/list",
+          add: "/summary/pmpComment/add",
+          edit: "/summary/pmpComment/edit",
+          info: "/summary/pmpTaskSummary/info",
+        },
+        hovered: false,
+      }
+    },
+    created () {
+    },
+    methods: {
+      add () {
+        this.edit({});
+      },
+      edit (record) {
+        this.form.resetFields();
+        this.model = Object.assign({}, record);
+        this.visible = true;
+        this.$nextTick(() => {
+          this.form.setFieldsValue(pick(this.model,'taskid','content'))
+        })
+      },
+      reset() {
+        this.allCmtData = [];
+      },
+      close () {
+        this.reset();
+        this.$emit('close');
+        this.visible = false;
+      },
+      show(record) {
+
+        this.visible = true;
+        this.title = "任务名称：" + record.taskname;
+
+        this.edit({taskid: record.taskid});
+        this.loadAllComment(record.taskid);
+
+      },
+      loadPmpInfo(taskid) {
+        getAction(this.url.info, { projectid: taskid }).then((res) => {
+          if (res.success) {
+            this.taskid = res.result.taskId;
+            this.taskname = res.result.taskName;
+            this.projectid = res.result.projectId;
+            this.projectname = res.result.projectName;
+            this.taskInfo = "任务名称：" + res.result.taskName;
+            // this.title = this.taskInfo;
+          }
+        })
+      },
+      loadAllComment(taskid) {
+        getAction(this.url.list, { taskid: taskid, userName: '' }).then((res) => {
+          if (res.success) {
+            for(let i = 0; i < res.result.length; ++i) {
+              this.allCmtData.push({
+                title: res.result[i].createTime,
+                description: res.result[i].createBy + '：' + this.subText(this.rmHtmlLabel(res.result[i].content)),
+                details: res.result[i].content,
+                //avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png'
+              });
+            }
+          }
+        })
+      },
+      loadOwnerComment(taskid) {
+        getAction(this.url.list, { taskid: taskid, userName: 'admin' }).then((res) => {
+          if (res.success) {
+            for(let i = 0; i < res.result.length; ++i) {
+              this.ownerCmtData.push({
+                title: res.result[i].createTime,
+                description: res.result[i].createBy + '：' + this.subText(this.rmHtmlLabel(res.result[i].content)),
+                //avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png'
+              });
+            }
+          }
+        })
+      },
+      handleOk () {
+        const that = this;
+        // 触发表单验证
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            that.confirmLoading = true;
+            let httpurl = '';
+            let method = '';
+            if(!this.model.id){
+              httpurl+=this.url.add;
+              method = 'post';
+            }else{
+              httpurl+=this.url.edit;
+               method = 'put';
+            }
+            let formData = Object.assign(this.model, values);
+            console.log("表单提交数据",formData)
+            httpAction(httpurl,formData,method).then((res)=>{
+              if(res.success){
+                that.$message.success(res.message);
+                that.$emit('ok');
+              }else{
+                that.$message.warning(res.message);
+              }
+            }).finally(() => {
+              that.confirmLoading = false;
+              that.close();
+            })
+          }
+        })
+      },
+      handleCancel () {
+        this.close()
+      },
+      popupCallback(row){
+        this.form.setFieldsValue(pick(row,'taskid','content'))
+      },
+      //剔除html标签
+      rmHtmlLabel(str) {
+        return str.replace(/<[^>]+>/g, '');
+      },
+      //文本限长
+      subText(str) {
+        if (str.length > 100)
+          return str.substring(0, 50) + '...';
+        else
+          return str;
+      },
+    }
+  }
+</script>
+
+<style>
+  .scroll-wrap {
+    height: 200px;
+    overflow: hidden;
+    overflow-y:scroll;
+    margin-bottom: 25px;
+  }
+
+  .ant-popover-inner-content {
+    max-width: 500px;
+  }
+</style>

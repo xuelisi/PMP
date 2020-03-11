@@ -81,16 +81,17 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	 public Result<List<PmpComment>> queryPmpComment(@RequestParam(name="taskid",required=true) String taskid,
 													 @RequestParam(name="userName",required=true) String userName) {
 		 Result<List<PmpComment>> result = new Result<>();
-		 List<PmpComment> cmtList = pmpCommentService.getPmpCommentByTaskID(taskid);
+		 List<PmpComment> cmtList = pmpCommentService.getPmpCommentByTaskID(taskid, userName);
 
-		 if ("" != userName) {
-			 for (int i = cmtList.size() - 1; i >= 0; --i) {
-				 PmpComment item = cmtList.get(i);
-				 if (!userName.equals(item.getCreateBy())) {
-					 cmtList.remove(i);
-				 }
-			 }
-		 }
+		 //用户名过滤，不想太太多地方用的懒方法
+//		 if ("" != userName) {
+//			 for (int i = cmtList.size() - 1; i >= 0; --i) {
+//				 PmpComment item = cmtList.get(i);
+//				 if (!userName.equals(item.getCreateBy())) {
+//					 cmtList.remove(i);
+//				 }
+//			 }
+//		 }
 
 		 result.setResult(cmtList);
 		 result.setSuccess(true);

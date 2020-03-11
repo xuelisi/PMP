@@ -4,7 +4,13 @@
 
     <!-- 根据项目Id查询 -->
     <select id="getPmpCommentByTaskID" resultType="org.jeecg.modules.wqc.summary.entity.PmpComment">
-        select * from pmp_comment where taskid = #{taskid} order by create_time desc
+        select *
+        from pmp_comment
+        where taskid = #{taskid}
+        <if test="username!=null and username!=''">
+            and create_by = #{username}
+        </if>
+        order by create_time desc
     </select>
 
 </mapper>
