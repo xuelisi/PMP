@@ -1,51 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpTaskSummaryMapper">
-
-    <!-- 根据项目Id查询 -->
-    <select id="getSummaryByProjectId" resultType="org.jeecg.modules.wqc.summary.entity.PmpTaskSummary">
-        select * from pmp_task_summary where projectid = #{projectid}
-    </select>
-
-    <!-- 根据项目Id查询 -->
-    <select id="getPmpInfoByProjectID" resultType="org.jeecg.modules.wqc.summary.entity.PmpInfo">
-        declare @tid nvarchar(19)
-        declare @pid nvarchar(19)
-        declare @pnid nvarchar(19)
-        declare @tName nvarchar(10)
-        declare @pName nvarchar(10)
-
-        set @tid = #{projectid}
-
-        select @pid = id,
-            @pnid = parentnode,
-            @tName = projectname,
-            @pName = projectname
-        from pmp_project
-        where id = @tid
-
-        while(('0' != @pnid) and (@pnid is not null))
-        begin
-            select @pid = id,
-                @pnid = parentnode
-            from pmp_project
-            where id = @pnid
-        end
-
-        select @tid as taskID,
-            @tName as taskName,
-            @pid as projectID,
-            @pName as projectName
-    </select>
-
-    <!-- 根据项目Id查询 -->
-    <select id="getPmpReviewByProjectID" resultType="org.jeecg.modules.wqc.summary.entity.PmpReview">
-        select * from pmp_task_summary where projectid = #{projectid}
-    </select>
-
-    <!-- 根据任务Id查询 -->
-    <select id="getPmpSummaryByTaskID" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummary">
-        select * from pmp_summary where taskid = #{taskid}
-    </select>
+<mapper namespace="org.jeecg.modules.project.summary.mapper.PmpTaskSummaryMapper">
 
 </mapper>

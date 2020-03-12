@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.project.projectmanage.entity.PmpProjectManage;
 import org.jeecg.modules.project.protree.entity.PmpProject;
 import org.jeecg.modules.project.protree.service.IPmpProjectService;
 
@@ -46,47 +47,6 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	@Autowired
 		 private IPmpProjectService pmpProjectService;
 
-		 /**
-		  * 分页列表查询
-		  * @param pmpProject
-		  * @param pageNo
-		  * @param pageSize
-		  * @param req
-		  * @return
-		  */
-		 @GetMapping(value = "/rootList")
-		 public Result<IPage<PmpProject>> queryRootPageList(PmpProject pmpProject,
-				 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-				 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-				 HttpServletRequest req) {
-			 if(oConvertUtils.isEmpty(pmpProject.getParentnode())){
-				 pmpProject.setParentnode("0");
-			 }
-			 Result<IPage<PmpProject>> result = new Result<IPage<PmpProject>>();
-
-			 //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------start
-			 //QueryWrapper<SysCategory> queryWrapper = QueryGenerator.initQueryWrapper(sysCategory, req.getParameterMap());
-			 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
-			 queryWrapper.eq("parentnode", pmpProject.getParentnode());
-			 //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------end
-
-		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
-		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
-		 result.setSuccess(true);
-		 result.setResult(pageList);
-		 return result;
-	 }
-
-	 @GetMapping(value = "/childList")
-	 public Result<List<PmpProject>> queryPageList(PmpProject pmpProject,HttpServletRequest req) {
-		 Result<List<PmpProject>> result = new Result<List<PmpProject>>();
-		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
-		 List<PmpProject> list = pmpProjectService.list(queryWrapper);
-		 result.setSuccess(true);
-		 result.setResult(list);
-		 return result;
-	 }
-
 	 /**
 	  * 分页列表查询
 	  *
@@ -107,6 +67,48 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);
 	 }
+		 /**
+		  * 分页列表查询
+		  * @param pmpProject
+		  * @param pageNo
+		  * @param pageSize
+		  * @param req
+		  * @return
+		  */
+		 @GetMapping(value = "/rootList")
+		 public Result<IPage<PmpProject>> queryRootPageList(PmpProject pmpProject,
+				 @RequestParam(name="pid", required = false) String pid,
+				 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+				 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+				 HttpServletRequest req) {
+			 if(oConvertUtils.isEmpty(pmpProject.getParentnode())){
+				 pmpProject.setParentnode("0");
+			 }
+			 Result<IPage<PmpProject>> result = new Result<IPage<PmpProject>>();
+
+			 //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------start
+			 //QueryWrapper<SysCategory> queryWrapper = QueryGenerator.initQueryWrapper(sysCategory, req.getParameterMap());
+			 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
+			 queryWrapper.eq("parentnode", pmpProject.getParentnode());
+			 queryWrapper.eq("id", pid);
+			 //--author:os_chengtgen---date:20190804 -----for: 分类字典页面显示错误,issues:377--------end
+
+		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
+
+	 @GetMapping(value = "/childList")
+	 public Result<List<PmpProject>> queryChildPageList(PmpProject pmpProject,HttpServletRequest req) {
+		 Result<List<PmpProject>> result = new Result<List<PmpProject>>();
+		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
+		 List<PmpProject> list = pmpProjectService.list(queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(list);
+		 return result;
+	 }
 
 	 /**
 	  *   添加
@@ -118,6 +120,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 Result<PmpProject> result = new Result<PmpProject>();
 		 try {
 			 pmpProjectService.addSysCategory(pmpProject);
+			 pmpProjectService.updateMyNode(pmpProject.getProjectname(),pmpProject.getParentnode(),pmpProject.getId());
 			 result.success("添加成功！");
 		 } catch (Exception e) {
 			 log.error(e.getMessage(),e);
@@ -134,7 +137,13 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  */
 	 @PostMapping(value = "/addpro")
 	 public Result<?> addpro(@RequestBody PmpProject pmpProject) {
-		 pmpProjectService.save(pmpProject);
+	 	if(oConvertUtils.isEmpty(pmpProject.getLeftval())){
+			pmpProject.setLeftval(1);
+		}
+		 if(oConvertUtils.isEmpty(pmpProject.getRightval())){
+			 pmpProject.setRightval(2) ;
+		 }
+		 pmpProjectService.addSysCategory(pmpProject);
 		 return Result.ok("添加成功！");
 	 }
 
@@ -158,9 +167,8 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  */
 	 @GetMapping(value = "/disable")
 	 public Result<?> disable(@RequestParam(name="id",required=true) String id) {
-		 PmpProject pmpProjectManage = pmpProjectService.getById(id);
-		 pmpProjectManage.setIsdelete("1");
-		 pmpProjectService.updateById(pmpProjectManage);
+	 	 PmpProject pmpProject = pmpProjectService.getById(id);
+		 pmpProjectService.isDelteSubNode(pmpProject.getProjectname(), id,"1");
 		 return Result.ok("禁用成功!");
 	 }
 
@@ -172,9 +180,8 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  */
 	 @GetMapping(value = "/enable")
 	 public Result<?> enable(@RequestParam(name="id",required=true) String id) {
-		 PmpProject pmpProjectManage = pmpProjectService.getById(id);
-		 pmpProjectManage.setIsdelete("0");
-		 pmpProjectService.updateById(pmpProjectManage);
+		 PmpProject pmpProject = pmpProjectService.getById(id);
+		 pmpProjectService.isDelteSubNode(pmpProject.getProjectname(), id,"0");
 		 return Result.ok("启用成功!");
 	 }
 
@@ -201,7 +208,23 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		this.pmpProjectService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.ok("批量删除成功!");
 	}
-	
+
+	 /**
+	  * 通过id查询
+	  *
+	  * @param id
+	  * @return
+	  */
+	 @GetMapping(value = "/isSuperior")
+	 public Result<?> isSuperior(@RequestParam(name="id",required=true) String id,
+								 @RequestParam(name="principal",required=true) String principal) {
+		 Integer count = pmpProjectService.IsSuperior(id,principal);
+		 if(count==null || count == 0) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.ok(count);
+	 }
+
 	/**
 	 * 通过id查询
 	 *
@@ -240,4 +263,26 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
         return super.importExcel(request, response, PmpProject.class);
     }
 
+	 /**
+	  * 校验编码
+	  * @param pid
+	  * @param code
+	  * @return
+	  */
+	 @GetMapping(value = "/checkCode")
+	 public Result<?> checkCode(@RequestParam(name="parentnode",required = false) String pid,@RequestParam(name="projectcode",required = false) String code) {
+		 if(oConvertUtils.isEmpty(code)){
+			 return Result.error("错误,类型编码为空!");
+		 }
+		 if(oConvertUtils.isEmpty(pid)){
+			 return Result.ok();
+		 }
+		 PmpProject parent = this.pmpProjectService.getById(pid);
+		 if(code.startsWith(parent.getProjectcode())){
+			 return Result.ok();
+		 }else{
+			 return Result.error("编码不符合规范,须以\""+parent.getProjectcode()+"\"开头!");
+		 }
+
+	 }
 }

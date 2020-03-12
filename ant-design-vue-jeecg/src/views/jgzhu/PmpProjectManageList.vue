@@ -115,7 +115,7 @@
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a @click="myHandleEdit(record)">编辑</a>
 
           <a-divider type="vertical" />
           <a-dropdown>
@@ -128,10 +128,14 @@
                 <a href="javascript:;" @click="handleDetail(record)">详情</a>
               </a-menu-item>
               <a-menu-item>
-                <a-popconfirm v-if="record.isdelete==0" title="确定禁用吗?" @confirm="() => handleDisable(record.id)">
+                <a-popconfirm
+                  v-if="record.isdelete==0"
+                  title="确定禁用吗?"
+                  @confirm="() => handleDisable(record)"
+                >
                   <a>禁用</a>
                 </a-popconfirm>
-                <a-popconfirm v-else title="确定启用吗?" @confirm="() => handleEnable(record.id)">
+                <a-popconfirm v-else title="确定启用吗?" @confirm="() => handleEnable(record)">
                   <a>启用</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -194,19 +198,19 @@ export default {
           align: 'center',
           dataIndex: 'schedule',
           customRender: function(text) {
-            return  text + '%'
+            return text + '%'
           }
         },
-          {
+        {
           title: '项目分类',
           align: 'center',
           dataIndex: 'projecttype',
-           customRender: (text) => {
-              //字典值替换通用方法
-              return filterDictText(this.projectTypeDictOptions, text);
-            }
+          customRender: text => {
+            //字典值替换通用方法
+            return filterDictText(this.projectTypeDictOptions, text)
+          }
         },
-                {
+        {
           title: '起始日期',
           align: 'center',
           dataIndex: 'startdate',
@@ -236,7 +240,7 @@ export default {
         }
       ],
       url: {
-        list: '/protree/pmpProject/rootList',
+        list: '/protree/pmpProject/list',
         delete: '/protree/pmpProject/delete',
         disable: '/protree/pmpProject/disable',
         enable: '/protree/pmpProject/enable',
@@ -254,16 +258,27 @@ export default {
   },
   methods: {
     initDictConfig() {
-       //初始化字典 - 项目类型
-        initDictOptions('project_type').then((res) => {
-          if (res.success) {
-            this.projectTypeDictOptions = res.result;
-          }
-        });
+      //初始化字典 - 项目类型
+      initDictOptions('project_type').then(res => {
+        if (res.success) {
+          this.projectTypeDictOptions = res.result
+        }
+      })
+    },
+    openNotification(title, des) {
+      this.$notification.open({
+        message: title,
+        description: des,
+        icon: <a-icon type="frown" style="color: red" />
+      })
     },
     redictHref(index) {
-      this.$router.push({name:'jgzhu-PmpTaskList',query: {parentnode:index.id}})
-    },
+      if (index.isdelete == '0') {
+        this.$router.push({ name: 'jgzhu-PmpTaskList', query: { data: index } })
+      } else {
+        this.openNotification('提示', '已禁用,无法查看！')
+      }
+    }
   }
 }
 </script>
