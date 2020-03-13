@@ -4,19 +4,22 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
+
           <a-col :md="6" :sm="8">
-            <a-form-item label="任务id">
-              <a-input placeholder="请输入任务id" v-model="queryParam.projectid"></a-input>
+            <a-form-item label="项目名称">
+              <a-input placeholder="请输入项目名称" v-model="queryParam.projectName"></a-input>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="6" :sm="8">
+            <a-form-item label="任务名称">
+              <a-input placeholder="请输入任务名称" v-model="queryParam.taskName"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8" >
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
-              </a>
             </span>
           </a-col>
 
@@ -61,7 +64,15 @@
         @change="handleTableChange">
 
         <template slot="htmlSlot" slot-scope="text">
-          <div v-html="text"></div>
+          <div slot="actions">
+            <a-popover>
+              <template slot="content">
+                <p style="max-width: 500px;">{{ rmHtmlLabel(text) }}</p>
+              </template>
+              <span>{{ subText(rmHtmlLabel(text)) }}</span>
+            </a-popover>
+          </div>
+
         </template>
         <template slot="imgSlot" slot-scope="text">
           <span v-if="!text" style="font-size: 12px;font-style: italic;">无此图片</span>
@@ -119,22 +130,27 @@
           return parseInt(index)+1;
         }
       },
+    {
+      title:'项目名称',
+      align:"center",
+      dataIndex: 'projectName'
+    },
       {
-        title:'任务id',
+        title:'任务名称',
         align:"center",
-        dataIndex: 'projectid'
+        dataIndex: 'taskName'
       },
-    {
-      title:'任务小结',
-      align:"center",
-      dataIndex: 'content',
-      scopedSlots: {customRender: 'htmlSlot'}
-    },
-    {
-      title:'提交时间',
-      align:"center",
-      dataIndex: 'createTime'
-    },
+      {
+        title:'小结内容',
+        align:"center",
+        dataIndex: 'content',
+        scopedSlots: {customRender: 'htmlSlot'}
+      },
+      {
+        title:'提交时间',
+        align:"center",
+        dataIndex: 'createTime',
+      },
       {
         title: '操作',
         dataIndex: 'action',
@@ -172,11 +188,25 @@
     },
     methods: {
       initDictConfig(){
-      }
+      },
+      //剔除html标签
+      rmHtmlLabel(str) {
+        return str.replace(/<[^>]+>/g, '');
+      },
+      //文本限长
+      subText(str) {
+        let len = 10;
+        if (str.length > len)
+          return str.substring(0, len) + '...';
+        else
+          return str;
+      },
        
     }
   }
 </script>
+
 <style scoped>
   @import '~@assets/less/common.less'
+
 </style>

@@ -11,19 +11,20 @@
       <a-form :form="form">
 
         <a-form-item label="名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-            <j-tree-select
-              v-decorator="[ 'projectid', validatorRules.projectid]"
+            <a-input v-if="showInput" :readOnly="true" v-decorator="[ 'taskName', validatorRules.taskName]" placeholder="请输入任务名称"></a-input>
+            <j-tree-select v-else
+              v-decorator="[ 'taskid', validatorRules.taskid]"
               placeholder="请选择菜单"
               dict="pmp_project,projectname,id"
               pidField="parentnode"
-              pidValue="0"
-            />
+              pidValue="0"/>
         </a-form-item>
+
         <a-form-item label="任务小结" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-editor v-decorator="['content',{trigger:'input'}]"/>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-upload v-decorator="['sumannex', validatorRules.sumannex]" :trigger-change="true"></j-upload>
+          <j-upload v-decorator="['contentAnnex', validatorRules.contentAnnex]" :trigger-change="true"></j-upload>
         </a-form-item>
 
       </a-form>
@@ -33,11 +34,11 @@
 
 <script>
 
-  import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
-  import { validateDuplicateValue } from '@/utils/util'
+  import { httpAction } from '@/api/manage'
   import JUpload from '@/components/jeecg/JUpload'
   import JEditor from '@/components/jeecg/JEditor'
+  import { validateDuplicateValue } from '@/utils/util'
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
 
   export default {
@@ -54,23 +55,24 @@
         width:800,
         visible: false,
         model: {},
+        showInput: false,
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 2 },
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 22 },
         },
         confirmLoading: false,
         validatorRules: {
-          projectid: {rules: [
+          taskid: {rules: [
             {required: true, message: '请输入任务id!'},
           ]},
           content: {rules: [
             {required: true, message: '请输入任务小结!'},
           ]},
-          sumannex: {rules: [
+          contentAnnex: {rules: [
           ]},
         },
         url: {
@@ -86,11 +88,18 @@
         this.edit({});
       },
       edit (record) {
+        console.log(record);
+
+        if ("undefined" == typeof(record.id))
+          this.showInput = false;
+        else
+          this.showInput = true;
+
         this.form.resetFields();
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'projectid','content','sumannex'))
+          this.form.setFieldsValue(pick(this.model,'id','taskid','taskName','content','contentAnnex'))
         })
       },
       close () {
@@ -133,7 +142,7 @@
         this.close()
       },
       popupCallback(row){
-        this.form.setFieldsValue(pick(row,'projectid','content','sumannex'))
+        this.form.setFieldsValue(pick(row,'taskid','content','contentAnnex'))
       },
 
       
