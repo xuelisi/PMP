@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.project.proecharts.mapper.PmpProEchartMapper">
+
+    <!-- 项目饼图根据条件查询 -->
+    <select id="getPieCountInfo" resultType="map">
+        select
+        count(status) as number,status
+        FROM [XiangMuGuanLi].[dbo].[pmp_project]
+        where 1=1
+        <if test="projecttype !=null and  projecttype !='' ">
+            and projecttype = #{projecttype}
+        </if>
+        <if test="startTime !=null and  startTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
+        </if>
+        <if test="endTime !=null and  endTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
+        </if>
+        group by status
+    </select>
+    <!-- 项目柱状图年统计 -->
+    <select id="getYearCountInfo" resultType="map">
+        select
+        count(status) as number,status,CONVERT(varchar(4),enddate,23)
+        FROM [XiangMuGuanLi].[dbo].[pmp_project]
+        where 1=1
+        <if test="projecttype !=null and  projecttype !='' ">
+            and projecttype = #{projecttype}
+        </if>
+        <if test="startTime !=null and  startTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
+        </if>
+        <if test="endTime !=null and  endTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
+        </if>
+        group by status,CONVERT(varchar(4),enddate,23)
+    </select>
+</mapper>

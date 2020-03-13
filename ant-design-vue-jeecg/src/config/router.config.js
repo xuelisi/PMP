@@ -45,6 +45,7 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/dashboard/workplace',
     children: [
+
       // // dashboard
       // {
       //   path: '/dashboard',
@@ -353,30 +354,29 @@ export const constantRouterMap = [
       },
     ]
   },
+  {
+    path: '/jgzhu/project',
+    name: 'project',
+    component: TabLayout,
+    meta: { title: '项目' },
+    children: [
+      {
+        path: '/jgzhu/project/PmpMyProjectManageList',
+        name: 'PmpProjectManageList',
+        component: RouteView,
+        meta: { title: '我的项目' },
+        children: [
+          {
+            path: '/jgzhu/project/PmpTaskList',
+            name: 'PmpTaskList',
+            component: () => import('@/views/jgzhu/project/PmpTaskList'),
+            meta: { title: '任务树' }
+          }
 
-  // {
-  //   path: '/jgzhu',
-  //   name: 'jgzhu',
-  //   component: TabLayout,
-  //   meta: { title: '项目' },
-  //   children: [
-  //     {
-  //       path: '/jgzhu/PmpProjectManageList',
-  //       name: 'PmpProjectManageList',
-  //       component: RouteView,
-  //       meta: { title: '我的项目' },
-  //       children: [
-  //         {
-  //           path: '/jgzhu/PmpTaskdetailsList/:id？',
-  //           name: 'PmpTaskdetailsList',
-  //           component: () => import('@/views/jgzhu/PmpTaskdetailsList'),
-  //           meta: { title: '我的任务' }
-  //         }
-
-  //       ]
-  //     },
-  //   ]
-  // },
+        ]
+      },
+    ]
+  },
   {
     path: '/test',
     component: BlankLayout,

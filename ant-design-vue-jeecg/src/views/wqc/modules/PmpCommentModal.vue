@@ -13,7 +13,7 @@
         <a-col>
 
           <div class="scroll-wrap">
-            <a-list size="small" split="false">
+            <a-list size="small" >
               <a-list-item :key="index" v-for="(item, index) in allCmtData">
                 <a-list-item-meta :description="item.description">
                   <a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>
@@ -168,8 +168,8 @@
         this.visible = true;
         this.title = "任务名称：" + record.taskname;
 
-        this.edit({taskid: record.taskid});
-        this.loadAllComment(record.taskid);
+        this.edit({taskid: record.id});
+        this.loadAllComment(record.id);
 
       },
       loadPmpInfo(taskid) {
@@ -213,6 +213,7 @@
       },
       handleOk () {
         const that = this;
+        debugger
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
