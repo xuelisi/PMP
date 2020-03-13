@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
 import org.jeecg.modules.wqc.summary.entity.PmpSummary;
+import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
 import org.jeecg.modules.wqc.summary.service.IPmpTaskSummaryService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -47,15 +47,15 @@ public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTa
 	@Autowired
 	private IPmpTaskSummaryService pmpTaskSummaryService;
 	
-	/**
-	 * 分页列表查询
-	 *
-	 * @param pmpTaskSummary
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
+//	/**
+//	 * 分页列表查询
+//	 *
+//	 * @param pmpTaskSummary
+//	 * @param pageNo
+//	 * @param pageSize
+//	 * @param req
+//	 * @return
+//	 */
 //	@GetMapping(value = "/list")
 //	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
 //								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -69,9 +69,9 @@ public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTa
 
 	@GetMapping(value = "/list")
 	 public Result<?> queryPageList(PmpSummaryInfo info,
-										  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-										  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-										  HttpServletRequest req) {
+                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                    HttpServletRequest req) {
 		 String taskName = req.getParameter("taskName");
 		 String projectName = req.getParameter("projectName");
 		 Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
@@ -89,7 +89,7 @@ public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTa
 	/**
 	 *   添加
 	 *
-	 * @param pmpTaskSummary
+	 * @param summary
 	 * @return
 	 */
 	@PostMapping(value = "/add")

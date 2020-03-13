@@ -197,10 +197,9 @@ export default {
     }
   },
   methods: {
-    initDictConfig() {
+     initDictConfig() {
       //初始化字典 - 项目状态
       initDictOptions('sys_user,realname,username').then(res => {
-        debugger
         if (res.success) {
           this.principalDictOptions = res.result
         }
