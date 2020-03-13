@@ -28,30 +28,25 @@
           </a-list-item>
         </a-list>
       </div>
-
-      <!--<a-tabs defaultActiveKey="1" @change="callback">-->
-        <!--<a-tab-pane tab="评论情况" key="1">-->
-          <!--<div class="scroll-wrap">-->
-            <!--<a-list size="small" split="false">-->
-              <!--<a-list-item :key="index" v-for="(item, index) in allCmtData">-->
-                <!--<a-list-item-meta :description="item.description">-->
-                  <!--<a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>-->
-                  <!--<a slot="title">{{ item.title }}</a>-->
-                <!--</a-list-item-meta>-->
-                <!--<div slot="actions">-->
-                    <!--<a-popover title="详情" style="max-width:100px;">-->
-                      <!--<template slot="content">-->
-                        <!--<p>{{item.details}}</p>-->
-                      <!--</template>-->
-                      <!--<a>详情</a>-->
-                      <!--&lt;!&ndash;<a-button type="primary">Hover me</a-button>&ndash;&gt;-->
-                    <!--</a-popover>-->
-                <!--</div>-->
-              <!--</a-list-item>-->
-            <!--</a-list>-->
-          <!--</div>-->
-        <!--</a-tab-pane>-->
-
+<div class="scroll-wrap">
+            <a-list size="small" >
+              <a-list-item :key="index" v-for="(item, index) in allCmtData">
+                <a-list-item-meta :description="item.description">
+                  <a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>
+                  <a slot="title">{{ item.title }}</a>
+                </a-list-item-meta>
+                <div slot="actions">
+                  <a-popover title="详情">
+                    <template slot="content">
+                      <p>{{item.details}}</p>
+                    </template>
+                    <a>详情</a>
+                    <!--<a-button type="primary">Hover me</a-button>-->
+                  </a-popover>
+                </div>
+              </a-list-item>
+            </a-list>
+          </div>
         <!--<a-tab-pane tab="我的评论" key="2" forceRender>-->
           <!--<div class="scroll-wrap">-->
             <!--<a-list size="small" split="false">-->
@@ -167,7 +162,6 @@
       show(record) {
         this.visible = true;
         this.recvRecord = record;
-
         this.initPage(this.recvRecord);
       },
       initComments(taskid) {
@@ -186,6 +180,7 @@
       },
       handleOk () {
         const that = this;
+        debugger
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {

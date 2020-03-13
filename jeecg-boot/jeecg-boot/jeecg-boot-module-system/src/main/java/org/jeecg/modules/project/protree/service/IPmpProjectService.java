@@ -1,5 +1,6 @@
 package org.jeecg.modules.project.protree.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.project.protree.entity.PmpProject;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -21,6 +22,10 @@ public interface IPmpProjectService extends IService<PmpProject> {
     void isDelteSubNode(String projectname, String id, String isdelete);
 
     Integer IsSuperior(String id, String principal);
+
+    Page<PmpProject> myProject(Page<PmpProject> page, String principal);
+
+    Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal);
 
     void addSysCategory(PmpProject pmpProject);
 }

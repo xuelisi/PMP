@@ -1,14 +1,13 @@
 <template>
   <a-card :bordered="false">
-    <!-- 查询区域 -->
     <!-- 操作按钮区域 -->
-    <!-- <div class="table-operator">
-       <a-button @click="handleAdd" icon="plus">添加任务</a-button> -->
+    <div class="table-operator">
+      <a-button @click="handleAdd" icon="plus">添加任务</a-button>
       <!--<a-button type="primary" icon="download" @click="handleExportXls('分类字典')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>-->
-      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+      <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -18,7 +17,8 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown> </div>  -->
+      </a-dropdown>
+    </div>
 
     <!-- table区域-begin -->
     <div>
@@ -41,78 +41,145 @@
         @expand="handleExpand"
         v-bind="tableProps"
       >
-        <template slot="projectname" slot-scope="text,record">
-          <a href="javascript:;" @click="handleEditTaskDetail(record)">{{text}}</a>
+        <template slot="taskname" slot-scope="text,record">
+          <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
         </template>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a @click="myHandleTaskEdit(record)">编辑</a>
           <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-            <a>删除</a>
-          </a-popconfirm>
+          <a-dropdown>
+            <a class="ant-dropdown-link">
+              更多
+              <a-icon type="down" />
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a href="javascript:;" @click="handleDetail1(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a href="javascript:;" @click="handleComment(record)">评论</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm
+                  v-if="record.isdelete==0"
+                  title="确定禁用吗?"
+                  @confirm="() => handleDisable(record)"
+                >
+                  <a>禁用</a>
+                </a-popconfirm>
+                <a-popconfirm v-else title="确定启用吗?" @confirm="() => handleEnable(record)">
+                  <a>启用</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </span>
       </a-table>
     </div>
-
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
+    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk1"></pmpTaskdetails-modal>
+    <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
   </a-card>
 </template>
 
 <script>
+import Vue from 'vue'
 import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import JDate from '@/components/jeecg/JDate.vue'
-//src\views\jgzhu\modules\PmpTaskListModal.vue
-//import PmpTaskListModal from '@/jgzhu/modules/PmpTaskListModal'
-import PmpTaskListModal from '@views/jgzhu/project/modules/PmpTaskListModal'
-import { initDictOptions, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import PmpTaskListModal from './modules/PmpTaskListModal'
+import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
+import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
+import { USER_NAME } from '@/store/mutation-types'
+import { isContainPrincipal } from '@/utils/util'
+import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'SysCategoryList',
   mixins: [JeecgListMixin],
   components: {
-    JDate,
-    PmpTaskListModal
+    PmpTaskListModal,
+    PmpTaskdetailsModal,
+    PmpCommentModal
   },
   data() {
     return {
-      description: '任务编码页面',
+      principalDictOptions: [],
+      description: '任务管理页面',
       // 表头
       columns: [
         {
           title: '名称',
           align: 'left',
-          dataIndex: 'taskname'
-        
+          dataIndex: 'taskname',
+          scopedSlots: { customRender: 'taskname' }
         },
         {
-          title: '任务编码',
+          title: '负责人',
           align: 'center',
-          dataIndex: 'projectcode'
-        },    
+          dataIndex: 'principal',
+          // customRender: text => {
+          //   //字典值替换通用方法
+          //   return filterMultiDictText(this.principalDictOptions, text)
+          // }
+        },
+        {
+          title: '总进度',
+          align: 'center',
+          dataIndex: 'schedule',
+          customRender: function(text) {
+            return text + '%'
+          }
+        },
+        {
+          title: '起始日期',
+          align: 'center',
+          dataIndex: 'startdate',
+          customRender: function(text) {
+            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
+          }
+        },
+        {
+          title: '结束日期',
+          align: 'center',
+          dataIndex: 'enddate',
+          customRender: function(text) {
+            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
+          }
+        },
         {
           title: '是否禁用',
           align: 'center',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align: 'center',
+          scopedSlots: { customRender: 'action' }
         }
       ],
       url: {
-        list: '/protree/pmpProjectXLF/rootList',
-        childList: '/protree/pmpProjectXLF/childList',
+        list: '/protree/pmpProject/rootList',
+        childList: '/protree/pmpProject/childList',
         delete: '/protree/pmpProject/delete',
         deleteBatch: '/protree/pmpProject/deleteBatch',
+        disable: '/protree/pmpProject/disable',
+        enable: '/protree/pmpProject/enable',
         exportXlsUrl: '/protree/pmpProject/exportXls',
-        importExcelUrl: 'protree/pmpProject/importExcel'
+        importExcelUrl: 'protree/pmpProject/importExcel',
+        isSuperior: 'protree/pmpProject/isSuperior'
       },
       expandedRowKeys: [],
       hasChildrenField: 'haschild',
       pidField: 'parentnode',
       dictOptions: {}
     }
+  },
+  created() {
   },
   computed: {
     importExcelUrl() {
@@ -130,13 +197,84 @@ export default {
     }
   },
   methods: {
+    initDictConfig() {
+      //初始化字典 - 项目状态
+      initDictOptions('sys_user,realname,username').then(res => {
+        debugger
+        if (res.success) {
+          this.principalDictOptions = res.result
+        }
+      })
+    },
+    openNotification(title, des) {
+      this.$notification.open({
+        message: title,
+        description: des,
+        icon: <a-icon type="frown" style="color: red" />
+      })
+    },
+    handleComment: function(record) {
+      if (record.isdelete == '0') {
+        let params = {
+          id: record.id,
+          principal: this.username
+        }
+        getAction(this.url.isSuperior, params).then(res => {
+          if (res.success) {
+            this.$refs.modalForm2.show(record)
+            // callback()
+          } else {
+            this.openNotification('提示', '权限不够哦,无法评论！')
+            // callback(res.message)
+          }
+        })
+      } else {
+        this.openNotification('提示', '已禁用,无法评论！')
+      }
+    },
+    handleDetail1: function(record) {
+      this.$refs.modalForm1.edit(record)
+      this.$refs.modalForm1.title = '详情'
+      this.$refs.modalForm1.disableSubmit = true
+    },
+    myHandleTaskEdit(record) {
+      if (record.isdelete == '0') {
+        if (record.createBy == this.username) {
+          this.$refs.modalForm.edit(record)
+          this.$refs.modalForm.title = '编辑'
+          this.$refs.modalForm.disableSubmit = false
+        } else {
+          this.openNotification('提示', '权限不够哦！禁止编辑！')
+        }
+      } else {
+        this.openNotification('提示', '已禁用,无法编辑！')
+      }
+    },
+    myHandleDetailEdit(record) {
+      if (record.isdelete == '0') {
+        if (record.createBy == this.username || isContainPrincipal(record.principal, this.username)) {
+          this.$refs.modalForm1.edit(record)
+          this.$refs.modalForm1.title = '编辑'
+          this.$refs.modalForm1.disableSubmit = false
+        } else {
+          this.openNotification('提示', '权限不够哦,禁止编辑！')
+        }
+      } else {
+        this.openNotification('提示', '已禁用,无法编辑！')
+      }
+    },
     loadData(arg) {
       if (arg == 1) {
         this.ipagination.current = 1
       }
       this.loading = true
       this.expandedRowKeys = []
-      let params = this.getQueryParams()
+      let params = {
+        field: this.getQueryField(),
+        pid: this.$route.query.data.id,
+        pageNo: this.ipagination.current,
+        pageSize: this.ipagination.pageSize
+      }
       return new Promise(resolve => {
         getAction(this.url.list, params).then(res => {
           if (res.success) {
@@ -203,6 +341,14 @@ export default {
         this.dataSource = [...this.dataSource]
       }
     },
+    modalFormOk1(formData, arr) {
+      if (!formData.id) {
+        this.addOk(formData, arr)
+      } else {
+        this.editOk(formData, this.dataSource)
+        this.dataSource = [...this.dataSource]
+      }
+    },
     editOk(formData, arr) {
       if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
@@ -234,7 +380,7 @@ export default {
         let params = this.getQueryParams() //查询条件
         params[this.pidField] = nodeId
         getAction(this.url.childList, params).then(res => {
-          console.log('11111', res)
+          //console.log('11111', res)
           if (res.success) {
             if (res.result && res.result.length > 0) {
               row.children = this.getDataByResult(res.result)
@@ -265,8 +411,4 @@ export default {
 </script>
 <style scoped>
 @import '~@assets/less/common.less';
-
-.inputnum {
-  width: 100%;
-}
 </style>
