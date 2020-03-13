@@ -31,14 +31,10 @@
                 icon="reload"
                 style="margin-left: 8px"
               >重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-              </a>
             </span>
           </a-col>
         </a-row>
-        <a-row :gutter="24" v-if="this.toggleSearchStatus">
+        <a-row :gutter="24">
           <a-col :md="6" :sm="8">
             <a-form-item label="总进度">
               <a-input-number
@@ -64,13 +60,13 @@
       </a-form>
     </div>
     <!-- 操作按钮区域 -->
-    <div class="table-operator" style="text-align:right">
-      <!-- <a-button @click="handleAdd" icon="plus">添加任务</a-button> -->
-      <a-button type="primary" icon="download" @click="handleExportXls('分类字典')">导出</a-button>
-      <!-- <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
+    <!-- <div class="table-operator"> -->
+    <!-- <a-button @click="handleAdd" icon="plus">添加任务</a-button> -->
+    <!--<a-button type="primary" icon="download" @click="handleExportXls('分类字典')">导出</a-button>
+      <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>-->
-      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+    </a-upload>-->
+    <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -80,8 +76,8 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown>-->
-    </div>
+    </a-dropdown>-->
+    <!-- </div> -->
 
     <!-- table区域-begin -->
     <div>
@@ -156,19 +152,7 @@
             @click="uploadFile(text)"
           >下载</a-button>
         </template>
-        <!-- 总进度 -->
-        <span slot="schedule" slot-scope="text,record">
-          <a-progress
-            :percent="text"
-            size="small"
-            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
-          />
-        </span>
-        <!-- 项目状态 -->
-      <!--   <span slot="status" slot-scope="text">
-          <a-tag :color="text==1 ? 'volcano' : 'green'">{{text}}</a-tag>
-        </span> -->
-        <!-- 是否删除 -->
+
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
@@ -182,16 +166,12 @@
       </a-table>
     </div>
 
-    <!--    <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
-    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>-->
   </a-card>
 </template>
 
 <script>
 import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-//import PmpTaskListModal from '@views/jgzhu/project/modules/PmpTaskListModal'
-//import PmpTaskdetailsModal from '@views/jgzhu/project/modules/PmpTaskdetailsModal'
 import JDate from '@/components/jeecg/JDate.vue'
 import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 import JSuperQuery from '@/components/jeecg/JSuperQuery.vue'
@@ -203,26 +183,20 @@ export default {
   name: 'SysCategoryList',
   mixins: [JeecgListMixin],
   components: {
-    // PmpTaskListModal,
     JDate,
-    //PmpTaskdetailsModal,
     JSuperQuery,
     JInput
   },
   data() {
     return {
-      description: '综合查询页面',
+      description: '任务管理页面',
       //字典数组缓存-项目分类
       projectTypeDictOptions: [],
       //字典数组缓存-紧急程度
       dictOptions: [],
       //字典数组缓存-负责人
-      principal: [],
-      participant: [],
-      createBys: [],
-      updateBy: [],
-      sysOrgCode: [],
-      projectstatus: [],
+      projectTypename: [],
+
       //表头
       columns: [],
       //列设置
@@ -233,8 +207,9 @@ export default {
           title: '项目名称',
           align: 'left',
           dataIndex: 'projectname',
-          width: 300
-          //scopedSlots: { customRender: 'projectname' }
+        
+          width: 300,
+          scopedSlots: { customRender: 'projectname' }
         },
         {
           title: '任务名称',
@@ -243,42 +218,53 @@ export default {
           width: 300
         },
         {
-          title: '负责人',
-          align: 'center',
-          width: 200,
-          dataIndex: 'principal',
-          customRender: text => {
-            //字典值替换通用方法
-            return filterMultiDictText(this.principal, text)
-          }
+          title: '任务编码',
+          align: 'left',
+          width: 100,
+          dataIndex: 'projectcode'
         },
         {
-          title: '参与人',
-          align: 'center',
-          width: 260,
-          dataIndex: 'participant',
-          customRender: text => {
-            //字典值替换通用方法
-            return filterMultiDictText(this.participant, text)
-          }
+          title: '创建人',
+          align: 'left',
+          width: 100,
+          dataIndex: 'createBy'
         },
         {
-          title: '总进度',
-          align: 'center',
-          dataIndex: 'schedule',
-          width: 160,
-          scopedSlots: { customRender: 'schedule' }
-        },
-        {
-          title: '项目状态',
-          align: 'center',
+          title: '创建日期',
+          align: 'left',
           width: 150,
-          dataIndex: 'status',
-          // scopedSlots: { customRender: 'status' },
-          customRender: text => {
-            //字典值替换通用方法
-            return filterDictText(this.projectstatus, text)
+          dataIndex: 'createTime',
+          customRender: function(text) {
+            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
           }
+        },
+        {
+          title: '更新人',
+          align: 'left',
+          width: 100,
+          dataIndex: 'updateBy'
+        },
+        {
+          title: '更新日期',
+          align: 'left',
+          width: 150,
+          dataIndex: 'updateTime',
+          customRender: function(text) {
+            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
+          }
+        },
+        {
+          title: '所属部门',
+          align: 'left',
+          width: 100,
+          dataIndex: 'sysOrgCode'
+        },
+        {
+          title: '头像',
+          align: 'left',
+          width: 100,
+          dataIndex: 'photo',
+          scopedSlots: { customRender: 'photo' }
         },
         {
           title: '项目分类',
@@ -291,11 +277,79 @@ export default {
           }
         },
         {
-          title: '是否禁用',
+          title: '内容',
+          align: 'left',
+          width: 200,
+          dataIndex: 'projectcontent'
+        },
+        {
+          title: '负责人',
           align: 'center',
           width: 100,
-          dataIndex: 'isdelete',
-          scopedSlots: { customRender: 'isdelete' }
+          dataIndex: 'principal',
+          customRender: text => {
+            //字典值替换通用方法
+            return filterDictText(this.projectTypename, text)
+          }
+        },
+        {
+          title: '参与人',
+          align: 'center',
+          width: 100,
+          dataIndex: 'participant'
+        },
+        {
+          title: '紧急程度',
+          align: 'center',
+          width: 100,
+          dataIndex: 'emergencylevel',
+          customRender: text => {
+            return filterDictText(this.dictOptions, text)
+          }
+        },
+        {
+          title: '完成日期',
+          align: 'center',
+          width: 150,
+          dataIndex: 'completiontime',
+          customRender: function(text) {
+            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
+          }
+        },
+
+        {
+          title: '总进度',
+          align: 'center',
+          dataIndex: 'schedule',
+          width: 100,
+          customRender: function(text) {
+            return text + '%'
+          }
+        },
+        {
+          title: '状态',
+          align: 'center',
+          width: 100,
+          dataIndex: 'status'
+        },
+        {
+          title: '费用',
+          align: 'center',
+          width: 100,
+          dataIndex: 'projectmoney'
+        },
+        {
+          title: '备注',
+          align: 'center',
+          width: 200,
+          dataIndex: 'remark'
+        },
+        {
+          title: '附件',
+          align: 'center',
+          width: 100,
+          dataIndex: 'annex',
+          scopedSlots: { customRender: 'fileSlot' }
         },
         {
           title: '起始日期',
@@ -316,114 +370,24 @@ export default {
           }
         },
         {
-          title: '完成日期',
-          align: 'center',
-          width: 150,
-          dataIndex: 'completiontime',
-          customRender: function(text) {
-            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
-        },
-
-        {
-          title: '备注',
-          align: 'center',
-          width: 200,
-          dataIndex: 'remark'
-        },
-        {
-          title: '创建人',
-          align: 'left',
-          width: 100,
-          dataIndex: 'createBy',
-          customRender: text => {
-            //字典值替换通用方法
-            return filterMultiDictText(this.createBys, text)
-          }
-        },
-        {
-          title: '创建日期',
-          align: 'left',
-          width: 150,
-          dataIndex: 'createTime',
-          customRender: function(text) {
-            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
-        },
-        {
-          title: '更新人',
-          align: 'left',
-          width: 100,
-          dataIndex: 'updateBy',
-          customRender: text => {
-            //字典值替换通用方法
-            return filterMultiDictText(this.updateBy, text)
-          }
-        },
-        {
-          title: '更新日期',
-          align: 'left',
-          width: 150,
-          dataIndex: 'updateTime',
-          customRender: function(text) {
-            return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
-        },
-        {
-          title: '所属部门',
-          align: 'left',
-          width: 200,
-          dataIndex: 'sysOrgCode',
-          customRender: text => {
-            //字典值替换通用方法
-            return filterMultiDictText(this.sysOrgCode, text)
-          }
-        },
-        {
-          title: '头像',
-          align: 'left',
-          width: 100,
-          dataIndex: 'photo',
-          scopedSlots: { customRender: 'photo' }
-        },
-
-        {
-          title: '内容',
-          align: 'left',
-          width: 200,
-          dataIndex: 'projectcontent'
-        },
-
-        /*         {
-          title: '紧急程度',
+          title: '是否禁用',
           align: 'center',
           width: 100,
-          dataIndex: 'emergencylevel',
-          customRender: text => {
-            return filterDictText(this.dictOptions, text)
-          }
-        }, */
-
+          dataIndex: 'isdelete',
+          scopedSlots: { customRender: 'isdelete' }
+        },
         {
-          title: '附件',
-          align: 'center',
-          width: 100,
-          dataIndex: 'annex',
-          scopedSlots: { customRender: 'fileSlot' }
-        }
-
-        /* {
           title: '操作',
           dataIndex: 'action',
           width: 100,
           align: 'center',
           fixed: 'right',
           scopedSlots: { customRender: 'action' }
-        } */
+        }
       ],
       url: {
-        list: '/protree/pmpProjectXLF/rootLists',
-        childList: '/protree/pmpProjectXLF/childList',
+        list: '/protree/pmpProject/rootLists',
+        childList: '/protree/pmpProject/childList',
         delete: '/protree/pmpProject/delete',
         deleteBatch: '/protree/pmpProject/deleteBatch',
         exportXlsUrl: '/protree/pmpProject/exportXls',
@@ -635,27 +599,6 @@ export default {
         this.projectTypeDictOptions = res.result
       }
     }),
-      //初始化字典 - 项目状态
-      initDictOptions('project_status').then(res => {
-        if (res.success) {
-          this.projectstatus = res.result
-        }
-      }),
-      //初始化字典 - 创建人
-      initDictOptions('sys_user,realname,username').then(res => {
-        if (res.success) {
-          this.createBys = res.result
-          this.updateBy = res.result
-          this.principal = res.result
-          this.participant = res.result
-        }
-      }),
-      //初始化字典 - 所属部门
-      initDictOptions('sys_depart,depart_name,org_code').then(res => {
-        if (res.success) {
-          this.sysOrgCode = res.result
-        }
-      }),
       //初始化字典 - 紧急程度
       initDictOptions('urgent_level').then(res => {
         if (res.success) {

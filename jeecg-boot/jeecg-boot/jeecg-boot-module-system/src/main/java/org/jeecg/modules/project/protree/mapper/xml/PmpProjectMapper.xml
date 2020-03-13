@@ -24,6 +24,18 @@
 	    )}
 	</select>
 
+	<select id="myProject" resultType="org.jeecg.modules.project.protree.entity.PmpProject" statementType="CALLABLE">
+	   {call dbo.myProject(
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="myProjectpar" resultType="org.jeecg.modules.project.protree.entity.PmpProject" statementType="CALLABLE">
+	   {call dbo.myProjectpar(
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
 	<!-- 项目饼图根据条件查询 -->
 	<select id="getCountInfo" resultType="map">
 		select

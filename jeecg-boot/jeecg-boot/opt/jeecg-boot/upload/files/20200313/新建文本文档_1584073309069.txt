@@ -1,0 +1,1 @@
+set IDENTITY_INSERT [XiangMuGuanLi].[dbo].[xiangmu_main] on  

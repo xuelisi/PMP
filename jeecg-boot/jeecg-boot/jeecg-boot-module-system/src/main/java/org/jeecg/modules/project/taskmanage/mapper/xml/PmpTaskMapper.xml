@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.project.taskmanage.mapper.PmpTaskMapper">
+    <select id="myTaskpri" resultType="org.jeecg.modules.project.taskmanage.entity.PmpTask" statementType="CALLABLE">
+	   {call dbo.myTaskpri(
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="myTaskpar" resultType="org.jeecg.modules.project.taskmanage.entity.PmpTask" statementType="CALLABLE">
+	   {call dbo.myTaskpar(
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+</mapper>

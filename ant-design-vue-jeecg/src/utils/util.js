@@ -1,5 +1,32 @@
 import * as api from '@/api/api'
 import { isURL } from '@/utils/validate'
+import moment from 'dayjs'
+
+export function compareDate(d1, d2) {
+  let reg = new RegExp('-', 'g')
+  return new Date(d1.replace(reg, '/')) >= new Date(d2.replace(reg, '/'))
+}
+
+export function handleStatus(values) {
+  //console.log(values)
+  if (values.schedule === 0 || values.schedule == null || values.schedule == undefined) {
+    if(compareDate(values.startdate, moment(new Date()).format('YYYY-MM-DD'))){
+      return '5'
+    }
+  }else if(values.schedule === 100) {
+    if(compareDate(values.enddate, moment(new Date()).format('YYYY-MM-DD'))){
+      return '1'
+    }else {
+      return '2'
+    }
+  }else{
+     if(compareDate(values.enddate, moment(new Date()).format('YYYY-MM-DD'))){
+      return '3'
+    }else {
+      return '4'
+    }
+  }
+}
 
 export function isContainPrincipal(principals, value){
   debugger

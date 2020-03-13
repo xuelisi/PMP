@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.project.projectmanage.entity.PmpProjectManage;
 import org.jeecg.modules.project.protree.entity.PmpProject;
 import org.jeecg.modules.project.protree.service.IPmpProjectService;
 
@@ -50,23 +49,87 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	 /**
 	  * 分页列表查询
 	  *
-	  * @param pmpTaskdetails
+	  * @param pmpProject
 	  * @param pageNo
 	  * @param pageSize
 	  * @param req
 	  * @return
 	  */
 	 @GetMapping(value = "/list")
-	 public Result<?> queryPageList(PmpProject pmpTaskdetails,
+	 public Result<?> queryPageList(PmpProject pmpProject,
 									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									HttpServletRequest req) {
-		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpTaskdetails, req.getParameterMap());
+		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
 		 queryWrapper.eq("parentnode","0");
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);
 	 }
+
+	 /**
+	  * 分页列表查询
+	  *
+	  * @param pmpProject
+	  * @param pageNo
+	  * @param pageSize
+	  * @param req
+	  * @return
+	  */
+	 @GetMapping(value = "/myProList")
+	 public Result<?> queryMyProPageList(PmpProject pmpProject,
+									@RequestParam(name="username") String username,
+									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									HttpServletRequest req) {
+		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username);
+		 return Result.ok(pageList);
+	 }
+
+	 /**
+	  * 分页列表查询
+	  *
+	  * @param pmpProject
+	  * @param pageNo
+	  * @param pageSize
+	  * @param req
+	  * @return
+	  */
+	 @GetMapping(value = "/myProListByPar")
+	 public Result<?> queryMyProPageListByPar(PmpProject pmpProject,
+										 @RequestParam(name="username") String username,
+										 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+										 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+										 HttpServletRequest req) {
+		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+		 IPage<PmpProject> pageList = pmpProjectService.myProjectpar(page, username);
+		 return Result.ok(pageList);
+	 }
+
+	 /**
+	  * 分页列表查询
+	  *
+	  * @param pmpProject
+	  * @param pageNo
+	  * @param pageSize
+	  * @param req
+	  * @return
+	  */
+	 @GetMapping(value = "/myProListByCreateBy")
+	 public Result<?> queryMyProPageListByCreateBy(PmpProject pmpProject,
+											  @RequestParam(name="username") String username,
+											  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+											  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+											  HttpServletRequest req) {
+		 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
+		 queryWrapper.eq("parentnode",'0');
+		 queryWrapper.eq("create_by", username);
+		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
+		 return Result.ok(pageList);
+	 }
+
 		 /**
 		  * 分页列表查询
 		  * @param pmpProject
@@ -115,7 +178,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  * @param pmpProject
 	  * @return
 	  */
-	 @PostMapping(value = "/addtask")
+	 @PostMapping(value = "/addTask")
 	 public Result<PmpProject> addtask(@RequestBody PmpProject pmpProject) {
 		 Result<PmpProject> result = new Result<PmpProject>();
 		 try {
@@ -135,7 +198,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  * @param pmpProject
 	  * @return
 	  */
-	 @PostMapping(value = "/addpro")
+	 @PostMapping(value = "/addPro")
 	 public Result<?> addpro(@RequestBody PmpProject pmpProject) {
 	 	if(oConvertUtils.isEmpty(pmpProject.getLeftval())){
 			pmpProject.setLeftval(1);
