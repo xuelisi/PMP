@@ -13,6 +13,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
+import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
 import org.jeecg.modules.wqc.summary.service.IPmpCommentService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -55,16 +56,24 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	 * @param req
 	 * @return
 	 */
-//	@GetMapping(value = "/list")
-//	public Result<?> queryPageList(PmpComment pmpComment,
-//								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-//								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-//								   HttpServletRequest req) {
-//		QueryWrapper<PmpComment> queryWrapper = QueryGenerator.initQueryWrapper(pmpComment, req.getParameterMap());
-//		Page<PmpComment> page = new Page<PmpComment>(pageNo, pageSize);
-//		IPage<PmpComment> pageList = pmpCommentService.page(page, queryWrapper);
-//		return Result.ok(pageList);
-//	}
+	@GetMapping(value = "/list")
+	public Result<?> queryPageList(PmpComment pmpComment,
+								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+								   HttpServletRequest req) {
+		String taskName = req.getParameter("taskName");
+		String projectName = req.getParameter("projectName");
+		Result<Page<PmpCommentInfo>> result = new Result<Page<PmpCommentInfo>>();
+		Page<PmpCommentInfo> pageList = new Page<PmpCommentInfo>(pageNo, pageSize);
+
+		taskName = (null == taskName) ? "" : taskName;
+		projectName = (null == projectName) ? "" : projectName;
+		pageList = pmpCommentService.getPmpCommentInfoByPTName(pageList, projectName, taskName);//通知公告消息
+
+		result.setSuccess(true);
+		result.setResult(pageList);
+		return result;
+	}
 
 //	 @RequestMapping(value = "/list", method = RequestMethod.GET)
 //	 public Result<List<PmpComment>> queryPmpComment(@RequestParam(name="taskid",required=true) String taskid) {
@@ -77,7 +86,7 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 //		 return result;
 //	 }
 
-	 @RequestMapping(value = "/list", method = RequestMethod.GET)
+	 @RequestMapping(value = "/query", method = RequestMethod.GET)
 	 public Result<List<PmpComment>> queryPmpComment(@RequestParam(name="taskid",required=true) String taskid,
 													 @RequestParam(name="userName",required=true) String userName) {
 		 Result<List<PmpComment>> result = new Result<>();
@@ -109,7 +118,7 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody PmpComment pmpComment) {
 		pmpCommentService.save(pmpComment);
-		return Result.ok("添加成功！");
+		return Result.ok("评论成功！");
 	}
 	
 	/**

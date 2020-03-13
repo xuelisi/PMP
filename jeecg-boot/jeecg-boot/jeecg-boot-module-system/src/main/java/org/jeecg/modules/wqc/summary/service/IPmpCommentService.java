@@ -1,6 +1,8 @@
 package org.jeecg.modules.wqc.summary.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
+import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -14,4 +16,6 @@ import java.util.List;
 public interface IPmpCommentService extends IService<PmpComment> {
 
     public List<PmpComment> getPmpCommentByTaskID(String taskid, String username);
+
+    public Page<PmpCommentInfo> getPmpCommentInfoByPTName(Page<PmpCommentInfo> page, String projectName, String taskName);
 }

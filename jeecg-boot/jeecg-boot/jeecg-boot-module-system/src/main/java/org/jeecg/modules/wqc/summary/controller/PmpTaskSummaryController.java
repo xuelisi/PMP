@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.wqc.summary.entity.PmpTaskSummary;
+import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
+import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.service.IPmpTaskSummaryService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -42,7 +43,7 @@ import com.alibaba.fastjson.JSON;
 @RestController
 @RequestMapping("/summary/pmpTaskSummary")
 @Slf4j
-public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IPmpTaskSummaryService> {
+public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTaskSummaryService> {
 	@Autowired
 	private IPmpTaskSummaryService pmpTaskSummaryService;
 	
@@ -55,16 +56,35 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
 	 * @param req
 	 * @return
 	 */
+//	@GetMapping(value = "/list")
+//	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
+//								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+//								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+//								   HttpServletRequest req) {
+//		QueryWrapper<PmpTaskSummary> queryWrapper = QueryGenerator.initQueryWrapper(pmpTaskSummary, req.getParameterMap());
+//		Page<PmpTaskSummary> page = new Page<PmpTaskSummary>(pageNo, pageSize);
+//		IPage<PmpTaskSummary> pageList = pmpTaskSummaryService.page(page, queryWrapper);
+//		return Result.ok(pageList);
+//	}
+
 	@GetMapping(value = "/list")
-	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<PmpTaskSummary> queryWrapper = QueryGenerator.initQueryWrapper(pmpTaskSummary, req.getParameterMap());
-		Page<PmpTaskSummary> page = new Page<PmpTaskSummary>(pageNo, pageSize);
-		IPage<PmpTaskSummary> pageList = pmpTaskSummaryService.page(page, queryWrapper);
-		return Result.ok(pageList);
-	}
+	 public Result<?> queryPageList(PmpSummaryInfo info,
+										  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+										  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+										  HttpServletRequest req) {
+		 String taskName = req.getParameter("taskName");
+		 String projectName = req.getParameter("projectName");
+		 Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
+		 Page<PmpSummaryInfo> pageList = new Page<PmpSummaryInfo>(pageNo, pageSize);
+
+		 taskName = (null == taskName) ? "" : taskName;
+		 projectName = (null == projectName) ? "" : projectName;
+		 pageList = pmpTaskSummaryService.getPmpSummaryInfoByPTName(pageList, projectName, taskName);//通知公告消息
+
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
 	
 	/**
 	 *   添加
@@ -73,8 +93,8 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<?> add(@RequestBody PmpTaskSummary pmpTaskSummary) {
-		pmpTaskSummaryService.save(pmpTaskSummary);
+	public Result<?> add(@RequestBody PmpSummary summary) {
+		pmpTaskSummaryService.save(summary);
 		return Result.ok("添加成功！");
 	}
 	
@@ -85,7 +105,7 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<?> edit(@RequestBody PmpTaskSummary pmpTaskSummary) {
+	public Result<?> edit(@RequestBody PmpSummary pmpTaskSummary) {
 		pmpTaskSummaryService.updateById(pmpTaskSummary);
 		return Result.ok("编辑成功!");
 	}
@@ -122,7 +142,7 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
 	 */
 	@GetMapping(value = "/queryById")
 	public Result<?> queryById(@RequestParam(name="id",required=true) String id) {
-		PmpTaskSummary pmpTaskSummary = pmpTaskSummaryService.getById(id);
+		PmpSummary pmpTaskSummary = pmpTaskSummaryService.getById(id);
 		if(pmpTaskSummary==null) {
 			return Result.error("未找到对应数据");
 		}
@@ -136,8 +156,8 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
     * @param pmpTaskSummary
     */
     @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, PmpTaskSummary pmpTaskSummary) {
-        return super.exportXls(request, pmpTaskSummary, PmpTaskSummary.class, "任务小结");
+    public ModelAndView exportXls(HttpServletRequest request, PmpSummary pmpTaskSummary) {
+        return super.exportXls(request, pmpTaskSummary, PmpSummary.class, "任务小结");
     }
 
     /**
@@ -149,7 +169,7 @@ public class PmpTaskSummaryController extends JeecgController<PmpTaskSummary, IP
     */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, PmpTaskSummary.class);
+        return super.importExcel(request, response, PmpSummary.class);
     }
 
 }

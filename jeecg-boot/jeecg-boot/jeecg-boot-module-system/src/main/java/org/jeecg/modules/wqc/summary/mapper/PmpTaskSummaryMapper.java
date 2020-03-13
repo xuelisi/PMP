@@ -2,8 +2,10 @@ package org.jeecg.modules.wqc.summary.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
-import org.jeecg.modules.wqc.summary.entity.PmpTaskSummary;
+import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
+import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -12,6 +14,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Date:   2020-03-06
  * @Version: V1.0
  */
-public interface PmpTaskSummaryMapper extends BaseMapper<PmpTaskSummary> {
+public interface PmpTaskSummaryMapper extends BaseMapper<PmpSummary> {
 
+    List<PmpSummaryInfo> getPmpSummaryInfoByPTName(Page<PmpSummaryInfo> page, String projectName, String taskName);
+
+    void removeById(String id);
 }
