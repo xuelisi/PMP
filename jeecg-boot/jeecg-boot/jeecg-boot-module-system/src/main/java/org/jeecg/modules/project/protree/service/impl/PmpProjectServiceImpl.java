@@ -1,5 +1,6 @@
 package org.jeecg.modules.project.protree.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.common.util.FillRuleUtil;
 import org.jeecg.common.util.oConvertUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -37,6 +38,16 @@ public class PmpProjectServiceImpl extends ServiceImpl<PmpProjectMapper, PmpProj
     @Override
     public Integer IsSuperior(String id, String principal) {
         return pmpProjectMapper.IsSuperior(id, principal);
+    }
+
+    @Override
+    public Page<PmpProject> myProject(Page<PmpProject> page, String principal) {
+        return pmpProjectMapper.myProject(page, principal);
+    }
+
+    @Override
+    public Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal) {
+        return pmpProjectMapper.myProjectpar(page, principal);
     }
 
     @Override
