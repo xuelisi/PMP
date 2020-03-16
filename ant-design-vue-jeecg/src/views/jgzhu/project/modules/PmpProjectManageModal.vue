@@ -68,18 +68,26 @@
           ></a-input>
         </a-form-item>
         <a-form-item label="负责人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['principal', validatorRules.principal]"
             :trigger-change="true"
-          />
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['principal', validatorRules.principal]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
         <a-form-item label="参与人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['participant', validatorRules.participant]"
             :trigger-change="true"
-          />
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['participant', validatorRules.participant]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
-         <a-form-item label="任务进度" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="任务进度" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <!-- <a-input-number v-decorator="[ 'taskschedule', validatorRules.taskschedule]" placeholder="请输入任务进度" style="width: 100%"/> -->
           <a-row>
             <a-col :span="19">
@@ -149,7 +157,7 @@ import { validateDuplicateValue, handleStatus } from '@/utils/util'
 import JDate from '@/components/jeecg/JDate'
 import JUpload from '@/components/jeecg/JUpload'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
 
 export default {
@@ -157,7 +165,7 @@ export default {
   components: {
     JDate,
     JUpload,
-    JSelectUserByDep,
+    JSelectMultiUser,
     JDictSelectTag
   },
   data() {
@@ -324,7 +332,7 @@ export default {
           'projectcontent',
           'principal',
           'participant',
-           'emergencylevel',
+          'emergencylevel',
           'startdate',
           'enddate',
           'schedule',

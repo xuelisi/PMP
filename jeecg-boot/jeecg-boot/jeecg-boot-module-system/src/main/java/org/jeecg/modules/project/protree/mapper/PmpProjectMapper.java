@@ -2,6 +2,9 @@ package org.jeecg.modules.project.protree.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.project.protree.entity.PmpProject;
@@ -24,7 +27,7 @@ public interface PmpProjectMapper extends BaseMapper<PmpProject> {
     Integer IsSuperior(@Param("id") String id, @Param("principal") String principal);
 
     //调用存储过程
-    Page<PmpProject> myProject(Page<PmpProject> page, @Param("principal") String principal);
+    IPage<PmpProject> myProject(IPage<PmpProject> page, @Param("principal") String principal);
 
     //调用存储过程
     Page<PmpProject> myProjectpar(Page<PmpProject> page, @Param("principal") String principal);

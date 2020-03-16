@@ -150,7 +150,6 @@
 </template>
 
 <script>
-import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
 import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
@@ -276,33 +275,6 @@ export default {
             this.projectTypeDictOptions = res.result
           }
         })
-    },
-    loadData(arg) {
-      if (!this.url.list) {
-        this.$message.error('请设置url.list属性!')
-        return
-      }
-      //加载数据 若传入参数1则加载第一页的内容
-      if (arg === 1) {
-        this.ipagination.current = 1
-      }
-      let params = {
-        field: this.getQueryField(),
-        username: this.username,
-        pageNo: this.ipagination.current,
-        pageSize: this.ipagination.pageSize
-      }
-      this.loading = true
-      getAction(this.url.list, params).then(res => {
-        if (res.success) {
-          this.dataSource = res.result.records
-          this.ipagination.total = res.result.total
-        }
-        if (res.code === 510) {
-          this.$message.warning(res.message)
-        }
-        this.loading = false
-      })
     },
     openNotification(title, des) {
       this.$notification.open({

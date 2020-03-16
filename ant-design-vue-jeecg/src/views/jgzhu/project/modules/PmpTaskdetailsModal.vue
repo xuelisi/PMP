@@ -23,16 +23,24 @@
           ></a-input>
         </a-form-item>
         <a-form-item label="负责人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['principal', validatorRules.principal]"
             :trigger-change="true"
-          />
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['principal', validatorRules.principal]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
         <a-form-item label="参与人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['participant', validatorRules.participant]"
             :trigger-change="true"
-          />
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['participant', validatorRules.participant]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
         <a-form-item label="任务进度" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <!-- <a-input-number v-decorator="[ 'taskschedule', validatorRules.taskschedule]" placeholder="请输入任务进度" style="width: 100%"/> -->
@@ -80,7 +88,7 @@
             dictCode="urgent_level"
             placeholder="请选择紧急程度"
           />
-        </a-form-item> -->
+        </a-form-item>-->
         <a-form-item label="任务费用" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input-number
             v-decorator="[ 'projectmoney', validatorRules.projectmoney]"
@@ -110,6 +118,7 @@ import { validateDuplicateValue, randomUUID, handleStatus } from '@/utils/util'
 import JDate from '@/components/jeecg/JDate'
 import JUpload from '@/components/jeecg/JUpload'
 import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
 
 export default {
@@ -118,11 +127,12 @@ export default {
     JDate,
     JUpload,
     JSelectUserByDep,
+    JSelectMultiUser,
     JDictSelectTag
   },
   data() {
     return {
-      disableSubmit:false,
+      disableSubmit: false,
       readOnly: true,
       form: this.$form.createForm(this),
       title: '操作',

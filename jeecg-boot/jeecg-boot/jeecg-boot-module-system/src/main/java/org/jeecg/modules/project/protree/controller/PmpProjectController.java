@@ -82,7 +82,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									HttpServletRequest req) {
-		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+	     Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username);
 		 return Result.ok(pageList);
 	 }

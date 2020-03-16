@@ -100,16 +100,29 @@ public class SysUserController {
 	private RedisUtil redisUtil;
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public Result<IPage<SysUser>> queryPageList(SysUser user,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
-		Result<IPage<SysUser>> result = new Result<IPage<SysUser>>();
-		QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
-		Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
-		IPage<SysUser> pageList = sysUserService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
-	}
+    public Result<IPage<SysUser>> queryPageList(SysUser user,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
+        Result<IPage<SysUser>> result = new Result<IPage<SysUser>>();
+        QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
+        Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
+        IPage<SysUser> pageList = sysUserService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
+
+    @RequestMapping(value = "/noAdminList", method = RequestMethod.GET)
+    public Result<IPage<SysUser>> queryPageNoAdminList(SysUser user,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
+        Result<IPage<SysUser>> result = new Result<IPage<SysUser>>();
+        QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
+        queryWrapper.ne("username","admin");
+        Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
+        IPage<SysUser> pageList = sysUserService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Result<SysUser> add(@RequestBody JSONObject jsonObject) {

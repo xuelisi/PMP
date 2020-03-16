@@ -1,5 +1,8 @@
 package org.jeecg.modules.project.protree.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.common.util.FillRuleUtil;
 import org.jeecg.common.util.oConvertUtils;
@@ -41,7 +44,7 @@ public class PmpProjectServiceImpl extends ServiceImpl<PmpProjectMapper, PmpProj
     }
 
     @Override
-    public Page<PmpProject> myProject(Page<PmpProject> page, String principal) {
+    public IPage<PmpProject> myProject(IPage<PmpProject> page, String principal) {
         return pmpProjectMapper.myProject(page, principal);
     }
 

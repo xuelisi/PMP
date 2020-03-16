@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
+    <!-- <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
@@ -39,11 +39,22 @@
           </a-col>
         </a-row>
       </a-form>
-    </div>
+    </div>-->
     <!-- 查询区域-END -->
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
+      <a-dropdown>
+        <a-menu slot="overlay" @click="handleMenuClick">
+          <a-menu-item key="1">负责的项目</a-menu-item>
+          <a-menu-item key="2">参与的项目</a-menu-item>
+          <a-menu-item key="3">创建的项目</a-menu-item>
+        </a-menu>
+        <a-button style="margin-left: 8px">
+          项目分类
+          <a-icon type="down" />
+        </a-button>
+      </a-dropdown>
       <a-dropdown-button @click="handleAdd">
         <a-icon type="plus" />添加项目
         <a-menu slot="overlay">
@@ -97,6 +108,49 @@
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
+        <div
+          slot="filterDropdown"
+          slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters }"
+          style="padding: 8px"
+        >
+          <a-input
+            v-ant-ref="c => searchInput = c"
+            :value="selectedKeys[0]"
+            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+            @pressEnter="() => handleSearch(selectedKeys, confirm)"
+            style="width: 188px; margin-bottom: 8px; display: block;"
+          />
+          <a-button
+            type="primary"
+            @click="() => handleSearch(selectedKeys, confirm)"
+            icon="search"
+            size="small"
+            style="width: 90px; margin-right: 8px"
+          >查询</a-button>
+          <a-button @click="() => handleReset(clearFilters)" size="small" style="width: 90px">重置</a-button>
+        </div>
+        <a-icon
+          slot="filterIcon"
+          slot-scope="filtered"
+          type="search"
+          :style="{ color: filtered ? '#108ee9' : undefined }"
+        />
+        <template slot="customRender" slot-scope="text">
+          <span v-if="searchText">
+            <template
+              v-for="(fragment, i) in text.toString().split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+            >
+              <mark
+                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                :key="i"
+                class="highlight"
+              >{{fragment}}</mark>
+              <template v-else>{{fragment}}</template>
+            </template>
+          </span>
+          <template v-else>{{text}}</template>
+        </template>
+
         <template slot="projectname" slot-scope="text,index">
           <a href="javascript:;" @click="redictHref(index)">{{text}}</a>
         </template>
@@ -164,6 +218,7 @@
 
 <script>
 import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
+import { filterObj, isContainPrincipal } from '@/utils/util'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
 import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
@@ -201,7 +256,26 @@ export default {
           title: '项目名称',
           align: 'center',
           dataIndex: 'projectname',
-          scopedSlots: { customRender: 'projectname' }
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender',
+            customRender: 'projectname'
+          },
+          onFilter: (value, record) =>
+            record.projectname
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              }, 0)
+            }
+          }
+
+          /* scopedSlots: { customRender: 'projectname' } */
         },
         {
           title: '负责人',
@@ -210,6 +284,23 @@ export default {
           customRender: text => {
             //字典值替换通用方法
             return filterMultiDictText(this.principalDictOptions, text)
+          },
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender'
+          },
+          onFilter: (value, record) =>
+            record.principal
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              })
+            }
           }
         },
         {
@@ -278,8 +369,19 @@ export default {
     }
   },
   methods: {
+    handleSearch(selectedKeys, confirm) {
+      confirm()
+      this.searchText = selectedKeys[0]
+    },
+
+    handleReset(clearFilters) {
+      clearFilters()
+      this.searchText = ''
+    },
+    searchQuery() {
+      this.loadData(1, this.url.list)
+    },
     handleMenuClick(e) {
-      debugger
       if (e.key == '2') {
         this.loadData(1, this.url.list1)
       } else if (e.key == '3') {
@@ -302,7 +404,7 @@ export default {
           }
         })
     },
-    loadData(arg, url = this.url.list) {
+    loadData(arg = 1, url = this.url.list) {
       if (!url) {
         this.$message.error('请设置url.list属性!')
         return
@@ -311,12 +413,7 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = {
-        field: this.getQueryField(),
-        username: this.username,
-        pageNo: this.ipagination.current,
-        pageSize: this.ipagination.pageSize
-      }
+      var params = this.getQueryParams() //查询条件
       this.loading = true
       getAction(url, params).then(res => {
         if (res.success) {
@@ -328,6 +425,29 @@ export default {
         }
         this.loading = false
       })
+    },
+    getQueryParams() {
+      //获取查询条件
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+      let params = {
+        username: this.username
+      }
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, params)
+      param.field = this.getQueryField()
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+    getQueryField() {
+      //TODO 字段权限控制
+      var str = 'id,'
+      this.columns.forEach(function(value) {
+        str += ',' + value.dataIndex
+      })
+      return str
     },
     openNotification(title, des) {
       this.$notification.open({
