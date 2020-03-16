@@ -18,7 +18,7 @@
     props: ['value'],
     data() {
       return {
-        url: { list: '/sys/user/list' },
+        url: { list: '/sys/user/noAdminList' },
         columns: [
           { title: '姓名', align: 'center', width: '20%', widthRight: '70%', dataIndex: 'realname' },
           { title: '账号', align: 'center', width: '20%', dataIndex: 'username' },
@@ -31,7 +31,9 @@
           width: 1000,
           displayKey: 'realname',
           returnKeys: ['id', 'username'],
-          queryParamText: '账号',
+          queryParamText: '姓名',
+          queryParamCode: 'realname',
+          valueKey: 'username',
         }
       }
     },

@@ -1,5 +1,8 @@
 package org.jeecg.modules.project.protree.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.project.protree.entity.PmpProject;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,7 +26,7 @@ public interface IPmpProjectService extends IService<PmpProject> {
 
     Integer IsSuperior(String id, String principal);
 
-    Page<PmpProject> myProject(Page<PmpProject> page, String principal);
+    IPage<PmpProject> myProject(IPage<PmpProject> page, String principal);
 
     Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal);
 

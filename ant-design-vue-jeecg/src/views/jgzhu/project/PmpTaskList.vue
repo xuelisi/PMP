@@ -106,7 +106,8 @@ export default {
   },
   data() {
     return {
-      principalDictOptions: [],
+      //字典数组缓存-负责人
+      principal: [],
       description: '任务管理页面',
       // 表头
       columns: [
@@ -120,10 +121,10 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
-          // customRender: text => {
-          //   //字典值替换通用方法
-          //   return filterMultiDictText(this.principalDictOptions, text)
-          // }
+          customRender: text => {
+            //字典值替换通用方法
+            return filterMultiDictText(this.principal, text)
+          }
         },
         {
           title: '总进度',
@@ -180,6 +181,12 @@ export default {
     }
   },
   created() {
+    //初始化字典 - 创建人
+    initDictOptions('sys_user,realname,username').then(res => {
+      if (res.success) {
+        this.principal = res.result
+      }
+    })
   },
   computed: {
     importExcelUrl() {
@@ -197,7 +204,7 @@ export default {
     }
   },
   methods: {
-     initDictConfig() {
+    initDictConfig() {
       //初始化字典 - 项目状态
       initDictOptions('sys_user,realname,username').then(res => {
         if (res.success) {
