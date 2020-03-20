@@ -41,6 +41,14 @@
         @expand="handleExpand"
         v-bind="tableProps"
       >
+              <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <template slot="taskname" slot-scope="text,record">
           <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
         </template>
@@ -62,6 +70,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="handleComment(record)">评论</a>
               </a-menu-item>
+              <!-- <a-menu-item>
+                <a href="javascript:;" @click="handleRemind(record)">催办</a>
+              </a-menu-item> -->
               <a-menu-item>
                 <a-popconfirm
                   v-if="record.isdelete==0"
@@ -82,6 +93,7 @@
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
     <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk1"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
+    <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
 
@@ -92,9 +104,10 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
+import TaskRemindModal from './modules/TaskRemindModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'SysCategoryList',
@@ -102,7 +115,8 @@ export default {
   components: {
     PmpTaskListModal,
     PmpTaskdetailsModal,
-    PmpCommentModal
+    PmpCommentModal,
+    TaskRemindModal
   },
   data() {
     return {
@@ -123,16 +137,14 @@ export default {
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principal, text)
+            return myFilterMultiDictText(this.principal, text)
           }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' }
         },
         {
           title: '起始日期',
@@ -238,6 +250,25 @@ export default {
         this.openNotification('提示', '已禁用,无法评论！')
       }
     },
+    // handleRemind: function(record) {
+    //   if (record.isdelete == '0') {
+    //     let params = {
+    //       id: record.id,
+    //       principal: this.username
+    //     }
+    //     getAction(this.url.isSuperior, params).then(res => {
+    //       if (res.success) {
+    //         this.$refs.modalForm3.showModal(record)
+    //         // callback()
+    //       } else {
+    //         this.openNotification('提示', '权限不够哦,无法催办！')
+    //         // callback(res.message)
+    //       }
+    //     })
+    //   } else {
+    //     this.openNotification('提示', '已禁用,无法评论！')
+    //   }
+    // },
     handleDetail1: function(record) {
       this.$refs.modalForm1.edit(record)
       this.$refs.modalForm1.title = '详情'

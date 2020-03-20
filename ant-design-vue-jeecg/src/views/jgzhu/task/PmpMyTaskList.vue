@@ -93,6 +93,14 @@
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
+        <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <template slot="taskname" slot-scope="text,record">
           <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
         </template>
@@ -152,9 +160,10 @@
 <script>
 import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 import PmpTaskdetailsModal from '@views/jgzhu/project/modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
+import { filterObj, isContainPrincipal } from '@/utils/util'
 
 export default {
   name: 'PmpProjectList',
@@ -198,16 +207,14 @@ export default {
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principal, text)
+            return myFilterMultiDictText(this.principal, text)
           }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' }
         },
         {
           title: '开始日期',

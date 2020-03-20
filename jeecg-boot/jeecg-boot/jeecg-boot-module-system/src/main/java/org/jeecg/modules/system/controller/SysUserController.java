@@ -115,6 +115,10 @@ public class SysUserController {
     public Result<IPage<SysUser>> queryPageNoAdminList(SysUser user,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
         Result<IPage<SysUser>> result = new Result<IPage<SysUser>>();
+        if(oConvertUtils.isNotEmpty(user.getOrgCode())){
+            SysDepart sysDepart = sysDepartService.getById(user.getOrgCode());
+            user.setOrgCode(sysDepart.getOrgCode());
+        }
         QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
         queryWrapper.ne("username","admin");
         Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);

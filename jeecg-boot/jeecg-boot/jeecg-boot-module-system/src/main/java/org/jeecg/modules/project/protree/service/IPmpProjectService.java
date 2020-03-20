@@ -26,9 +26,9 @@ public interface IPmpProjectService extends IService<PmpProject> {
 
     Integer IsSuperior(String id, String principal);
 
-    IPage<PmpProject> myProject(IPage<PmpProject> page, String principal);
+    IPage<PmpProject> myProject(IPage<PmpProject> page, String principal, PmpProject pmpProject);
 
-    Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal);
+    Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal, PmpProject pmpProject);
 
     void addSysCategory(PmpProject pmpProject);
 }

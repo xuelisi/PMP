@@ -9,6 +9,14 @@
               <a-input placeholder="请输入项目名称" v-model="queryParam.projectname"></a-input>
             </a-form-item>
           </a-col>
+          <a-col :md="3" :sm="8">
+            <a-form-item>
+              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
+                <a-radio :value="0">正常</a-radio>
+                <a-radio :value="1">禁用</a-radio>
+              </a-radio-group>
+            </a-form-item>
+          </a-col>
           <a-col :md="6" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -84,6 +92,14 @@
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
+        <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <template slot="projectname" slot-scope="text,index">
           <a href="javascript:;" @click="redictHref(index)">{{text}}</a>
         </template>
@@ -151,14 +167,16 @@
 
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import JDate from '@/components/jeecg/JDate.vue'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'PmpProjectManageList',
   mixins: [JeecgListMixin],
   components: {
-    PmpProjectManageModal
+    PmpProjectManageModal,
+    JDate
   },
   data() {
     return {
@@ -195,16 +213,14 @@ export default {
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principalDictOptions, text)
+            return myFilterMultiDictText(this.principalDictOptions, text)
           }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' }
         },
         {
           title: '项目分类',

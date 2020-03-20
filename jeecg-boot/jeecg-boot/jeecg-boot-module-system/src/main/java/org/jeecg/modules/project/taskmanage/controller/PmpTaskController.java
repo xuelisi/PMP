@@ -62,6 +62,7 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
 								   HttpServletRequest req) {
 		QueryWrapper<PmpTask> queryWrapper = QueryGenerator.initQueryWrapper(pmpTask, req.getParameterMap());
 		queryWrapper.ne("parentnode",'0');
+		queryWrapper.eq("isdelete",'0');
 		Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
 		IPage<PmpTask> pageList = pmpTaskService.page(page, queryWrapper);
 		return Result.ok(pageList);
@@ -125,6 +126,7 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
          QueryWrapper<PmpTask> queryWrapper = new QueryWrapper<PmpTask>();
          queryWrapper.ne("parentnode",'0');
          queryWrapper.eq("create_by", username);
+		 queryWrapper.eq("isdelete",'0');
          Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
          IPage<PmpTask> pageList = pmpTaskService.page(page, queryWrapper);
          return Result.ok(pageList);

@@ -29,8 +29,7 @@ export function handleStatus(values) {
 }
 
 export function isContainPrincipal(principals, value){
-  debugger
-  let strArray = principals.split(',')
+  let strArray = (principals || "").split(",")
   for(var i=0;i<strArray.length;i++){
     if(strArray[i] == value){
       return true

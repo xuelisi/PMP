@@ -44,13 +44,25 @@ public class PmpProjectServiceImpl extends ServiceImpl<PmpProjectMapper, PmpProj
     }
 
     @Override
-    public IPage<PmpProject> myProject(IPage<PmpProject> page, String principal) {
-        return pmpProjectMapper.myProject(page, principal);
+    public IPage<PmpProject> myProject(IPage<PmpProject> page, String principal, PmpProject pmpProject) {
+        if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+            pmpProject.setIsdelete("0");
+        }
+        if(oConvertUtils.isEmpty(pmpProject.getProjectname())){
+            pmpProject.setProjectname("");
+        }
+        return pmpProjectMapper.myProject(page, principal, pmpProject.getProjectname(), pmpProject.getIsdelete());
     }
 
     @Override
-    public Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal) {
-        return pmpProjectMapper.myProjectpar(page, principal);
+    public Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal, PmpProject pmpProject) {
+        if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+            pmpProject.setIsdelete("0");
+        }
+        if(oConvertUtils.isEmpty(pmpProject.getProjectname())){
+            pmpProject.setProjectname("");
+        }
+        return pmpProjectMapper.myProjectpar(page, principal, pmpProject.getProjectname(), pmpProject.getIsdelete());
     }
 
     @Override

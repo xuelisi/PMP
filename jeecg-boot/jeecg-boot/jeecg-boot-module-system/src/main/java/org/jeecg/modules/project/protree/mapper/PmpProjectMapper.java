@@ -27,10 +27,10 @@ public interface PmpProjectMapper extends BaseMapper<PmpProject> {
     Integer IsSuperior(@Param("id") String id, @Param("principal") String principal);
 
     //调用存储过程
-    IPage<PmpProject> myProject(IPage<PmpProject> page, @Param("principal") String principal);
+    IPage<PmpProject> myProject(IPage<PmpProject> page, @Param("principal") String principal, @Param("projectname") String projectname, @Param("isdelete") String isdelete);
 
     //调用存储过程
-    Page<PmpProject> myProjectpar(Page<PmpProject> page, @Param("principal") String principal);
+    Page<PmpProject> myProjectpar(Page<PmpProject> page, @Param("principal") String principal, @Param("projectname") String projectname, @Param("isdelete") String isdelete);
 
     public List<PmpProject>  getCountInfo();
 }

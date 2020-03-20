@@ -372,7 +372,7 @@ export default {
       if (info.file.status === 'done') {
         var response = info.file.response
         this.uploadLoading = false
-        console.log(response)
+       // console.log(response)
         if (response.success) {
           this.model.photo = response.message
           this.picUrl = 'Has no pic url yet'
