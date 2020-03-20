@@ -105,6 +105,7 @@
 
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import PmpProCommentModal from './modules/PmpProCommentModal'
+  import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
   export default {
     name: "PmpCommentList",
@@ -115,6 +116,7 @@
     data () {
       return {
         description: '任务批阅管理页面',
+        principalDictOptions: [],
         // 表头
         columns: [
           {
@@ -144,14 +146,18 @@
             scopedSlots: {customRender: 'htmlSlot'}
           },
           {
-            title:'提交时间',
+            title:'评论时间',
             align:"center",
             dataIndex: 'createTime',
           },
           {
-            title:'提交人员',
+            title:'评论人员',
             align:"center",
-            dataIndex: 'createBy',
+            dataIndex: 'realName',
+            // customRender: text => {
+            //   //字典值替换通用方法
+            //   return filterMultiDictText(this.principalDictOptions, text)
+            // },
           },
           {
             title: '操作',
@@ -177,7 +183,13 @@
       }
     },
     methods: {
-      initDictConfig(){
+      initDictConfig() {
+        //初始化字典 - 项目状态
+        initDictOptions('sys_user,realname,username').then(res => {
+          if (res.success) {
+            this.principalDictOptions = res.result
+          }
+        })
       },
       details(record) {
         this.$refs.modalForm.edit(record);
@@ -199,6 +211,7 @@
     }
   }
 </script>
+
 <style scoped>
   @import '~@assets/less/common.less'
 </style>

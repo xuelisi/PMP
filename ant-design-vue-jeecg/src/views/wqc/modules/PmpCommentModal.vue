@@ -12,8 +12,14 @@
       <div class="scroll-wrap">
         <a-list size="small">
           <a-list-item :key="index" v-for="(item, index) in allCmtData">
-            <a-list-item-meta :description="item.description">
-              <a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>
+            <a-list-item-meta
+              :description="item.description">
+              <a-avatar
+                slot="avatar"
+                size="small"
+                shape="square"
+                :src="item.avatar"
+              />
               <a slot="title">{{ item.title }}</a>
             </a-list-item-meta>
             <div slot="actions">
@@ -28,25 +34,6 @@
           </a-list-item>
         </a-list>
       </div>
-<div class="scroll-wrap">
-            <a-list size="small" >
-              <a-list-item :key="index" v-for="(item, index) in allCmtData">
-                <a-list-item-meta :description="item.description">
-                  <a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>
-                  <a slot="title">{{ item.title }}</a>
-                </a-list-item-meta>
-                <div slot="actions">
-                  <a-popover title="详情">
-                    <template slot="content">
-                      <p>{{item.details}}</p>
-                    </template>
-                    <a>详情</a>
-                    <!--<a-button type="primary">Hover me</a-button>-->
-                  </a-popover>
-                </div>
-              </a-list-item>
-            </a-list>
-          </div>
         <!--<a-tab-pane tab="我的评论" key="2" forceRender>-->
           <!--<div class="scroll-wrap">-->
             <!--<a-list size="small" split="false">-->
@@ -127,7 +114,7 @@
         url: {
           add: "/summary/pmpComment/add",
           edit: "/summary/pmpComment/edit",
-          list: "/summary/pmpComment/query",
+          query: "/summary/pmpComment/query",
         },
         hovered: false,
       }
@@ -165,12 +152,12 @@
         this.initPage(this.recvRecord);
       },
       initComments(taskid) {
-        getAction(this.url.list, { taskid: taskid, userName: '' }).then((res) => {
+        getAction(this.url.query, { taskid: taskid, userName: '' }).then((res) => {
           if (res.success) {
             for(let i = 0; i < res.result.length; ++i) {
               this.allCmtData.push({
                 title: res.result[i].createTime,
-                description: res.result[i].createBy + '：' + this.subText(this.rmHtmlLabel(res.result[i].content)),
+                description: res.result[i].realName + '：' + this.subText(this.rmHtmlLabel(res.result[i].content)),
                 details: res.result[i].content,
                 //avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png'
               });

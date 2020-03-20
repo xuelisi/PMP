@@ -2,39 +2,34 @@
   <a-card :bordered="false">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="24">
+      <!--<a-form layout="inline" @keyup.enter.native="searchQuery">-->
+        <!--<a-row :gutter="24">-->
 
-          <a-col :md="6" :sm="8">
-            <a-form-item label="项目名称">
-              <a-input placeholder="请输入项目名称" v-model="queryParam.projectName"></a-input>
-            </a-form-item>
-          </a-col>
+          <!--<a-col :md="6" :sm="8">-->
+            <!--<a-form-item label="提交人姓名">-->
+              <!--<a-input placeholder="请输入提交人员名称" v-model="queryParam.userName"></a-input>-->
+            <!--</a-form-item>-->
+          <!--</a-col>-->
+          <!---->
+          <!--<a-col :md="6" :sm="8" >-->
+            <!--<span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">-->
+              <!--<a-button type="primary" @click="searchQuery" icon="search">查询</a-button>-->
+              <!--<a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>-->
+            <!--</span>-->
+          <!--</a-col>-->
 
-          <a-col :md="6" :sm="8">
-            <a-form-item label="任务名称">
-              <a-input placeholder="请输入任务名称" v-model="queryParam.taskName"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8" >
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-            </span>
-          </a-col>
-
-        </a-row>
-      </a-form>
+        <!--</a-row>-->
+      <!--</a-form>-->
     </div>
     <!-- 查询区域-END -->
     
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('任务小结')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
-        <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>
+      <!--<a-button type="primary" icon="download" @click="handleExportXls('任务小结')">导出</a-button>-->
+      <!--<a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">-->
+        <!--<a-button type="primary" icon="import">导入</a-button>-->
+      <!--</a-upload>-->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
@@ -130,15 +125,15 @@
           return parseInt(index)+1;
         }
       },
-    {
-      title:'项目名称',
-      align:"center",
-      dataIndex: 'projectName'
-    },
+      {
+        title:'项目名称',
+        align:"center",
+        dataIndex: 'projectName',
+      },
       {
         title:'任务名称',
         align:"center",
-        dataIndex: 'taskName'
+        dataIndex: 'taskName',
       },
       {
         title:'小结内容',
@@ -147,7 +142,12 @@
         scopedSlots: {customRender: 'htmlSlot'}
       },
       {
-        title:'提交时间',
+        title:'小结日期',
+        align:"center",
+        dataIndex: 'summaryTime',
+      },
+      {
+        title:'填报时间',
         align:"center",
         dataIndex: 'createTime',
       },
@@ -160,7 +160,7 @@
     ]
 
   export default {
-    name: "PmpTaskSummaryList",
+    name: "PmpProSummaryList",
     mixins:[JeecgListMixin],
     components: {
       PmpTaskSummaryModal
@@ -171,8 +171,9 @@
         // 表头
         columns: tableHeaders,
         url: {
-          list: "/summary/pmpTaskSummary/list",
-          delete: "/summary/pmpTaskSummary/delete",
+          list: "/summary/pmpSummary/list",
+          add: "/summary/pmpSummary/add",
+          delete: "/summary/pmpSummary/delete",
           deleteBatch: "/summary/pmpTaskSummary/deleteBatch",
           exportXlsUrl: "/summary/pmpTaskSummary/exportXls",
           importExcelUrl: "summary/pmpTaskSummary/importExcel",

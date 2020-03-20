@@ -15,7 +15,9 @@ import java.util.List;
  */
 public interface IPmpCommentService extends IService<PmpComment> {
 
-    public List<PmpComment> getPmpCommentByTaskID(String taskid, String username);
+    public String queryRealName(String username);
 
-    public Page<PmpCommentInfo> getPmpCommentInfoByPTName(Page<PmpCommentInfo> page, String projectName, String taskName);
+    public List<PmpCommentInfo> queryCommentInfoByTask(String taskid, String username);
+
+    public Page<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
 }

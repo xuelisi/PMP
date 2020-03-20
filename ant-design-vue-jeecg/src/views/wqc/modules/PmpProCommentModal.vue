@@ -26,12 +26,12 @@
 
         <a-row :gutter="24">
           <a-col :lg="12">
-            <a-form-item label="提交人员" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'createBy', validatorRules.projectName]" :readonly="true" placeholder=""></a-input>
+            <a-form-item label="评论人员" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <a-input v-model="realName" v-decorator="[ 'realName', validatorRules.realName]" :readonly="true" placeholder=""></a-input>
             </a-form-item>
           </a-col>
           <a-col :lg="12">
-            <a-form-item label="提交时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
+            <a-form-item label="评论时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-input v-decorator="[ 'createTime', validatorRules.taskName]" :readonly="true" placeholder=""></a-input>
             </a-form-item>
           </a-col>
@@ -39,7 +39,7 @@
 
         <a-form-item label="评论内容" :labelCol="ctlabelCol" :wrapperCol="ccwrapperCol">
           <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
-                      :autosize="{ minRows: 3}"
+                      :autosize="{ minRows: 5}"
                       :readOnly="true">
           </a-textarea>
         </a-form-item>
@@ -51,10 +51,11 @@
 
 <script>
 
-  import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
-  import { validateDuplicateValue } from '@/utils/util'
+  import { getAction } from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import JEditor from '@/components/jeecg/JEditor'
+  import { validateDuplicateValue } from '@/utils/util'
 
   export default {
     name: "PmpCommentModal",
@@ -94,7 +95,7 @@
         url: {
           add: "/summary/pmpComment/add",
           edit: "/summary/pmpComment/edit",
-        }
+        },
       }
     },
     created () {
@@ -108,7 +109,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'projectName','taskName','createBy','createTime','content'))
+          this.form.setFieldsValue(pick(this.model,'projectName','taskName','realName','createTime','content'))
         })
       },
       close () {

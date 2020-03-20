@@ -14,28 +14,28 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecg.common.aspect.annotation.Dict;
 
 /**
- * @Description: 任务小结对照表
+ * @Description: 领导小结对照表
  * @Author: jeecg-boot
  * @Date:   2020-03-17
  * @Version: V1.0
  */
 @Data
-@TableName("pmp_task_summary")
-public class PmpTaskSummary implements Serializable {
+@TableName("pmp_chief_summary")
+public class PmpChiefSummary implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**主键*/
 	@TableId(type = IdType.ID_WORKER_STR)
     private java.lang.String id;
-	/**任务id*/
-	@Excel(name = "任务id", width = 15)
-    private java.lang.String taskId;
-	/**小结Id*/
-	@Excel(name = "小结Id", width = 15)
+	/**领导Id*/
+	@Excel(name = "领导Id", width = 15)
+    private java.lang.String chiefId;
+	/**小结id*/
+	@Excel(name = "小结id", width = 15)
     private java.lang.String summaryId;
 
-	public PmpTaskSummary(String id, String taskid) {
+	public PmpChiefSummary(String id, String chiefid) {
 		this.summaryId = id;
-		this.taskId = taskid;
+		this.chiefId = chiefid;
 	}
 }
