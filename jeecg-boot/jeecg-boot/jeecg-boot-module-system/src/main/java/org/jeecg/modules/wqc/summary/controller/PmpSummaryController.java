@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.jeecg.common.system.vo.LoginUser;
+import org.apache.shiro.SecurityUtils;
 
 /**
 * @Description: 任务小结
@@ -51,7 +53,9 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
         Page<PmpSummaryInfo> pageList = new Page<PmpSummaryInfo>(pageNo, pageSize);
 
-        pageList = service.querySummaryInfo(pageList);
+        //pageList = service.querySummaryInfo(pageList);
+       LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
+        pageList = service.querySummaryInfoByUsername(pageList, sysUser.getUsername());
 
         result.setSuccess(true);
         result.setResult(pageList);

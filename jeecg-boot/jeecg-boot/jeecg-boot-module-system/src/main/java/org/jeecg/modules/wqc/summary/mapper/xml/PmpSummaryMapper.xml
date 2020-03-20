@@ -15,9 +15,38 @@
     </update>
 
     <select id="querySummaryInfoByUsername" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
-        select *
-        from pmp_summary
-        where create_by like '%' + isnull(@userName, '') + '%'
+        select s.id as id,
+			p.id as taskid,
+			p.taskname as taskName,
+			p.projectname as projectName,
+			p.principal as chiefName,
+			s.create_by as createBy,
+			s.create_time as createTime,
+			s.summary_time as summaryTime,
+			s.content as content,
+			s.content_annex as contentAnnex
+        from
+        (
+			select *
+			from pmp_summary
+            where create_by = #{userName}
+        ) as s
+        left join
+        (
+			select *
+			from pmp_task_summary
+        ) as ts on s.id = ts.summary_id
+        left join
+        (
+			select *
+			from pmp_project
+        ) as p on ts.task_id = p.id
+        left join
+        (
+			select *
+			from sys_user
+        ) as u on p.principal = u.username
+        where ts.task_id is not null
     </select>
 
     <select id="querySummaryInfo" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
