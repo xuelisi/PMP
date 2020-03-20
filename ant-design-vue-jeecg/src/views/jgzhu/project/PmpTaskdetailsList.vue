@@ -144,7 +144,7 @@
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
-import { initDictOptions, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'PmpTaskdetailsList',

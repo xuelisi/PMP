@@ -83,7 +83,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									HttpServletRequest req) {
 	     Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
-		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username);
+		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username, pmpProject);
 		 return Result.ok(pageList);
 	 }
 
@@ -103,7 +103,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 										 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 										 HttpServletRequest req) {
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
-		 IPage<PmpProject> pageList = pmpProjectService.myProjectpar(page, username);
+		 IPage<PmpProject> pageList = pmpProjectService.myProjectpar(page, username, pmpProject);
 		 return Result.ok(pageList);
 	 }
 
@@ -125,6 +125,14 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
 		 queryWrapper.eq("parentnode",'0');
 		 queryWrapper.eq("create_by", username);
+		 if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+			 pmpProject.setIsdelete("0");
+		 }
+		 if(oConvertUtils.isEmpty(pmpProject.getProjectname())){
+			 pmpProject.setProjectname("");
+		 }
+		 queryWrapper.eq("isdelete",pmpProject.getIsdelete());
+		 queryWrapper.like("projectname",pmpProject.getProjectname());
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);

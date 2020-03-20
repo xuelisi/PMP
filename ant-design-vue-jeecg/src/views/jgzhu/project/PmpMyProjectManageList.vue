@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <!-- <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
@@ -22,6 +22,14 @@
               <a-input placeholder="请输入项目名称" v-model="queryParam.projectname"></a-input>
             </a-form-item>
           </a-col>
+          <a-col :md="3" :sm="8">
+            <a-form-item>
+              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
+              <a-radio :value="0">正常</a-radio>
+              <a-radio :value="1">禁用</a-radio>
+            </a-radio-group>
+            </a-form-item>
+          </a-col>
           <a-col :md="6" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -39,22 +47,11 @@
           </a-col>
         </a-row>
       </a-form>
-    </div>-->
+    </div>
     <!-- 查询区域-END -->
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-dropdown>
-        <a-menu slot="overlay" @click="handleMenuClick">
-          <a-menu-item key="1">负责的项目</a-menu-item>
-          <a-menu-item key="2">参与的项目</a-menu-item>
-          <a-menu-item key="3">创建的项目</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px">
-          项目分类
-          <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
       <a-dropdown-button @click="handleAdd">
         <a-icon type="plus" />添加项目
         <a-menu slot="overlay">
@@ -110,11 +107,12 @@
       >
         <div
           slot="filterDropdown"
-          slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters }"
+          slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
           style="padding: 8px"
         >
           <a-input
             v-ant-ref="c => searchInput = c"
+            :placeholder="`Search ${column.text}`"
             :value="selectedKeys[0]"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
             @pressEnter="() => handleSearch(selectedKeys, confirm)"
@@ -178,6 +176,14 @@
             @click="uploadFile(text)"
           >下载</a-button>
         </template>
+                <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
@@ -221,7 +227,7 @@ import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
 import { filterObj, isContainPrincipal } from '@/utils/util'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'PmpProjectManageList',
@@ -234,6 +240,8 @@ export default {
       description: '项目主表管理页面',
       projectTypeDictOptions: [],
       principalDictOptions: [],
+      searchText: '',
+      searchInput: null,
       // 表头
       columns: [
         {
@@ -254,8 +262,10 @@ export default {
         },
         {
           title: '项目名称',
+          text: '项目名',
           align: 'center',
           dataIndex: 'projectname',
+          key: 'projectname',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -281,9 +291,11 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
+          text: '账号',
+          key: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principalDictOptions, text)
+            return myFilterMultiDictText(this.principalDictOptions, text)
           },
           scopedSlots: {
             filterDropdown: 'filterDropdown',
@@ -307,9 +319,7 @@ export default {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' }
         },
         {
           title: '项目分类',
@@ -468,4 +478,8 @@ export default {
 </script>
 <style scoped>
 @import '~@assets/less/common.less';
+.highlight {
+  background-color: rgb(255, 192, 105);
+  padding: 0px;
+}
 </style>

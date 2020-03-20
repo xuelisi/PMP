@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Author Scott
  */
 @Slf4j
-public class SampleJob implements Job {
+class SampleJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

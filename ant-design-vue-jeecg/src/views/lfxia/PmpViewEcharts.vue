@@ -7,12 +7,10 @@
             <a-form-item label="起止日期">
               <a-col :span="11">
                 <j-date placeholder="请选择起始日期" class="inputnum" v-model="startTime"></j-date>
-                <!-- <a-date-picker v-model="startTime" /> -->
               </a-col>
               <a-col :span="1" style="text-align:center">-</a-col>
               <a-col :span="12">
                 <j-date placeholder="请选择起始日期" class="inputnum" v-model="endTime"></j-date>
-                <!--  <a-date-picker v-model="endTime" /> -->
               </a-col>
             </a-form-item>
           </a-col>
@@ -46,7 +44,7 @@
               <a-radio-button value="cabinet">按部门统计</a-radio-button>
             </a-radio-group>
           </a-col>
-          <bar class="statistic"  :dataSource="countSource" :height="400" />
+           <bar-multid class="statistic" title="多列柱状图" :height="400" :data="countSource" />
         </a-row>
       </a-tab-pane>
       <a-tab-pane tab="饼状图" key="2">
@@ -64,6 +62,7 @@ import Pie from '@/components/chart/Pie'
 import ACol from 'ant-design-vue/es/grid/Col'
 import JDate from '@/components/jeecg/JDate.vue'
 import { getAction } from '@/api/manage'
+import BarMultid from './BarMultid'
 
 export default {
   name: 'PmpViewEcharts',
@@ -71,7 +70,8 @@ export default {
     ACol,
     JDate,
     Bar,
-    Pie
+    Pie,
+    BarMultid
   },
   data() {
     return {
@@ -91,10 +91,10 @@ export default {
       tabStatus: 'bar',
       url: {
         getPieCountInfo: '/proecharts/pmpProjectEchart/getPieCountInfo',
-        getYearCountInfo: '/api/report/getYearCountInfo',
-        getMonthCountInfo: '/api/report/getMonthCountInfo',
-        getCntrNoCountInfo: '/api/report/getCntrNoCountInfo',
-        getCabinetCountInfo: '/api/report/getCabinetCountInfo'
+        getYearCountInfo: '/proecharts/pmpProjectEchart/getYearCountInfo',
+        getMonthCountInfo: '/proecharts/pmpProjectEchart/getMonthCountInfo',
+        getPerCountInfo: '/proecharts/pmpProjectEchart/getPerNoCountInfo',
+        getDepCountInfo: '/proecharts/pmpProjectEchart/getDepCountInfo'
       }
     }
   },
@@ -108,18 +108,7 @@ export default {
         if (res.success) {
           this.countSource = []
           if (this.tabStatus === 'bar') {
-            if (type === 'year') {
-              this.getYearCountSource(res.result)
-            }
-            if (type === 'month') {
-              this.getMonthCountSource(res.result)
-            }
-            if (type === 'category') {
-              this.getCategoryCountSource(res.result)
-            }
-            if (type === 'cabinet') {
-              this.getCabinetCountSource(res.result)
-            }
+            this.countSource=res.result
           } else {
             this.getPieCountSource(res.result)
           }
@@ -135,38 +124,6 @@ export default {
         this.countSource.push({
           item: data[i].status,
           count: data[i].number
-        })
-      }
-    },
-    getYearCountSource(data) {
-      for (let i = 0; i < data.length; i++) {
-        this.countSource.push({
-          x: `${data[i].year}年`,
-          y: data[i].yearcount
-        })
-      }
-    },
-    getMonthCountSource(data) {
-      for (let i = 0; i < data.length; i++) {
-        this.countSource.push({
-          x: data[i].month,
-          y: data[i].monthcount
-        })
-      }
-    },
-    getCategoryCountSource(data) {
-      for (let i = 0; i < data.length; i++) {
-        this.countSource.push({
-          x: data[i].classifyname,
-          y: data[i].cntrnocount
-        })
-      }
-    },
-    getCabinetCountSource(data) {
-      for (let i = 0; i < data.length; i++) {
-        this.countSource.push({
-          x: data[i].cabinetname,
-          y: data[i].cabinetcocunt
         })
       }
     },
@@ -216,10 +173,10 @@ export default {
           url = this.url.getMonthCountInfo
         }
         if (type === 'category') {
-          url = this.url.getCntrNoCountInfo
+          url = this.url.getPerCountInfo
         }
         if (type === 'cabinet') {
-          url = this.url.getCabinetCountInfo
+          url = this.url.getDepCountInfo
         }
       }
       this.loadData(url, type, param)
