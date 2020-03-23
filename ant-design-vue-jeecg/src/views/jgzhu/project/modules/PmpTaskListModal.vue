@@ -12,15 +12,12 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item label="父级节点" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-tree-select
+          <j-select-pmp
             ref="treeSelect"
-            placeholder="请选择父级节点"
             v-decorator="['parentnode', validatorRules.parentnode]"
             :trigger-change="true"
-            dict="pmp_project,taskname,id"
-            pidField="parentnode"
-            pidValue="0"
-          ></j-tree-select>
+            customReturnField="id"
+          ></j-select-pmp>
         </a-form-item>
         <a-form-item label="任务名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
@@ -48,12 +45,12 @@
 import { validateDuplicateValue } from '@/utils/util'
 import { httpAction, getAction } from '@/api/manage'
 import pick from 'lodash.pick'
-import JTreeSelect from '@/components/jeecg/JTreeSelect'
+import JSelectPmp from '@/components/jeecgbiz/JSelectPmp'
 
 export default {
   name: 'SysCategoryModal',
   components: {
-    JTreeSelect
+    JSelectPmp
   },
   data() {
     return {
@@ -75,9 +72,7 @@ export default {
       validatorRules: {
         parentnode: { rules: [{ required: true, message: '请选择父级节点!' }] },
         taskname: {
-          rules: [
-            { required: true, message: '请输入任务名称!' },
-          ]
+          rules: [{ required: true, message: '请输入任务名称!' }]
         },
         projectcode: {
           rules: [
@@ -136,7 +131,7 @@ export default {
             projectname: this.$route.query.data.projectname
           }
           let formData = Object.assign(this.model, values, params)
-          console.log('表单提交数据', formData)
+         // console.log('表单提交数据', formData)
           httpAction(httpurl, formData, method)
             .then(res => {
               if (res.success) {

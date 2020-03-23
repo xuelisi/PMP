@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
-import org.jeecg.modules.wqc.summary.service.IPmpTaskSummaryService;
+import org.jeecg.modules.wqc.summary.entity.PmpSummary;
+import org.jeecg.modules.wqc.summary.service.IPmpSummaryService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -43,19 +43,19 @@ import com.alibaba.fastjson.JSON;
 @RestController
 @RequestMapping("/summary/pmpTaskSummary")
 @Slf4j
-public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTaskSummaryService> {
+public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpSummaryService> {
 	@Autowired
-	private IPmpTaskSummaryService pmpTaskSummaryService;
+	private IPmpSummaryService pmpTaskSummaryService;
 	
-//	/**
-//	 * 分页列表查询
-//	 *
-//	 * @param pmpTaskSummary
-//	 * @param pageNo
-//	 * @param pageSize
-//	 * @param req
-//	 * @return
-//	 */
+	/**
+	 * 分页列表查询
+	 *
+	 * @param pmpTaskSummary
+	 * @param pageNo
+	 * @param pageSize
+	 * @param req
+	 * @return
+	 */
 //	@GetMapping(value = "/list")
 //	public Result<?> queryPageList(PmpTaskSummary pmpTaskSummary,
 //								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -69,27 +69,38 @@ public class PmpTaskSummaryController extends JeecgController<PmpSummary, IPmpTa
 
 	@GetMapping(value = "/list")
 	 public Result<?> queryPageList(PmpSummaryInfo info,
-                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                    HttpServletRequest req) {
+										  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+										  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+										  HttpServletRequest req) {
 		 String taskName = req.getParameter("taskName");
 		 String projectName = req.getParameter("projectName");
 		 Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
 		 Page<PmpSummaryInfo> pageList = new Page<PmpSummaryInfo>(pageNo, pageSize);
 
-		 taskName = (null == taskName) ? "" : taskName;
-		 projectName = (null == projectName) ? "" : projectName;
-		 pageList = pmpTaskSummaryService.getPmpSummaryInfoByPTName(pageList, projectName, taskName);//通知公告消息
+//		 taskName = (null == taskName) ? "" : taskName;
+//		 projectName = (null == projectName) ? "" : projectName;
+//		 pageList = pmpTaskSummaryService.getPmpSummaryInfoByPTName(pageList, projectName, taskName);//通知公告消息
 
 		 result.setSuccess(true);
 		 result.setResult(pageList);
 		 return result;
 	 }
-	
+
+	 @GetMapping(value = "/time")
+	 public Result<?> queryListByTime(@RequestParam(name="time",required=true) String time) {
+		 Result<List<PmpSummaryInfo>> result = new Result<>();
+//		 List<PmpSummaryInfo> cmtList = pmpTaskSummaryService.getPmpSummaryInfoByTime(time);
+//
+//		 result.setResult(cmtList);
+		 result.setSuccess(true);
+
+		 return result;
+	 }
+
 	/**
 	 *   添加
 	 *
-	 * @param summary
+	 * @param pmpTaskSummary
 	 * @return
 	 */
 	@PostMapping(value = "/add")

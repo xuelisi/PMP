@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.project.protree.entity.PmpProject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.project.protree.entity.PmpProjectTreeModel;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description: 项目管理
@@ -31,4 +33,10 @@ public interface IPmpProjectService extends IService<PmpProject> {
     Page<PmpProject> myProjectpar(Page<PmpProject> page, String principal, PmpProject pmpProject);
 
     void addSysCategory(PmpProject pmpProject);
+
+    /**
+     * 查询所有部门信息,并分节点进行显示
+     * @return
+     */
+    List<PmpProjectTreeModel> queryTreeList();
 }

@@ -18,6 +18,8 @@ public class PmpCommentInfo{
 
 	private String projectName;
 
+    private String realName;
+
     private String createBy;
 
     private Date createTime;

@@ -24,6 +24,7 @@
             :headers="headers"
             :beforeUpload="beforeUpload"
             @change="handleChange"
+            :disabled="disableSubmit"
           >
             <img v-if="picUrl" :src="getAvatarView()" alt="头像" style="height:104px;max-width:300px" />
             <div v-else>
@@ -32,11 +33,8 @@
             </div>
           </a-upload>
         </a-form-item>
-        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol" v-if="show">
-          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称"></a-input>
-        </a-form-item>
-        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol" v-else>
-          <a-input v-decorator="[ 'projectname']" placeholder="请输入项目名称" :readOnly="readOnly"></a-input>
+        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称" :disabled="disableSubmit"></a-input>
         </a-form-item>
         <!--<a-form-item label="项目编码" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="[ 'projectcode', validatorRules.projectcode]" placeholder="请输入项目编码"></a-input>
@@ -57,20 +55,23 @@
                 :trigger-change="true"
                 dictCode="project_type"
                 placeholder="请选择项目类型"
+                :disabled="disableSubmit"
               />
             </a-col>
           </a-row>
         </a-form-item>
-        <a-form-item label="项目内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="项目内容" :labelCol="labelCol" :wrapperCol="wrapperCol" disabled>
           <a-input
             v-decorator="[ 'projectcontent', validatorRules.projectcontent]"
             placeholder="请输入项目内容"
+            :disabled="disableSubmit"
           ></a-input>
         </a-form-item>
         <a-form-item label="负责人" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-select-multi-user
             v-decorator="['principal', validatorRules.principal]"
             :trigger-change="true"
+            :disabled="disableSubmit"
           ></j-select-multi-user>
           <!-- <j-select-user-by-dep
             v-decorator="['principal', validatorRules.principal]"
@@ -81,6 +82,7 @@
           <j-select-multi-user
             v-decorator="['participant', validatorRules.participant]"
             :trigger-change="true"
+            :disabled="disableSubmit"
           ></j-select-multi-user>
           <!-- <j-select-user-by-dep
             v-decorator="['participant', validatorRules.participant]"
@@ -96,6 +98,7 @@
                 :max="100"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
             <a-col :span="4">
@@ -105,6 +108,7 @@
                 style="marginLeft: 16px"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
           </a-row>
@@ -126,6 +130,7 @@
               v-decorator="[ 'startdate', validatorRules.startdate]"
               :trigger-change="true"
               style="width: 100%"
+              :disabled="disableSubmit"
             />
           </a-col>
           <a-col :span="1" style="text-align:center">-</a-col>
@@ -135,14 +140,15 @@
               v-decorator="[ 'enddate', validatorRules.enddate]"
               :trigger-change="true"
               style="width: 100%"
+              :disabled="disableSubmit"
             />
           </a-col>
         </a-form-item>
         <a-form-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入备注"></a-input>
+          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入备注" :disabled="disableSubmit"></a-input>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true"></j-upload>
+          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true" :disabled="disableSubmit"></j-upload>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -171,7 +177,6 @@ export default {
   data() {
     return {
       show: true,
-      readOnly: true,
       disableSubmit: false,
       picUrl: '',
       uploadLoading: false,

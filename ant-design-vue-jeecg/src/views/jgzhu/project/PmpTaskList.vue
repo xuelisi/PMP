@@ -56,7 +56,7 @@
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="myHandleTaskEdit(record)">编辑</a>
+          <a @click="myHandleTaskEdit(record)">节点编辑</a>
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">
@@ -91,7 +91,7 @@
       </a-table>
     </div>
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
-    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk1"></pmpTaskdetails-modal>
+    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
     <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
@@ -378,14 +378,6 @@ export default {
         this.dataSource = [...this.dataSource]
       }
     },
-    modalFormOk1(formData, arr) {
-      if (!formData.id) {
-        this.addOk(formData, arr)
-      } else {
-        this.editOk(formData, this.dataSource)
-        this.dataSource = [...this.dataSource]
-      }
-    },
     editOk(formData, arr) {
       if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
@@ -400,10 +392,10 @@ export default {
     },
     async addOk(formData, arr) {
       if (!formData[this.pidField]) {
-        this.loadData()
+        this.loadData(1)
       } else {
         this.expandedRowKeys = []
-        console.log('22222', arr)
+      //  console.log('22222', arr)
         for (let i of arr) {
           await this.expandTreeNode(i)
         }
@@ -417,7 +409,7 @@ export default {
         let params = this.getQueryParams() //查询条件
         params[this.pidField] = nodeId
         getAction(this.url.childList, params).then(res => {
-          //console.log('11111', res)
+          console.log('11111', res)
           if (res.success) {
             if (res.result && res.result.length > 0) {
               row.children = this.getDataByResult(res.result)

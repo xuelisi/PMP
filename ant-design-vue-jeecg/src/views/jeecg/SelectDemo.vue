@@ -40,7 +40,7 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-item label="选择部门 自定义返回值">
-              <j-select-depart v-decorator="['departId']" :trigger-change="true" customReturnField="departName"></j-select-depart>
+              <j-select-depart v-decorator="['departId']" :trigger-change="true" customReturnField="id"></j-select-depart>
             </a-form-item>
           </a-col>
           <a-col :span="12">选中的部门ID(v-decorator):{{ getDepartIdValue() }}</a-col>

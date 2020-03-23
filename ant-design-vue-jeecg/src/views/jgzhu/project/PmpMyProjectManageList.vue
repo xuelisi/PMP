@@ -254,12 +254,12 @@ export default {
             return parseInt(index) + 1
           }
         },
-        {
-          title: '头像',
-          align: 'center',
-          dataIndex: 'photo',
-          scopedSlots: { customRender: 'photo' }
-        },
+        // {
+        //   title: '头像',
+        //   align: 'center',
+        //   dataIndex: 'photo',
+        //   scopedSlots: { customRender: 'photo' }
+        // },
         {
           title: '项目名称',
           text: '项目名',
