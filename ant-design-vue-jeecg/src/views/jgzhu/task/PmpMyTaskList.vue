@@ -274,7 +274,6 @@ export default {
   },
   methods: {
     handleMenuClick(e) {
-      debugger
       if (e.key == '2') {
         this.loadData(1, this.url.list1)
       } else if (e.key == '3') {

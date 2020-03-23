@@ -2,35 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpTaskSummaryMapper">
 
-    <select id="getPmpSummaryInfoByPTName" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
-        select b.id as id,
-            b.taskid as taskid,
-            a.taskname as taskName,
-            a.projectname as projectName,
-            b.create_by as createBy,
-            b.create_time as createTime,
-            b.content as content,
-	        b.content_annex as contentAnnex
-        from
-        (
-            select *
-            from pmp_project
-            where projectname like ('%' + #{projectName} + '%') and
-                taskname like ('%' + #{taskName} + '%') and
-		        (parentnode != '0' and parentnode is not null)
-        ) as a
-        left join
-        (
-            select *
-            from pmp_summary
-        ) as b on a.id = b.taskid
-        where b.id is not null
-        order by b.create_time desc
-    </select>
-
-    <update id="removeById" >
-        delete
-        from pmp_summary
-        where id = #{id}
-    </update>
 </mapper>

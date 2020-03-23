@@ -61,14 +61,12 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		String taskName = req.getParameter("taskName");
-		String projectName = req.getParameter("projectName");
 		Result<Page<PmpCommentInfo>> result = new Result<Page<PmpCommentInfo>>();
 		Page<PmpCommentInfo> pageList = new Page<PmpCommentInfo>(pageNo, pageSize);
 
-		taskName = (null == taskName) ? "" : taskName;
-		projectName = (null == projectName) ? "" : projectName;
-		pageList = pmpCommentService.getPmpCommentInfoByPTName(pageList, projectName, taskName);//通知公告消息
+		String taskName = req.getParameter("taskName");
+		String projectName = req.getParameter("projectName");
+		pageList = pmpCommentService.queryCommentInfoByProjectAndTask(pageList, projectName, taskName);//通知公告消息
 
 		result.setSuccess(true);
 		result.setResult(pageList);
@@ -76,9 +74,9 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	}
 
 //	 @RequestMapping(value = "/list", method = RequestMethod.GET)
-//	 public Result<List<PmpComment>> queryPmpComment(@RequestParam(name="taskid",required=true) String taskid) {
+//	 public Result<List<PmpComment>> queryRealName(@RequestParam(name="taskid",required=true) String taskid) {
 //		 Result<List<PmpComment>> result = new Result<>();
-//		 List<PmpComment> cmtList = pmpCommentService.getPmpCommentByTaskID(taskid);
+//		 List<PmpComment> cmtList = pmpCommentService.queryCommentInfoByTask(taskid);
 //
 //		 result.setResult(cmtList);
 //		 result.setSuccess(true);
@@ -87,20 +85,10 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 //	 }
 
 	 @RequestMapping(value = "/query", method = RequestMethod.GET)
-	 public Result<List<PmpComment>> queryPmpComment(@RequestParam(name="taskid",required=true) String taskid,
+	 public Result<List<PmpCommentInfo>> queryCommentInfoByTask(@RequestParam(name="taskid",required=true) String taskid,
 													 @RequestParam(name="userName",required=true) String userName) {
-		 Result<List<PmpComment>> result = new Result<>();
-		 List<PmpComment> cmtList = pmpCommentService.getPmpCommentByTaskID(taskid, userName);
-
-		 //用户名过滤，不想太太多地方用的懒方法
-//		 if ("" != userName) {
-//			 for (int i = cmtList.size() - 1; i >= 0; --i) {
-//				 PmpComment item = cmtList.get(i);
-//				 if (!userName.equals(item.getCreateBy())) {
-//					 cmtList.remove(i);
-//				 }
-//			 }
-//		 }
+		 Result<List<PmpCommentInfo>> result = new Result<>();
+		 List<PmpCommentInfo> cmtList = pmpCommentService.queryCommentInfoByTask(taskid, userName);
 
 		 result.setResult(cmtList);
 		 result.setSuccess(true);
@@ -108,6 +96,16 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 		 return result;
 	 }
 
+	 @RequestMapping(value = "/realname", method = RequestMethod.GET)
+	 public Result<String> queryRealName(@RequestParam(name="username",required=true) String username) {
+		 Result<String> result = new Result<>();
+		 String realName = pmpCommentService.queryRealName(username);
+
+		 result.setResult(realName);
+		 result.setSuccess(true);
+
+		 return result;
+	 }
 
 	 /**
 	 *   添加

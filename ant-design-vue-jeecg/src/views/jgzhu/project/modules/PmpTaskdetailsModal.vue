@@ -13,19 +13,21 @@
           <a-input
             v-decorator="[ 'taskname', validatorRules.taskname]"
             placeholder="请输入名称"
-            :read-only="readOnly"
+            :disabled="disableSubmit"
           ></a-input>
         </a-form-item>
         <a-form-item label="任务内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
             v-decorator="[ 'projectcontent', validatorRules.projectcontent]"
             placeholder="请输入任务内容"
+            :disabled="disableSubmit"
           ></a-input>
         </a-form-item>
         <a-form-item label="负责人" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-select-multi-user
             v-decorator="['principal', validatorRules.principal]"
             :trigger-change="true"
+            :disabled="disableSubmit"
           ></j-select-multi-user>
           <!-- <j-select-user-by-dep
             v-decorator="['principal', validatorRules.principal]"
@@ -36,6 +38,7 @@
           <j-select-multi-user
             v-decorator="['participant', validatorRules.participant]"
             :trigger-change="true"
+            :disabled="disableSubmit"
           ></j-select-multi-user>
           <!-- <j-select-user-by-dep
             v-decorator="['participant', validatorRules.participant]"
@@ -51,6 +54,7 @@
                 :max="100"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
             <a-col :span="4">
@@ -60,6 +64,7 @@
                 style="marginLeft: 16px"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
           </a-row>
@@ -70,6 +75,7 @@
             v-decorator="[ 'startdate', validatorRules.startdate]"
             :trigger-change="true"
             style="width: 100%"
+            :disabled="disableSubmit"
           />
         </a-form-item>
         <a-form-item label="结束日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -78,8 +84,31 @@
             v-decorator="[ 'enddate', validatorRules.enddate]"
             :trigger-change="true"
             style="width: 100%"
+            :disabled="disableSubmit"
           />
         </a-form-item>
+        <!-- <a-form-item label="提醒" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-row>
+            <a-col :span="3">到期日前</a-col>
+            <a-col :span="5">
+              <a-select v-decorator="[ 'remindday', validatorRules.remindday]" placeholder="请输入天数">
+                <a-select-option value="0">不提醒</a-select-option>
+                <a-select-option value="1">1天</a-select-option>
+                <a-select-option value="2">2天</a-select-option>
+                <a-select-option value="3">3天</a-select-option>
+                <a-select-option value="4">4天</a-select-option>
+                <a-select-option value="5">5天</a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="16">
+              <a-checkbox-group v-decorator="[ 'remindperson', validatorRules.remindperson]">
+                <a-checkbox value="1" name="type">创建人</a-checkbox>
+                <a-checkbox value="2" name="type">负责人</a-checkbox>
+                <a-checkbox value="3" name="type">参与人</a-checkbox>
+              </a-checkbox-group>
+            </a-col>
+          </a-row>
+        </a-form-item> -->
         <!-- <a-form-item label="紧急程度" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-dict-select-tag
             type="list"
@@ -94,13 +123,14 @@
             v-decorator="[ 'projectmoney', validatorRules.projectmoney]"
             placeholder="请输入任务费用"
             style="width: 100%"
+            :disabled="disableSubmit"
           />
         </a-form-item>
         <a-form-item label="任务备注" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入任务备注"></a-input>
+          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入任务备注" :disabled="disableSubmit"></a-input>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true"></j-upload>
+          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true" :disabled="disableSubmit"></j-upload>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -133,7 +163,6 @@ export default {
   data() {
     return {
       disableSubmit: false,
-      readOnly: true,
       form: this.$form.createForm(this),
       title: '操作',
       width: 800,

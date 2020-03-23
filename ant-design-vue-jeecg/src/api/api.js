@@ -56,6 +56,9 @@ const queryParentName   = (params)=>getAction("/sys/sysDepart/queryParentName",p
 const searchByKeywords   = (params)=>getAction("/sys/sysDepart/searchBy",params);
 const deleteByDepartId   = (params)=>deleteAction("/sys/sysDepart/delete",params);
 
+//项目管理
+const queryPmpTreeList = (params)=>getAction("/protree/pmpProject/queryTreeList",params);
+
 //日志管理
 //const getLogList = (params)=>getAction("/sys/log/list",params);
 const deleteLog = (params)=>deleteAction("/sys/log/delete",params);
@@ -98,6 +101,7 @@ const loadCategoryData = (params)=>getAction("/sys/category/loadAllData",params)
 export {
   // imgView,
   // doMian,
+  queryPmpTreeList,
   addRole,
   editRole,
   checkRoleCode,

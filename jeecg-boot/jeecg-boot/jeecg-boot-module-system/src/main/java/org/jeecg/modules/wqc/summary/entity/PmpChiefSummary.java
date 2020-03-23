@@ -26,13 +26,13 @@ public class PmpChiefSummary implements Serializable {
     
 	/**主键*/
 	@TableId(type = IdType.ID_WORKER_STR)
-    private java.lang.String id;
+    private String id;
 	/**领导Id*/
 	@Excel(name = "领导Id", width = 15)
-    private java.lang.String chiefId;
+    private String chiefId;
 	/**小结id*/
 	@Excel(name = "小结id", width = 15)
-    private java.lang.String summaryId;
+    private String summaryId;
 
 	public PmpChiefSummary(String id, String chiefid) {
 		this.summaryId = id;

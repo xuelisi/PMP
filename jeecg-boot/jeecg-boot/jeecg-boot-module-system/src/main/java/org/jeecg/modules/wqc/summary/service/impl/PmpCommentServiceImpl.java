@@ -27,12 +27,17 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
     @Autowired
     private PmpCommentMapper mapper;
 
-    //根据小结id，查询批阅信息
-    public List<PmpComment> getPmpCommentByTaskID(String taskid, String username) {
-        return mapper.getPmpCommentByTaskID(taskid, username);
+
+    public String queryRealName(String username) {
+        return  mapper.queryRealName(username);
     }
 
-    public Page<PmpCommentInfo> getPmpCommentInfoByPTName(Page<PmpCommentInfo> page, String projectName,String taskName) {
-        return page.setRecords(mapper.getPmpCommentInfoByPTName(page, projectName, taskName));
+    //根据小结id，查询批阅信息
+    public List<PmpCommentInfo> queryCommentInfoByTask(String taskid, String username) {
+        return mapper.queryCommentInfoByTask(taskid, username);
+    }
+
+    public Page<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName,String taskName) {
+        return page.setRecords(mapper.queryCommentInfoByProjectAndTask(page, projectName, taskName));
     }
 }

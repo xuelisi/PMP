@@ -16,7 +16,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface PmpCommentMapper extends BaseMapper<PmpComment> {
 
-    List<PmpComment> getPmpCommentByTaskID(@Param("taskid") String taskid, @Param("username") String username);
+    String queryRealName(String username);
 
-    List<PmpCommentInfo> getPmpCommentInfoByPTName(Page<PmpCommentInfo> page, String projectName, String taskName);
+    List<PmpCommentInfo> queryCommentInfoByTask(@Param("taskid") String taskid, @Param("username") String username);
+
+    List<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
+
 }

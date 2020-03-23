@@ -13,6 +13,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.project.protree.entity.PmpProject;
+import org.jeecg.modules.project.protree.entity.PmpProjectTreeModel;
 import org.jeecg.modules.project.protree.service.IPmpProjectService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -45,6 +46,29 @@ import com.alibaba.fastjson.JSON;
 public class PmpProjectController extends JeecgController<PmpProject, IPmpProjectService> {
 	@Autowired
 		 private IPmpProjectService pmpProjectService;
+
+	 /**
+	  * 查询数据 查出所有部门,并以树结构数据格式响应给前端
+	  *
+	  * @return
+	  */
+	 @RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
+	 public Result<List<PmpProjectTreeModel>> queryTreeList() {
+		 Result<List<PmpProjectTreeModel>> result = new Result<>();
+		 try {
+			 // 从内存中读取
+//			List<SysDepartTreeModel> list =FindsDepartsChildrenUtil.getSysDepartTreeList();
+//			if (CollectionUtils.isEmpty(list)) {
+//				list = sysDepartService.queryTreeList();
+//			}
+			 List<PmpProjectTreeModel> list = pmpProjectService.queryTreeList();
+			 result.setResult(list);
+			 result.setSuccess(true);
+		 } catch (Exception e) {
+			 log.error(e.getMessage(),e);
+		 }
+		 return result;
+	 }
 
 	 /**
 	  * 分页列表查询
