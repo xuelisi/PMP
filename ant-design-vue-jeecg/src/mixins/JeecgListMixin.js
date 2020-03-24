@@ -185,7 +185,7 @@ export const JeecgListMixin = {
         }
       });
     },
-    openNotification(title,des) {
+    openNotification(title, des) {
       this.$notification.open({
         message: title,
         description: des,
@@ -193,7 +193,7 @@ export const JeecgListMixin = {
       })
     },
     handleDisable: function (record) {
-      if (record.createBy == this.username || isContainPrincipal(record.principal,this.username)) {
+      if (record.createBy == this.username || isContainPrincipal(record.principal, this.username)) {
         if (!this.url.disable) {
           this.$message.error("请设置url.disable属性!")
           return
@@ -208,11 +208,11 @@ export const JeecgListMixin = {
           }
         });
       } else {
-        this.openNotification('提示','权限不够哦！禁止编辑！')
+        this.openNotification('提示', '权限不够哦！禁止编辑！')
       }
     },
     handleEnable: function (record) {
-      if (record.createBy == this.username || isContainPrincipal(record.principal,this.username)) {
+      if (record.createBy == this.username || isContainPrincipal(record.principal, this.username)) {
         if (!this.url.enable) {
           this.$message.error("请设置url.enable属性!")
           return
@@ -227,7 +227,7 @@ export const JeecgListMixin = {
           }
         });
       } else {
-        this.openNotification('提示','权限不够哦！禁止编辑！')
+        this.openNotification('提示', '权限不够哦！禁止编辑！')
       }
     },
     handleEdit: function (record) {
@@ -237,13 +237,16 @@ export const JeecgListMixin = {
     },
     myHandleEdit(record) {
       if (record.isdelete == '0') {
-        if (record.createBy == this.username || isContainPrincipal(record.principal,this.username)) {
-          this.handleEdit(record)
+        if (record.createBy == this.username || isContainPrincipal(record.principal, this.username)) {
+          this.$refs.modalForm.edit(record);
+          this.$refs.modalForm.title = "编辑";
+          this.$refs.modalForm.disableSubmit = false;
+          this.$refs.modalForm.readOnly = true;
         } else {
-          this.openNotification('提示','权限不够哦！禁止编辑！')
+          this.openNotification('提示', '权限不够哦！禁止编辑！')
         }
       } else {
-        this.openNotification('提示','已禁用,无法编辑！')
+        this.openNotification('提示', '已禁用,无法编辑！')
       }
     },
     handleAdd: function () {

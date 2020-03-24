@@ -3,13 +3,17 @@
 <mapper namespace="org.jeecg.modules.project.taskmanage.mapper.PmpTaskMapper">
     <select id="myTaskpri" resultType="org.jeecg.modules.project.taskmanage.entity.PmpTask" statementType="CALLABLE">
 	   {call dbo.myTaskpri(
-	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    #{principal,jdbcType=VARCHAR,mode=IN},
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{taskname,jdbcType=VARCHAR,mode=IN}
 	    )}
 	</select>
 
 	<select id="myTaskpar" resultType="org.jeecg.modules.project.taskmanage.entity.PmpTask" statementType="CALLABLE">
 	   {call dbo.myTaskpar(
-	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    #{principal,jdbcType=VARCHAR,mode=IN},
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{taskname,jdbcType=VARCHAR,mode=IN}
 	    )}
 	</select>
 </mapper>

@@ -16,6 +16,20 @@
             :disabled="disableSubmit"
           ></a-input>
         </a-form-item>
+        <a-form-item label="任务类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-row :gutter="24">
+            <a-col :span="12">
+              <j-dict-select-tag
+                type="list"
+                v-decorator="['projecttype', validatorRules.projecttype]"
+                :trigger-change="true"
+                dictCode="task_type"
+                placeholder="请选择任务类型"
+                :disabled="disableSubmit"
+              />
+            </a-col>
+          </a-row>
+        </a-form-item>
         <a-form-item label="任务内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
             v-decorator="[ 'projectcontent', validatorRules.projectcontent]"
@@ -108,7 +122,7 @@
               </a-checkbox-group>
             </a-col>
           </a-row>
-        </a-form-item> -->
+        </a-form-item>-->
         <!-- <a-form-item label="紧急程度" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-dict-select-tag
             type="list"
@@ -127,10 +141,18 @@
           />
         </a-form-item>
         <a-form-item label="任务备注" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入任务备注" :disabled="disableSubmit"></a-input>
+          <a-input
+            v-decorator="[ 'remark', validatorRules.remark]"
+            placeholder="请输入任务备注"
+            :disabled="disableSubmit"
+          ></a-input>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true" :disabled="disableSubmit"></j-upload>
+          <j-upload
+            v-decorator="['annex', validatorRules.annex]"
+            :trigger-change="true"
+            :disabled="disableSubmit"
+          ></j-upload>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -179,6 +201,7 @@ export default {
       confirmLoading: false,
       validatorRules: {
         taskname: { rules: [{ required: true, message: '请输入名称!' }] },
+        projecttype: { },
         projectcontent: { rules: [] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
@@ -210,6 +233,7 @@ export default {
           pick(
             this.model,
             'taskname',
+            'projecttype',
             'projectcontent',
             'principal',
             'participant',
@@ -276,6 +300,7 @@ export default {
         pick(
           row,
           'taskname',
+          'projecttype',
           'projectcontent',
           'principal',
           'participant',

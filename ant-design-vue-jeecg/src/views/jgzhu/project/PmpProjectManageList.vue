@@ -9,9 +9,14 @@
               <a-input placeholder="请输入项目名称" v-model="queryParam.projectname"></a-input>
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="8">
+            <a-form-item label="负责人">
+              <j-select-multi-user v-model="queryParam.principal"></j-select-multi-user>
+            </a-form-item>
+          </a-col>
           <a-col :md="3" :sm="8">
             <a-form-item>
-              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
+              <a-radio-group name="radioGroup" v-model="queryParam.isdelete">
                 <a-radio :value="0">正常</a-radio>
                 <a-radio :value="1">禁用</a-radio>
               </a-radio-group>
@@ -31,6 +36,28 @@
                 <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
               </a>
             </span>
+          </a-col>
+        </a-row>
+        <a-row :gutter="24" v-if="this.toggleSearchStatus">
+          <a-col :md="6" :sm="8">
+            <a-form-item label="总进度">
+              <a-input-number
+                placeholder="请输入总进度"
+                :min="0"
+                :max="100"
+                class="inputnum"
+                v-model="queryParam.schedule"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
+            <a-form-item label="项目分类">
+              <j-dict-select-tag
+                v-model="queryParam.projecttype"
+                dictCode="project_type"
+                placeholder="请输入项目分类"
+              />
+            </a-form-item>
           </a-col>
         </a-row>
       </a-form>
@@ -170,13 +197,15 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import JDate from '@/components/jeecg/JDate.vue'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 
 export default {
   name: 'PmpProjectManageList',
   mixins: [JeecgListMixin],
   components: {
     PmpProjectManageModal,
-    JDate
+    JDate,
+    JSelectMultiUser
   },
   data() {
     return {
@@ -220,7 +249,10 @@ export default {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          scopedSlots: { customRender: 'schedule' }
+          scopedSlots: { customRender: 'schedule' },
+          onFilter: (value, record) => record.schedule.indexOf(value) === 0,
+          sorter: (a, b) => a.schedule - b.schedule,
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '项目分类',
@@ -229,7 +261,10 @@ export default {
           customRender: text => {
             //字典值替换通用方法
             return filterDictText(this.projectTypeDictOptions, text)
-          }
+          },
+          onFilter: (value, record) => record.projecttype.indexOf(value) === 0,
+          sorter: (a, b) => a.projecttype.toUpperCase() > b.projecttype.toUpperCase(),
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '起始日期',
@@ -237,7 +272,18 @@ export default {
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.startdate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '结束日期',
@@ -245,7 +291,18 @@ export default {
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.enddate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '是否禁用',
@@ -278,6 +335,12 @@ export default {
     }
   },
   methods: {
+    handleAdd: function() {
+      this.$refs.modalForm.add()
+      this.$refs.modalForm.title = '新增'
+      this.$refs.modalForm.disableSubmit = false
+      this.$refs.modalForm.readOnly = false
+    },
     initDictConfig() {
       //初始化字典 - 项目状态
       initDictOptions('sys_user,realname,username').then(res => {
@@ -311,4 +374,7 @@ export default {
 </script>
 <style scoped>
 @import '~@assets/less/common.less';
+.inputnum {
+  width: 100%;
+}
 </style>

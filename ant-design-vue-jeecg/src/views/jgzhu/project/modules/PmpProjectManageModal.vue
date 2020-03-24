@@ -34,7 +34,8 @@
           </a-upload>
         </a-form-item>
         <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称" :disabled="disableSubmit"></a-input>
+          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称" :disabled="disableSubmit" :read-only="readOnly" v-if="!readOnly"></a-input>
+          <a-input v-decorator="[ 'projectname']" placeholder="请输入项目名称" :disabled="disableSubmit" :read-only="readOnly" v-else></a-input>
         </a-form-item>
         <!--<a-form-item label="项目编码" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="[ 'projectcode', validatorRules.projectcode]" placeholder="请输入项目编码"></a-input>
@@ -178,6 +179,7 @@ export default {
     return {
       show: true,
       disableSubmit: false,
+      readOnly: false,
       picUrl: '',
       uploadLoading: false,
       headers: {},
@@ -208,7 +210,7 @@ export default {
         projecttype: { rules: [{ required: true, message: '请输入项目类型!' }] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
-        emergencylevel: { rules: [{ required: true, message: '请输入紧急程度!' }] },
+        // emergencylevel: { rules: [{ required: true, message: '请输入紧急程度!' }] },
         startdate: { rules: [{ required: true, message: '请输入起始日期!' }] },
         enddate: { rules: [{ required: true, message: '请输入结束日期!' }] },
         remark: { rules: [] },

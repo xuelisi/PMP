@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface IPmpTaskService extends IService<PmpTask> {
-    Page<PmpTask> myTaskpri(Page<PmpTask> page, String principal);
+    Page<PmpTask> myTaskpri(Page<PmpTask> page, String principal, PmpTask pmpTask);
 
-    Page<PmpTask> myTaskpar(Page<PmpTask> page, String principal);
+    Page<PmpTask> myTaskpar(Page<PmpTask> page, String principal, PmpTask pmpTask);
 }
