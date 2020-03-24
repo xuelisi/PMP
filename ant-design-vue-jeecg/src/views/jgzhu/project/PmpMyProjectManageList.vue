@@ -7,12 +7,12 @@
           <a-col :md="6" :sm="8">
             <a-dropdown>
               <a-menu slot="overlay" @click="handleMenuClick">
-                <a-menu-item key="1">负责的项目</a-menu-item>
+                <a-menu-item key="1" default>负责的项目</a-menu-item>
                 <a-menu-item key="2">参与的项目</a-menu-item>
                 <a-menu-item key="3">创建的项目</a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
-                项目分类
+                {{proStatusVal}}
                 <a-icon type="down" />
               </a-button>
             </a-dropdown>
@@ -25,9 +25,9 @@
           <a-col :md="3" :sm="8">
             <a-form-item>
               <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
-              <a-radio :value="0">正常</a-radio>
-              <a-radio :value="1">禁用</a-radio>
-            </a-radio-group>
+                <a-radio :value="0">正常</a-radio>
+                <a-radio :value="1">禁用</a-radio>
+              </a-radio-group>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -176,7 +176,7 @@
             @click="uploadFile(text)"
           >下载</a-button>
         </template>
-                <!-- 总进度 -->
+        <!-- 总进度 -->
         <span slot="schedule" slot-scope="text,record">
           <a-progress
             :percent="text"
@@ -237,6 +237,7 @@ export default {
   },
   data() {
     return {
+      proStatusVal: '负责的项目',
       description: '项目主表管理页面',
       projectTypeDictOptions: [],
       principalDictOptions: [],
@@ -319,7 +320,10 @@ export default {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          scopedSlots: { customRender: 'schedule' }
+          scopedSlots: { customRender: 'schedule' },
+          onFilter: (value, record) => record.schedule.indexOf(value) === 0,
+          sorter: (a, b) => a.schedule - b.schedule,
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '项目分类',
@@ -328,7 +332,10 @@ export default {
           customRender: text => {
             //字典值替换通用方法
             return filterDictText(this.projectTypeDictOptions, text)
-          }
+          },
+          onFilter: (value, record) => record.projecttype.indexOf(value) === 0,
+          sorter: (a, b) => a.projecttype.toUpperCase() > b.projecttype.toUpperCase(),
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '起始日期',
@@ -336,7 +343,18 @@ export default {
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.startdate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '结束日期',
@@ -344,7 +362,18 @@ export default {
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.enddate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '是否禁用',
@@ -383,20 +412,48 @@ export default {
       confirm()
       this.searchText = selectedKeys[0]
     },
-
     handleReset(clearFilters) {
       clearFilters()
       this.searchText = ''
     },
+    modalFormOk() {
+      // 新增/修改 成功时，重载列表
+      this.searchQuery()
+    },
     searchQuery() {
-      this.loadData(1, this.url.list)
+      if (this.proStatusVal == '参与的项目') {
+        this.loadData(1, this.url.list1)
+      } else if (this.proStatusVal == '创建的项目') {
+        this.loadData(1, this.url.list2)
+      } else {
+        this.loadData(1, this.url.list)
+      }
+    },
+    handleTableChange(pagination, filters, sorter) {
+      //分页、排序、筛选变化时触发
+      //TODO 筛选
+      if (Object.keys(sorter).length > 0) {
+        this.isorter.column = sorter.field
+        this.isorter.order = 'ascend' == sorter.order ? 'asc' : 'desc'
+      }
+      this.ipagination = pagination
+      if (this.proStatusVal == '参与的项目') {
+        this.loadData(0, this.url.list1)
+      } else if (this.proStatusVal == '创建的项目') {
+        this.loadData(0, this.url.list2)
+      } else {
+        this.loadData(0, this.url.list)
+      }
     },
     handleMenuClick(e) {
       if (e.key == '2') {
+        this.proStatusVal = '参与的项目'
         this.loadData(1, this.url.list1)
       } else if (e.key == '3') {
+        this.proStatusVal = '创建的项目'
         this.loadData(1, this.url.list2)
       } else {
+        this.proStatusVal = '负责的项目'
         this.loadData(1, this.url.list)
       }
     },

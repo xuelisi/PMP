@@ -41,7 +41,7 @@
         @expand="handleExpand"
         v-bind="tableProps"
       >
-              <!-- 总进度 -->
+        <!-- 总进度 -->
         <span slot="schedule" slot-scope="text,record">
           <a-progress
             :percent="text"
@@ -50,7 +50,12 @@
           />
         </span>
         <template slot="taskname" slot-scope="text,record">
-          <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
+          <a
+            href="javascript:;"
+            @click="myHandleDetailEdit(record)"
+            v-if="record.parentnode!='0'"
+          >{{text}}</a>
+          <span v-else>{{text}}</span>
         </template>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
@@ -72,7 +77,7 @@
               </a-menu-item>
               <!-- <a-menu-item>
                 <a href="javascript:;" @click="handleRemind(record)">催办</a>
-              </a-menu-item> -->
+              </a-menu-item>-->
               <a-menu-item>
                 <a-popconfirm
                   v-if="record.isdelete==0"
@@ -122,6 +127,8 @@ export default {
     return {
       //字典数组缓存-负责人
       principal: [],
+      projectTypeDictOptions: [],
+      taskTypeDictOptions: [],
       description: '任务管理页面',
       // 表头
       columns: [
@@ -145,6 +152,16 @@ export default {
           align: 'center',
           dataIndex: 'schedule',
           scopedSlots: { customRender: 'schedule' }
+        },
+        {
+          title: '任务分类',
+          align: 'center',
+          dataIndex: 'projecttype',
+          customRender: text => {
+            return filterDictText(this.projectTypeDictOptions, text) == text
+              ? filterDictText(this.taskTypeDictOptions, text)
+              : filterDictText(this.projectTypeDictOptions, text)
+          }
         },
         {
           title: '起始日期',
@@ -199,6 +216,18 @@ export default {
         this.principal = res.result
       }
     })
+    //初始化字典 - 项目类型
+    initDictOptions('task_type').then(res => {
+      if (res.success) {
+        this.taskTypeDictOptions = res.result
+      }
+    })
+    //初始化字典 - 项目类型
+    initDictOptions('project_type').then(res => {
+      if (res.success) {
+        this.projectTypeDictOptions = res.result
+      }
+    })
   },
   computed: {
     importExcelUrl() {
@@ -216,14 +245,6 @@ export default {
     }
   },
   methods: {
-    initDictConfig() {
-      //初始化字典 - 项目状态
-      initDictOptions('sys_user,realname,username').then(res => {
-        if (res.success) {
-          this.principalDictOptions = res.result
-        }
-      })
-    },
     openNotification(title, des) {
       this.$notification.open({
         message: title,
@@ -395,7 +416,7 @@ export default {
         this.loadData(1)
       } else {
         this.expandedRowKeys = []
-      //  console.log('22222', arr)
+        //  console.log('22222', arr)
         for (let i of arr) {
           await this.expandTreeNode(i)
         }

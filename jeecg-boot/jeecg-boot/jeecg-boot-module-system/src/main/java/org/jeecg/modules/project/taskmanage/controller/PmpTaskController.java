@@ -63,6 +63,19 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
 		QueryWrapper<PmpTask> queryWrapper = QueryGenerator.initQueryWrapper(pmpTask, req.getParameterMap());
 		queryWrapper.ne("parentnode",'0');
 		queryWrapper.eq("isdelete",'0');
+		String taskprincipal = pmpTask.getPrincipal();
+		if (oConvertUtils.isNotEmpty(taskprincipal)) {
+			String[] result = taskprincipal.split(",");
+			int i = 0;
+			for (String k : result) {
+				if (i == 0) {
+					queryWrapper.like("principal", k);
+				} else {
+					queryWrapper.or().like("principal", k);
+				}
+				i++;
+			}
+		}
 		Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
 		IPage<PmpTask> pageList = pmpTaskService.page(page, queryWrapper);
 		return Result.ok(pageList);
@@ -84,7 +97,7 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
 										 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 										 HttpServletRequest req) {
 		 Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
-		 IPage<PmpTask> pageList = pmpTaskService.myTaskpri(page, username);
+		 IPage<PmpTask> pageList = pmpTaskService.myTaskpri(page, username, pmpTask);
 		 return Result.ok(pageList);
 	 }
 
@@ -104,7 +117,7 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                           HttpServletRequest req) {
          Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
-         IPage<PmpTask> pageList = pmpTaskService.myTaskpar(page, username);
+         IPage<PmpTask> pageList = pmpTaskService.myTaskpar(page, username, pmpTask);
          return Result.ok(pageList);
      }
 
@@ -126,6 +139,14 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
          QueryWrapper<PmpTask> queryWrapper = new QueryWrapper<PmpTask>();
          queryWrapper.ne("parentnode",'0');
          queryWrapper.eq("create_by", username);
+		 if(oConvertUtils.isEmpty(pmpTask.getProjectname())){
+			 pmpTask.setProjectname("");
+		 }
+		 if(oConvertUtils.isEmpty(pmpTask.getTaskname())){
+			 pmpTask.setTaskname("");
+		 }
+		 queryWrapper.like("projectname", pmpTask.getProjectname());
+		 queryWrapper.like("taskname", pmpTask.getTaskname());
 		 queryWrapper.eq("isdelete",'0');
          Page<PmpTask> page = new Page<PmpTask>(pageNo, pageSize);
          IPage<PmpTask> pageList = pmpTaskService.page(page, queryWrapper);

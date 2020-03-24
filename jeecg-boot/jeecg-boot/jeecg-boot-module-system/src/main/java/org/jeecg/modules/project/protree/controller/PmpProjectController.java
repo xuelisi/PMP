@@ -86,6 +86,19 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									HttpServletRequest req) {
 		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
 		 queryWrapper.eq("parentnode","0");
+		 String principal = pmpProject.getPrincipal();
+		 if (oConvertUtils.isNotEmpty(principal)) {
+			 String[] result = principal.split(",");
+			 int i = 0;
+			 for (String k : result) {
+				 if (i == 0) {
+					 queryWrapper.like("principal", k);
+				 } else {
+					 queryWrapper.or().like("principal", k);
+				 }
+				 i++;
+			 }
+		 }
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);
