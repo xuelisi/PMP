@@ -24,6 +24,7 @@
             :headers="headers"
             :beforeUpload="beforeUpload"
             @change="handleChange"
+            :disabled="disableSubmit"
           >
             <img v-if="picUrl" :src="getAvatarView()" alt="头像" style="height:104px;max-width:300px" />
             <div v-else>
@@ -32,11 +33,9 @@
             </div>
           </a-upload>
         </a-form-item>
-        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol" v-if="show">
-          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称"></a-input>
-        </a-form-item>
-        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol" v-else>
-          <a-input v-decorator="[ 'projectname']" placeholder="请输入项目名称" :readOnly="readOnly"></a-input>
+        <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-input v-decorator="[ 'projectname', validatorRules.projectname]" placeholder="请输入项目名称" :disabled="disableSubmit" :read-only="readOnly" v-if="!readOnly"></a-input>
+          <a-input v-decorator="[ 'projectname']" placeholder="请输入项目名称" :disabled="disableSubmit" :read-only="readOnly" v-else></a-input>
         </a-form-item>
         <!--<a-form-item label="项目编码" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="[ 'projectcode', validatorRules.projectcode]" placeholder="请输入项目编码"></a-input>
@@ -57,29 +56,41 @@
                 :trigger-change="true"
                 dictCode="project_type"
                 placeholder="请选择项目类型"
+                :disabled="disableSubmit"
               />
             </a-col>
           </a-row>
         </a-form-item>
-        <a-form-item label="项目内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="项目内容" :labelCol="labelCol" :wrapperCol="wrapperCol" disabled>
           <a-input
             v-decorator="[ 'projectcontent', validatorRules.projectcontent]"
             placeholder="请输入项目内容"
+            :disabled="disableSubmit"
           ></a-input>
         </a-form-item>
         <a-form-item label="负责人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['principal', validatorRules.principal]"
             :trigger-change="true"
-          />
+            :disabled="disableSubmit"
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['principal', validatorRules.principal]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
         <a-form-item label="参与人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-select-user-by-dep
+          <j-select-multi-user
             v-decorator="['participant', validatorRules.participant]"
             :trigger-change="true"
-          />
+            :disabled="disableSubmit"
+          ></j-select-multi-user>
+          <!-- <j-select-user-by-dep
+            v-decorator="['participant', validatorRules.participant]"
+            :trigger-change="true"
+          />-->
         </a-form-item>
-         <a-form-item label="任务进度" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="任务进度" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <!-- <a-input-number v-decorator="[ 'taskschedule', validatorRules.taskschedule]" placeholder="请输入任务进度" style="width: 100%"/> -->
           <a-row>
             <a-col :span="19">
@@ -88,6 +99,7 @@
                 :max="100"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
             <a-col :span="4">
@@ -97,6 +109,7 @@
                 style="marginLeft: 16px"
                 v-decorator="[ 'schedule', validatorRules.schedule]"
                 :trigger-change="true"
+                :disabled="disableSubmit"
               />
             </a-col>
           </a-row>
@@ -118,6 +131,7 @@
               v-decorator="[ 'startdate', validatorRules.startdate]"
               :trigger-change="true"
               style="width: 100%"
+              :disabled="disableSubmit"
             />
           </a-col>
           <a-col :span="1" style="text-align:center">-</a-col>
@@ -127,14 +141,15 @@
               v-decorator="[ 'enddate', validatorRules.enddate]"
               :trigger-change="true"
               style="width: 100%"
+              :disabled="disableSubmit"
             />
           </a-col>
         </a-form-item>
         <a-form-item label="备注" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入备注"></a-input>
+          <a-input v-decorator="[ 'remark', validatorRules.remark]" placeholder="请输入备注" :disabled="disableSubmit"></a-input>
         </a-form-item>
         <a-form-item label="附件" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true"></j-upload>
+          <j-upload v-decorator="['annex', validatorRules.annex]" :trigger-change="true" :disabled="disableSubmit"></j-upload>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -149,7 +164,7 @@ import { validateDuplicateValue, handleStatus } from '@/utils/util'
 import JDate from '@/components/jeecg/JDate'
 import JUpload from '@/components/jeecg/JUpload'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 import JDictSelectTag from '@/components/dict/JDictSelectTag'
 
 export default {
@@ -157,14 +172,14 @@ export default {
   components: {
     JDate,
     JUpload,
-    JSelectUserByDep,
+    JSelectMultiUser,
     JDictSelectTag
   },
   data() {
     return {
       show: true,
-      readOnly: true,
       disableSubmit: false,
+      readOnly: false,
       picUrl: '',
       uploadLoading: false,
       headers: {},
@@ -195,7 +210,7 @@ export default {
         projecttype: { rules: [{ required: true, message: '请输入项目类型!' }] },
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
-        emergencylevel: { rules: [{ required: true, message: '请输入紧急程度!' }] },
+        // emergencylevel: { rules: [{ required: true, message: '请输入紧急程度!' }] },
         startdate: { rules: [{ required: true, message: '请输入起始日期!' }] },
         enddate: { rules: [{ required: true, message: '请输入结束日期!' }] },
         remark: { rules: [] },
@@ -324,7 +339,7 @@ export default {
           'projectcontent',
           'principal',
           'participant',
-           'emergencylevel',
+          'emergencylevel',
           'startdate',
           'enddate',
           'schedule',
@@ -364,7 +379,7 @@ export default {
       if (info.file.status === 'done') {
         var response = info.file.response
         this.uploadLoading = false
-        console.log(response)
+       // console.log(response)
         if (response.success) {
           this.model.photo = response.message
           this.picUrl = 'Has no pic url yet'

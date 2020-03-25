@@ -33,5 +33,19 @@ public class PmpProEchartServiceImpl extends ServiceImpl<PmpProEchartMapper, Pmp
     public List<PmpProject>  getYearCountInfo( String startTime,String endTime, String projecttype){
         return pmpProEchartMapper.getYearCountInfo(startTime,endTime,projecttype);
     }
-
+    public List<PmpProject>  getMonthCountInfo( String startTime,String endTime, String projecttype){
+        return pmpProEchartMapper.getMonthCountInfo(startTime,endTime,projecttype);
+    }
+    public List<PmpProject>  getPerNoCountInfo( String startTime,String endTime, String projecttype){
+        return pmpProEchartMapper.getPerNoCountInfo(startTime,endTime,projecttype);
+    }
+    public List<PmpProject>  getDepCountInfo( String startTime,String endTime, String projecttype){
+        return pmpProEchartMapper.getDepCountInfo(startTime,endTime,projecttype);
+    }
+    public List<PmpProject>  getTaskPieCountInfo( String startTime,String endTime){
+        return pmpProEchartMapper.getTaskPieCountInfo(startTime,endTime);
+    }
+    public List<PmpProject>  getTaskCountInfo( String startTime,String endTime){
+        return pmpProEchartMapper.getTaskCountInfo(startTime,endTime);
+    }
 }

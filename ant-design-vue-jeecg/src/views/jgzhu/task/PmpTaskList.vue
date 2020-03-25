@@ -14,6 +14,14 @@
               <a-input placeholder="请输入任务名称" v-model="queryParam.taskname"></a-input>
             </a-form-item>
           </a-col>
+          <a-col :md="3" :sm="8">
+            <a-form-item>
+              <a-radio-group name="radioGroup" v-model="queryParam.isdelete">
+                <a-radio :value="0">正常</a-radio>
+                <a-radio :value="1">禁用</a-radio>
+              </a-radio-group>
+            </a-form-item>
+          </a-col>
           <a-col :md="6" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -28,6 +36,29 @@
                 <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
               </a>
             </span>
+          </a-col>
+        </a-row>
+        <a-row :gutter="24" v-if="this.toggleSearchStatus">
+          <a-col :md="6" :sm="8">
+            <a-form-item label="负责人">
+              <j-select-multi-user v-model="queryParam.principal"></j-select-multi-user>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
+            <a-form-item label="总进度">
+              <a-input-number
+                placeholder="请输入总进度"
+                :min="0"
+                :max="100"
+                class="inputnum"
+                v-model="queryParam.schedule"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
+            <a-form-item label="任务分类">
+              <j-dict-select-tag v-model="queryParam.projecttype" dictCode="task_type" placeholder="请输入任务分类"/>
+            </a-form-item>
           </a-col>
         </a-row>
       </a-form>
@@ -80,6 +111,14 @@
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
+        <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <template slot="taskname" slot-scope="text,record">
           <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
         </template>
@@ -139,16 +178,19 @@
 <script>
 import { getAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 import PmpTaskdetailsModal from '@views/jgzhu/project/modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
+import { filterObj, isContainPrincipal } from '@/utils/util'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 
 export default {
   name: 'PmpProjectList',
   mixins: [JeecgListMixin],
   components: {
     PmpTaskdetailsModal,
-    PmpCommentModal
+    PmpCommentModal,
+    JSelectMultiUser
   },
   data() {
     return {
@@ -156,6 +198,8 @@ export default {
       projectstatus: [],
       projectisdelete: [],
       principal: [],
+      projectTypeDictOptions: [],
+      taskTypeDictOptions: [],
       // 表头
       columns: [
         {
@@ -185,16 +229,30 @@ export default {
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principal, text)
+            return myFilterMultiDictText(this.principal, text)
           }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' },
+          onFilter: (value, record) => record.schedule.indexOf(value) === 0,
+          sorter: (a, b) => a.schedule - b.schedule,
+          sortDirections: ['descend', 'ascend']
+        },
+        {
+          title: '任务分类',
+          align: 'center',
+          dataIndex: 'projecttype',
+          customRender: text => {
+            return filterDictText(this.projectTypeDictOptions, text) == text
+              ? filterDictText(this.taskTypeDictOptions, text)
+              : filterDictText(this.projectTypeDictOptions, text)
+          },
+          onFilter: (value, record) => record.projecttype.indexOf(value) === 0,
+          sorter: (a, b) => a.projecttype.toUpperCase() > b.projecttype.toUpperCase(),
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '开始日期',
@@ -202,7 +260,18 @@ export default {
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.startdate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '结束日期',
@@ -210,7 +279,18 @@ export default {
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.enddate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         // {
         //   title: '状态',
@@ -245,26 +325,38 @@ export default {
       dictOptions: {}
     }
   },
+  created() {
+    //初始化字典 - 项目状态
+    initDictOptions('project_status').then(res => {
+      if (res.success) {
+        this.projectstatus = res.result
+      }
+    })
+    //初始化字典 - 创建人
+    initDictOptions('sys_user,realname,username').then(res => {
+      if (res.success) {
+        this.principal = res.result
+      }
+    })
+    //初始化字典 - 项目类型
+    initDictOptions('task_type').then(res => {
+      if (res.success) {
+        this.taskTypeDictOptions = res.result
+      }
+    })
+    //初始化字典 - 项目类型
+    initDictOptions('project_type').then(res => {
+      if (res.success) {
+        this.projectTypeDictOptions = res.result
+      }
+    })
+  },
   computed: {
     importExcelUrl: function() {
       return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
     }
   },
   methods: {
-    initDictConfig() {
-      //初始化字典 - 项目状态
-      initDictOptions('sys_user,realname,username').then(res => {
-        if (res.success) {
-          this.principal = res.result
-        }
-      }),
-        //初始化字典 - 项目状态
-        initDictOptions('project_status').then(res => {
-          if (res.success) {
-            this.projectstatus = res.result
-          }
-        })
-    },
     handleComment: function(record) {
       if (record.isdelete == '0') {
         let params = {
@@ -314,4 +406,7 @@ export default {
 </script>
 <style scoped>
 @import '~@assets/less/common.less';
+.inputnum {
+  width: 100%;
+}
 </style>

@@ -5,15 +5,20 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
+            <a-form-item label="项目名称">
+              <a-input placeholder="请输入项目名称" v-model="queryParam.projectname"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="8">
             <a-form-item label="任务名称">
               <a-input placeholder="请输入任务名称" v-model="queryParam.taskname"></a-input>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="8">
+          <!--       <a-col :md="6" :sm="8">
             <a-form-item label="负责人">
-              <a-input placeholder="请输入负责人" v-model="queryParam.principal"></a-input>
+              <j-select-multi-user v-model="queryParam.principal"></j-select-multi-user>
             </a-form-item>
-          </a-col>
+          </a-col>-->
           <a-col :md="6" :sm="8">
             <a-form-item label="是否禁用">
               <a-select placeholder="请选择是否禁用" v-model="queryParam.isdelete" allowClear>
@@ -51,13 +56,13 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="起始日期">
-              <j-date placeholder="请选择起始日期" class="inputnum" v-model="queryParam.startdate"></j-date>
+            <a-form-item label="项目状态">
+              <j-dict-select-tag v-model="queryParam.status" dictCode="project_status" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="结束日期">
-              <j-date placeholder="请选择结束日期" class="inputnum" v-model="queryParam.enddate"></j-date>
+            <a-form-item label="项目分类">
+              <j-dict-select-tag v-model="queryParam.projecttype" dictCode="project_type" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -127,14 +132,14 @@
         :pagination="ipagination"
         :loading="loading"
         :expandedRowKeys="expandedRowKeys"
-        :scroll="{ x: '150%'}"
+        :scroll="{ x: '220%',y: 500}"
         @change="handleTableChange"
         @expand="handleExpand"
         v-bind="tableProps"
       >
-        <template slot="projectname" slot-scope="text,record">
+        <!--    <template slot="projectname" slot-scope="text,record">
           <a href="javascript:;" @click="handleEditTaskDetail(record)">{{text}}</a>
-        </template>
+        </template>-->
         <template slot="photo" slot-scope="text">
           <span v-if="!text" style="font-size: 12px;font-style: italic;">无此图片</span>
           <img
@@ -156,6 +161,14 @@
             @click="uploadFile(text)"
           >下载</a-button>
         </template>
+        <!-- 内容 -->
+        <template slot="htmlSlot" slot-scope="text">
+          <j-ellipsis :value="text" :length="8" />
+        </template>
+        <!-- 备注 -->
+        <template slot="htmlremark" slot-scope="text">
+          <j-ellipsis :value="text" :length="8" />
+        </template>
         <!-- 总进度 -->
         <span slot="schedule" slot-scope="text,record">
           <a-progress
@@ -164,22 +177,24 @@
             :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
           />
         </span>
-        <!-- 项目状态 -->
-      <!--   <span slot="status" slot-scope="text">
-          <a-tag :color="text==1 ? 'volcano' : 'green'">{{text}}</a-tag>
-        </span> -->
         <!-- 是否删除 -->
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
-          <!-- <a-divider type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-            <a>删除</a>
-          </a-popconfirm>-->
         </span>
       </a-table>
+    </div>
+    <div style="text-align:center">
+      <span>正常完成</span>
+      <a-rate :value="1" :count="1" style="color:#52c41a" />
+      <span>延期完成</span>
+      <a-rate :value="1" :count="1" style="color:orange" />
+      <span>正常进行中</span>
+      <a-rate :value="1" :count="1" style="color:#1890ff" />
+      <span>延期进行中</span>
+      <a-rate :value="1" :count="1" style="color:#FFD700" />
     </div>
 
     <!--    <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
@@ -197,8 +212,9 @@ import { initDictOptions, filterDictText, filterMultiDictText } from '@/componen
 import JSuperQuery from '@/components/jeecg/JSuperQuery.vue'
 import JInput from '@/components/jeecg/JInput.vue'
 import Vue from 'vue'
+import JEllipsis from '@/components/jeecg/JEllipsis'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 import { filterObj } from '@/utils/util'
-
 export default {
   name: 'SysCategoryList',
   mixins: [JeecgListMixin],
@@ -207,6 +223,8 @@ export default {
     JDate,
     //PmpTaskdetailsModal,
     JSuperQuery,
+    JSelectMultiUser,
+    JEllipsis,
     JInput
   },
   data() {
@@ -221,7 +239,7 @@ export default {
       participant: [],
       createBys: [],
       updateBy: [],
-      sysOrgCode: [],
+      sysOrgCodes: [],
       projectstatus: [],
       //表头
       columns: [],
@@ -238,7 +256,7 @@ export default {
         },
         {
           title: '任务名称',
-          align: 'left',
+          align: 'center',
           dataIndex: 'taskname',
           width: 300
         },
@@ -282,7 +300,7 @@ export default {
         },
         {
           title: '项目分类',
-          align: 'left',
+          align: 'center',
           width: 150,
           dataIndex: 'projecttype',
           customRender: text => {
@@ -329,11 +347,12 @@ export default {
           title: '备注',
           align: 'center',
           width: 200,
-          dataIndex: 'remark'
+          dataIndex: 'remark',
+          scopedSlots: { customRender: 'htmlremark' }
         },
         {
           title: '创建人',
-          align: 'left',
+          align: 'center',
           width: 100,
           dataIndex: 'createBy',
           customRender: text => {
@@ -343,7 +362,7 @@ export default {
         },
         {
           title: '创建日期',
-          align: 'left',
+          align: 'center',
           width: 150,
           dataIndex: 'createTime',
           customRender: function(text) {
@@ -352,7 +371,7 @@ export default {
         },
         {
           title: '更新人',
-          align: 'left',
+          align: 'center',
           width: 100,
           dataIndex: 'updateBy',
           customRender: text => {
@@ -362,7 +381,7 @@ export default {
         },
         {
           title: '更新日期',
-          align: 'left',
+          align: 'center',
           width: 150,
           dataIndex: 'updateTime',
           customRender: function(text) {
@@ -371,7 +390,7 @@ export default {
         },
         {
           title: '所属部门',
-          align: 'left',
+          align: 'center',
           width: 200,
           dataIndex: 'sysOrgCode',
           customRender: text => {
@@ -381,7 +400,7 @@ export default {
         },
         {
           title: '头像',
-          align: 'left',
+          align: 'center',
           width: 100,
           dataIndex: 'photo',
           scopedSlots: { customRender: 'photo' }
@@ -389,9 +408,10 @@ export default {
 
         {
           title: '内容',
-          align: 'left',
-          width: 200,
-          dataIndex: 'projectcontent'
+          align: 'center',
+          width: 230,
+          dataIndex: 'projectcontent',
+          scopedSlots: { customRender: 'htmlSlot' }
         },
 
         /*         {
@@ -451,6 +471,16 @@ export default {
     }
   },
   methods: {
+    //剔除html标签
+    rmHtmlLabel(str) {
+      return str.replace(/<[^>]+>/g, '')
+    },
+    //文本限长
+    subText(str) {
+      let len = 8
+      if (str.length > len) return str.substring(0, len) + '...'
+      else return str
+    },
     //列设置更改事件
     onColSettingsChange(checkedValues) {
       var key = this.$route.name + ':colsettings'
@@ -602,7 +632,6 @@ export default {
     initColumns() {
       //权限过滤（列权限控制时打开，修改第二个参数为授权码前缀）
       //this.defColumns = colAuthFilter(this.defColumns,'testdemo:');
-
       var key = this.$route.name + ':colsettings'
       let colSettings = Vue.ls.get(key)
       if (colSettings == null || colSettings == undefined) {
@@ -653,7 +682,7 @@ export default {
       //初始化字典 - 所属部门
       initDictOptions('sys_depart,depart_name,org_code').then(res => {
         if (res.success) {
-          this.sysOrgCode = res.result
+          this.sysOrgCodes = res.result
         }
       }),
       //初始化字典 - 紧急程度

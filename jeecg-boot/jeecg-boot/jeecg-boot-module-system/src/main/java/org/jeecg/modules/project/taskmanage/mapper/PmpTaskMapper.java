@@ -15,8 +15,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface PmpTaskMapper extends BaseMapper<PmpTask> {
     //调用存储过程
-    Page<PmpTask> myTaskpri(Page<PmpTask> page, @Param("principal") String principal);
+    Page<PmpTask> myTaskpri(Page<PmpTask> page, @Param("principal") String principal, @Param("projectname") String projectname, @Param("taskname") String taskname);
 
     //调用存储过程
-    Page<PmpTask> myTaskpar(Page<PmpTask> page, @Param("principal") String principal);
+    Page<PmpTask> myTaskpar(Page<PmpTask> page, @Param("principal") String principal, @Param("projectname") String projectname, @Param("taskname") String taskname);
 }

@@ -39,3 +39,4 @@ public class PmpTaskSummary implements Serializable {
 		this.taskId = taskid;
 	}
 }
+

@@ -13,6 +13,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.project.protree.entity.PmpProject;
+import org.jeecg.modules.project.protree.entity.PmpProjectTreeModel;
 import org.jeecg.modules.project.protree.service.IPmpProjectService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -47,6 +48,29 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 private IPmpProjectService pmpProjectService;
 
 	 /**
+	  * 查询数据 查出所有部门,并以树结构数据格式响应给前端
+	  *
+	  * @return
+	  */
+	 @RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
+	 public Result<List<PmpProjectTreeModel>> queryTreeList() {
+		 Result<List<PmpProjectTreeModel>> result = new Result<>();
+		 try {
+			 // 从内存中读取
+//			List<SysDepartTreeModel> list =FindsDepartsChildrenUtil.getSysDepartTreeList();
+//			if (CollectionUtils.isEmpty(list)) {
+//				list = sysDepartService.queryTreeList();
+//			}
+			 List<PmpProjectTreeModel> list = pmpProjectService.queryTreeList();
+			 result.setResult(list);
+			 result.setSuccess(true);
+		 } catch (Exception e) {
+			 log.error(e.getMessage(),e);
+		 }
+		 return result;
+	 }
+
+	 /**
 	  * 分页列表查询
 	  *
 	  * @param pmpProject
@@ -62,6 +86,19 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									HttpServletRequest req) {
 		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
 		 queryWrapper.eq("parentnode","0");
+		 String principal = pmpProject.getPrincipal();
+		 if (oConvertUtils.isNotEmpty(principal)) {
+			 String[] result = principal.split(",");
+			 int i = 0;
+			 for (String k : result) {
+				 if (i == 0) {
+					 queryWrapper.like("principal", k);
+				 } else {
+					 queryWrapper.or().like("principal", k);
+				 }
+				 i++;
+			 }
+		 }
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);
@@ -82,8 +119,8 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									HttpServletRequest req) {
-		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
-		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username);
+	     Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
+		 IPage<PmpProject> pageList = pmpProjectService.myProject(page, username, pmpProject);
 		 return Result.ok(pageList);
 	 }
 
@@ -103,7 +140,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 										 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 										 HttpServletRequest req) {
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
-		 IPage<PmpProject> pageList = pmpProjectService.myProjectpar(page, username);
+		 IPage<PmpProject> pageList = pmpProjectService.myProjectpar(page, username, pmpProject);
 		 return Result.ok(pageList);
 	 }
 
@@ -125,6 +162,14 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
 		 queryWrapper.eq("parentnode",'0');
 		 queryWrapper.eq("create_by", username);
+		 if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+			 pmpProject.setIsdelete("0");
+		 }
+		 if(oConvertUtils.isEmpty(pmpProject.getProjectname())){
+			 pmpProject.setProjectname("");
+		 }
+		 queryWrapper.eq("isdelete",pmpProject.getIsdelete());
+		 queryWrapper.like("projectname",pmpProject.getProjectname());
 		 Page<PmpProject> page = new Page<PmpProject>(pageNo, pageSize);
 		 IPage<PmpProject> pageList = pmpProjectService.page(page, queryWrapper);
 		 return Result.ok(pageList);

@@ -15,11 +15,6 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="项目类型">
-              <j-dict-select-tag v-model="projecttype" dictCode="project_type" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" icon="search" @click="queryDatepie">查询</a-button>
               <a-button
@@ -36,20 +31,12 @@
     <a-tabs defaultActiveKey="1" @change="callback">
       <a-tab-pane tab="柱状图" key="1">
         <a-row :gutter="24">
-          <a-col :span="10">
-            <a-radio-group :value="barType" @change="statisticst">
-              <a-radio-button value="year">按年统计</a-radio-button>
-              <a-radio-button value="month">按月统计</a-radio-button>
-              <a-radio-button value="category">按人员统计</a-radio-button>
-              <a-radio-button value="cabinet">按部门统计</a-radio-button>
-            </a-radio-group>
-          </a-col>
            <bar-multid class="statistic" title="多列柱状图" :height="400" :data="countSource" />
         </a-row>
       </a-tab-pane>
       <a-tab-pane tab="饼状图" key="2">
         <a-row :gutter="24">
-          <pie class="statistic" title="项目图表" :dataSource="countSource" :height="450" />
+          <pie class="statistic" title="任务图表" :dataSource="countSource" :height="450" />
         </a-row>
       </a-tab-pane>
     </a-tabs>
@@ -62,7 +49,7 @@ import Pie from '@/components/chart/Pie'
 import ACol from 'ant-design-vue/es/grid/Col'
 import JDate from '@/components/jeecg/JDate.vue'
 import { getAction } from '@/api/manage'
-import BarMultid from './BarMultid'
+import BarMultid from './TaskBarMultid'
 
 export default {
   name: 'PmpViewEcharts',
@@ -75,35 +62,27 @@ export default {
   },
   data() {
     return {
-      description: '档案统计页面',
+      description: '任务统计报表页面',
       // 查询条件
       queryParam: {},
       // 数据集
       countSource: [],
-      //项目类型
-      projecttype: '',
-      // 柱状图
-      barType: 'year',
-
       startTime: '',
       endTime: '',
       // 统计图类型
       tabStatus: 'bar',
       url: {
-        getPieCountInfo: '/proecharts/pmpProjectEchart/getPieCountInfo',
-        getYearCountInfo: '/proecharts/pmpProjectEchart/getYearCountInfo',
-        getMonthCountInfo: '/proecharts/pmpProjectEchart/getMonthCountInfo',
-        getPerCountInfo: '/proecharts/pmpProjectEchart/getPerNoCountInfo',
-        getDepCountInfo: '/proecharts/pmpProjectEchart/getDepCountInfo'
+        getPieCountInfo: '/proecharts/pmpProjectEchart/getTaskPieCountInfo',
+        getTaskCountInfo: '/proecharts/pmpProjectEchart/getTaskCountInfo',
       }
     }
   },
   created() {
-    let url = this.url.getYearCountInfo
-    this.loadData(url, 'year', {})
+    let url = this.url.getTaskCountInfo
+    this.loadData(url, {})
   },
   methods: {
-    loadData(url, type, param) {
+    loadData(url,param) {
       getAction(url, param).then(res => {
         if (res.success) {
           this.countSource = []
@@ -136,50 +115,31 @@ export default {
       }
       this.queryDatepie()
     },
-    // 选择统计类别
-    statisticst(e) {
-      this.barType = e.target.value
-      this.queryDatepie()
-    },
     //查询
     queryDatepie() {
-      this.getUrl(this.barType, {
+      this.getUrl( {
         startTime: this.startTime,
-        endTime: this.endTime,
-        projecttype: this.projecttype
+        endTime: this.endTime
       })
     },
     //重置
     searchReset() {
       this.startTime = ''
       this.endTime = ''
-      this.projecttype = ''
-      this.getUrl(this.barType, {
+      this.getUrl({
         startTime: this.startTime,
-        endTime: this.endTime,
-        projecttype: this.projecttype
+        endTime: this.endTime
       })
     },
     // 选择请求url
-    getUrl(type, param) {
+    getUrl(param) {
       let url = ''
       if (this.tabStatus === 'pie') {
         url = this.url.getPieCountInfo
       } else {
-        if (type === 'year') {
-          url = this.url.getYearCountInfo
-        }
-        if (type === 'month') {
-          url = this.url.getMonthCountInfo
-        }
-        if (type === 'category') {
-          url = this.url.getPerCountInfo
-        }
-        if (type === 'cabinet') {
-          url = this.url.getDepCountInfo
-        }
+        url = this.url.getTaskCountInfo
       }
-      this.loadData(url, type, param)
+      this.loadData(url, param)
     }
   }
 }

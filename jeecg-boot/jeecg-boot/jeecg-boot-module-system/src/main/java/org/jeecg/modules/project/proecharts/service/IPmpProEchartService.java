@@ -17,4 +17,11 @@ public interface IPmpProEchartService extends IService<PmpProject> {
 
     public List<PmpProject> getPieCountInfo(String startTime, String endTime, String projecttype);
     public List<PmpProject>  getYearCountInfo(String startTime, String endTime, String projecttype);
+    public List<PmpProject>  getMonthCountInfo(String startTime, String endTime, String projecttype);
+    public List<PmpProject>  getPerNoCountInfo(String startTime, String endTime, String projecttype);
+    public List<PmpProject>  getDepCountInfo(String startTime, String endTime, String projecttype);
+
+    public List<PmpProject>  getTaskPieCountInfo(String startTime, String endTim);
+    public List<PmpProject>  getTaskCountInfo(String startTime, String endTime);
+
 }

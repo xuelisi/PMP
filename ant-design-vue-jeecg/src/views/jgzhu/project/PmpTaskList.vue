@@ -41,14 +41,27 @@
         @expand="handleExpand"
         v-bind="tableProps"
       >
+        <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <template slot="taskname" slot-scope="text,record">
-          <a href="javascript:;" @click="myHandleDetailEdit(record)">{{text}}</a>
+          <a
+            href="javascript:;"
+            @click="myHandleDetailEdit(record)"
+            v-if="record.parentnode!='0'"
+          >{{text}}</a>
+          <span v-else>{{text}}</span>
         </template>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="myHandleTaskEdit(record)">编辑</a>
+          <a @click="myHandleTaskEdit(record)">节点编辑</a>
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">
@@ -62,6 +75,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="handleComment(record)">评论</a>
               </a-menu-item>
+              <!-- <a-menu-item>
+                <a href="javascript:;" @click="handleRemind(record)">催办</a>
+              </a-menu-item>-->
               <a-menu-item>
                 <a-popconfirm
                   v-if="record.isdelete==0"
@@ -80,8 +96,9 @@
       </a-table>
     </div>
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
-    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk1"></pmpTaskdetails-modal>
+    <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
+    <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
 
@@ -92,9 +109,10 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
+import TaskRemindModal from './modules/TaskRemindModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'SysCategoryList',
@@ -102,11 +120,15 @@ export default {
   components: {
     PmpTaskListModal,
     PmpTaskdetailsModal,
-    PmpCommentModal
+    PmpCommentModal,
+    TaskRemindModal
   },
   data() {
     return {
-      principalDictOptions: [],
+      //字典数组缓存-负责人
+      principal: [],
+      projectTypeDictOptions: [],
+      taskTypeDictOptions: [],
       description: '任务管理页面',
       // 表头
       columns: [
@@ -120,17 +142,25 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
-          // customRender: text => {
-          //   //字典值替换通用方法
-          //   return filterMultiDictText(this.principalDictOptions, text)
-          // }
+          customRender: text => {
+            //字典值替换通用方法
+            return myFilterMultiDictText(this.principal, text)
+          }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
+          scopedSlots: { customRender: 'schedule' }
+        },
+        {
+          title: '任务分类',
+          align: 'center',
+          dataIndex: 'projecttype',
+          customRender: text => {
+            return filterDictText(this.projectTypeDictOptions, text) == text
+              ? filterDictText(this.taskTypeDictOptions, text)
+              : filterDictText(this.projectTypeDictOptions, text)
           }
         },
         {
@@ -180,6 +210,24 @@ export default {
     }
   },
   created() {
+    //初始化字典 - 创建人
+    initDictOptions('sys_user,realname,username').then(res => {
+      if (res.success) {
+        this.principal = res.result
+      }
+    })
+    //初始化字典 - 项目类型
+    initDictOptions('task_type').then(res => {
+      if (res.success) {
+        this.taskTypeDictOptions = res.result
+      }
+    })
+    //初始化字典 - 项目类型
+    initDictOptions('project_type').then(res => {
+      if (res.success) {
+        this.projectTypeDictOptions = res.result
+      }
+    })
   },
   computed: {
     importExcelUrl() {
@@ -197,15 +245,6 @@ export default {
     }
   },
   methods: {
-    initDictConfig() {
-      //初始化字典 - 项目状态
-      initDictOptions('sys_user,realname,username').then(res => {
-        debugger
-        if (res.success) {
-          this.principalDictOptions = res.result
-        }
-      })
-    },
     openNotification(title, des) {
       this.$notification.open({
         message: title,
@@ -232,6 +271,25 @@ export default {
         this.openNotification('提示', '已禁用,无法评论！')
       }
     },
+    // handleRemind: function(record) {
+    //   if (record.isdelete == '0') {
+    //     let params = {
+    //       id: record.id,
+    //       principal: this.username
+    //     }
+    //     getAction(this.url.isSuperior, params).then(res => {
+    //       if (res.success) {
+    //         this.$refs.modalForm3.showModal(record)
+    //         // callback()
+    //       } else {
+    //         this.openNotification('提示', '权限不够哦,无法催办！')
+    //         // callback(res.message)
+    //       }
+    //     })
+    //   } else {
+    //     this.openNotification('提示', '已禁用,无法评论！')
+    //   }
+    // },
     handleDetail1: function(record) {
       this.$refs.modalForm1.edit(record)
       this.$refs.modalForm1.title = '详情'
@@ -341,14 +399,6 @@ export default {
         this.dataSource = [...this.dataSource]
       }
     },
-    modalFormOk1(formData, arr) {
-      if (!formData.id) {
-        this.addOk(formData, arr)
-      } else {
-        this.editOk(formData, this.dataSource)
-        this.dataSource = [...this.dataSource]
-      }
-    },
     editOk(formData, arr) {
       if (arr && arr.length > 0) {
         for (let i = 0; i < arr.length; i++) {
@@ -363,10 +413,10 @@ export default {
     },
     async addOk(formData, arr) {
       if (!formData[this.pidField]) {
-        this.loadData()
+        this.loadData(1)
       } else {
         this.expandedRowKeys = []
-        console.log('22222', arr)
+        //  console.log('22222', arr)
         for (let i of arr) {
           await this.expandTreeNode(i)
         }
@@ -380,7 +430,7 @@ export default {
         let params = this.getQueryParams() //查询条件
         params[this.pidField] = nodeId
         getAction(this.url.childList, params).then(res => {
-          //console.log('11111', res)
+          console.log('11111', res)
           if (res.success) {
             if (res.result && res.result.length > 0) {
               row.children = this.getDataByResult(res.result)

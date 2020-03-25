@@ -7,12 +7,12 @@
           <a-col :md="6" :sm="8">
             <a-dropdown>
               <a-menu slot="overlay" @click="handleMenuClick">
-                <a-menu-item key="1">负责的项目</a-menu-item>
+                <a-menu-item key="1" default>负责的项目</a-menu-item>
                 <a-menu-item key="2">参与的项目</a-menu-item>
                 <a-menu-item key="3">创建的项目</a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
-                项目分类
+                {{proStatusVal}}
                 <a-icon type="down" />
               </a-button>
             </a-dropdown>
@@ -20,6 +20,14 @@
           <a-col :md="6" :sm="8">
             <a-form-item label="项目名称">
               <a-input placeholder="请输入项目名称" v-model="queryParam.projectname"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :md="3" :sm="8">
+            <a-form-item>
+              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
+                <a-radio :value="0">正常</a-radio>
+                <a-radio :value="1">禁用</a-radio>
+              </a-radio-group>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -97,6 +105,50 @@
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
+        <div
+          slot="filterDropdown"
+          slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+          style="padding: 8px"
+        >
+          <a-input
+            v-ant-ref="c => searchInput = c"
+            :placeholder="`Search ${column.text}`"
+            :value="selectedKeys[0]"
+            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+            @pressEnter="() => handleSearch(selectedKeys, confirm)"
+            style="width: 188px; margin-bottom: 8px; display: block;"
+          />
+          <a-button
+            type="primary"
+            @click="() => handleSearch(selectedKeys, confirm)"
+            icon="search"
+            size="small"
+            style="width: 90px; margin-right: 8px"
+          >查询</a-button>
+          <a-button @click="() => handleReset(clearFilters)" size="small" style="width: 90px">重置</a-button>
+        </div>
+        <a-icon
+          slot="filterIcon"
+          slot-scope="filtered"
+          type="search"
+          :style="{ color: filtered ? '#108ee9' : undefined }"
+        />
+        <template slot="customRender" slot-scope="text">
+          <span v-if="searchText">
+            <template
+              v-for="(fragment, i) in text.toString().split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+            >
+              <mark
+                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                :key="i"
+                class="highlight"
+              >{{fragment}}</mark>
+              <template v-else>{{fragment}}</template>
+            </template>
+          </span>
+          <template v-else>{{text}}</template>
+        </template>
+
         <template slot="projectname" slot-scope="text,index">
           <a href="javascript:;" @click="redictHref(index)">{{text}}</a>
         </template>
@@ -124,6 +176,14 @@
             @click="uploadFile(text)"
           >下载</a-button>
         </template>
+        <!-- 总进度 -->
+        <span slot="schedule" slot-scope="text,record">
+          <a-progress
+            :percent="text"
+            size="small"
+            :strokeColor="record.isdelete==1 ? 'red':record.status==2 ? 'orange':record.status==4 ? '#FFD700':'' "
+          />
+        </span>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
@@ -164,9 +224,10 @@
 
 <script>
 import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
+import { filterObj, isContainPrincipal } from '@/utils/util'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import PmpProjectManageModal from './modules/PmpProjectManageModal'
-import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
+import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 export default {
   name: 'PmpProjectManageList',
@@ -176,9 +237,12 @@ export default {
   },
   data() {
     return {
+      proStatusVal: '负责的项目',
       description: '项目主表管理页面',
       projectTypeDictOptions: [],
       principalDictOptions: [],
+      searchText: '',
+      searchInput: null,
       // 表头
       columns: [
         {
@@ -191,34 +255,75 @@ export default {
             return parseInt(index) + 1
           }
         },
-        {
-          title: '头像',
-          align: 'center',
-          dataIndex: 'photo',
-          scopedSlots: { customRender: 'photo' }
-        },
+        // {
+        //   title: '头像',
+        //   align: 'center',
+        //   dataIndex: 'photo',
+        //   scopedSlots: { customRender: 'photo' }
+        // },
         {
           title: '项目名称',
+          text: '项目名',
           align: 'center',
           dataIndex: 'projectname',
-          scopedSlots: { customRender: 'projectname' }
+          key: 'projectname',
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender',
+            customRender: 'projectname'
+          },
+          onFilter: (value, record) =>
+            record.projectname
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              }, 0)
+            }
+          }
+
+          /* scopedSlots: { customRender: 'projectname' } */
         },
         {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
+          text: '账号',
+          key: 'principal',
           customRender: text => {
             //字典值替换通用方法
-            return filterMultiDictText(this.principalDictOptions, text)
+            return myFilterMultiDictText(this.principalDictOptions, text)
+          },
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'customRender'
+          },
+          onFilter: (value, record) =>
+            record.principal
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              })
+            }
           }
         },
         {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
-          customRender: function(text) {
-            return text + '%'
-          }
+          scopedSlots: { customRender: 'schedule' },
+          onFilter: (value, record) => record.schedule.indexOf(value) === 0,
+          sorter: (a, b) => a.schedule - b.schedule,
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '项目分类',
@@ -227,7 +332,10 @@ export default {
           customRender: text => {
             //字典值替换通用方法
             return filterDictText(this.projectTypeDictOptions, text)
-          }
+          },
+          onFilter: (value, record) => record.projecttype.indexOf(value) === 0,
+          sorter: (a, b) => a.projecttype.toUpperCase() > b.projecttype.toUpperCase(),
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '起始日期',
@@ -235,7 +343,18 @@ export default {
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.startdate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '结束日期',
@@ -243,7 +362,18 @@ export default {
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
-          }
+          },
+          onFilter: (value, record) => record.enddate.indexOf(value) === 0,
+          sorter: (a, b) => {
+            let aTimeString = a.startdate
+            let bTimeString = b.startdate
+            aTimeString = aTimeString.replace(/-/g, '/')
+            bTimeString = bTimeString.replace(/-/g, '/')
+            let aTime = new Date(aTimeString).getTime()
+            let bTime = new Date(bTimeString).getTime()
+            return aTime - bTime
+          },
+          sortDirections: ['descend', 'ascend']
         },
         {
           title: '是否禁用',
@@ -278,13 +408,52 @@ export default {
     }
   },
   methods: {
-    handleMenuClick(e) {
-      debugger
-      if (e.key == '2') {
+    handleSearch(selectedKeys, confirm) {
+      confirm()
+      this.searchText = selectedKeys[0]
+    },
+    handleReset(clearFilters) {
+      clearFilters()
+      this.searchText = ''
+    },
+    modalFormOk() {
+      // 新增/修改 成功时，重载列表
+      this.searchQuery()
+    },
+    searchQuery() {
+      if (this.proStatusVal == '参与的项目') {
         this.loadData(1, this.url.list1)
-      } else if (e.key == '3') {
+      } else if (this.proStatusVal == '创建的项目') {
         this.loadData(1, this.url.list2)
       } else {
+        this.loadData(1, this.url.list)
+      }
+    },
+    handleTableChange(pagination, filters, sorter) {
+      //分页、排序、筛选变化时触发
+      //TODO 筛选
+      if (Object.keys(sorter).length > 0) {
+        this.isorter.column = sorter.field
+        this.isorter.order = 'ascend' == sorter.order ? 'asc' : 'desc'
+      }
+      this.ipagination = pagination
+      if (this.proStatusVal == '参与的项目') {
+        this.loadData(0, this.url.list1)
+      } else if (this.proStatusVal == '创建的项目') {
+        this.loadData(0, this.url.list2)
+      } else {
+        this.loadData(0, this.url.list)
+      }
+    },
+    handleMenuClick(e) {
+      if (e.key == '2') {
+        this.proStatusVal = '参与的项目'
+        this.loadData(1, this.url.list1)
+      } else if (e.key == '3') {
+        this.proStatusVal = '创建的项目'
+        this.loadData(1, this.url.list2)
+      } else {
+        this.proStatusVal = '负责的项目'
         this.loadData(1, this.url.list)
       }
     },
@@ -302,7 +471,7 @@ export default {
           }
         })
     },
-    loadData(arg, url = this.url.list) {
+    loadData(arg = 1, url = this.url.list) {
       if (!url) {
         this.$message.error('请设置url.list属性!')
         return
@@ -311,12 +480,7 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      let params = {
-        field: this.getQueryField(),
-        username: this.username,
-        pageNo: this.ipagination.current,
-        pageSize: this.ipagination.pageSize
-      }
+      var params = this.getQueryParams() //查询条件
       this.loading = true
       getAction(url, params).then(res => {
         if (res.success) {
@@ -328,6 +492,29 @@ export default {
         }
         this.loading = false
       })
+    },
+    getQueryParams() {
+      //获取查询条件
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+      }
+      let params = {
+        username: this.username
+      }
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters, params)
+      param.field = this.getQueryField()
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      return filterObj(param)
+    },
+    getQueryField() {
+      //TODO 字段权限控制
+      var str = 'id,'
+      this.columns.forEach(function(value) {
+        str += ',' + value.dataIndex
+      })
+      return str
     },
     openNotification(title, des) {
       this.$notification.open({
@@ -348,4 +535,8 @@ export default {
 </script>
 <style scoped>
 @import '~@assets/less/common.less';
+.highlight {
+  background-color: rgb(255, 192, 105);
+  padding: 0px;
+}
 </style>

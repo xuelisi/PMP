@@ -46,6 +46,32 @@ export function filterDictText(dictOptions, text) {
  * @param text  字典值
  * @return String
  */
+export function myFilterMultiDictText(dictOptions, text) {
+  if (!text || !dictOptions || dictOptions.length == 0) {
+    return ""
+  }
+  let re = "";
+  let arr = text.split(",")
+  for(let i=0;i<arr.length;i++){
+    dictOptions.forEach(function (option) {
+      if (arr[i] === option.value) {
+        re += option.text + ",";
+      }
+    });
+  }
+  if (re == "") {
+    return text;
+  }
+  return re.substring(0, re.length - 1);
+}
+
+
+/**
+ * 字典值替换文本通用方法(多选)
+ * @param dictOptions  字典数组
+ * @param text  字典值
+ * @return String
+ */
 export function filterMultiDictText(dictOptions, text) {
   if(!text || !dictOptions || dictOptions.length==0){
     return ""

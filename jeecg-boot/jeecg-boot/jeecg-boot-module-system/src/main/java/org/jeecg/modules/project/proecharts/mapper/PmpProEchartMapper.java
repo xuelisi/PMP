@@ -15,5 +15,16 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface PmpProEchartMapper extends BaseMapper<PmpProject> {
 
     public List<PmpProject>  getPieCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("projecttype") String projecttype);
+
     public List<PmpProject>  getYearCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("projecttype") String projecttype);
+
+    public List<PmpProject>  getMonthCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("projecttype") String projecttype);
+
+    public List<PmpProject>  getPerNoCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("projecttype") String projecttype);
+
+    public List<PmpProject>  getDepCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("projecttype") String projecttype);
+
+    public List<PmpProject>  getTaskCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
+    public List<PmpProject>  getTaskPieCountInfo(@Param("startTime") String startTime, @Param("endTime") String endTime);
 }
