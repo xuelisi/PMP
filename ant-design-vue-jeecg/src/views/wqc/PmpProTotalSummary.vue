@@ -16,10 +16,10 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="8" >
-        <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-          <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-          <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-        </span>
+              <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              </span>
             </a-col>
 
           </a-row>
@@ -29,24 +29,33 @@
 
       <div>
         <a-table
-            ref="table"
-            size="middle"
-            bordered
-            :columns="columns"
-            :dataSource="dataSource"
-            :pagination="ipagination"
-            :loading="loading"
-            @change="handleTableChange">
+          bordered
+          ref="table"
+          size="middle"
+          :loading="loading"
+          :columns="columns"
+          :dataSource="dataSource"
+          :pagination="ipagination"
+          @change="handleTableChange">
 
-            <template slot="checkSlot" slot-scope="text">
-              <div slot="actions">
-                <a-icon v-if="0 != text" type="check-circle" />
-              </div>
-            </template>
+          <template
+            slot="summaryStateSlot"
+            slot-scope="text, record">
 
-          </a-table>
+            <a slot="actions" @click="summaryDetails(text, record)">
+              <a-icon v-if="null != text" type="check-circle" />
+            </a>
+
+          </template>
+
+        </a-table>
       </div>
 
+      <div class="footer-tip">
+        <span>说明：<a-icon type="check-circle" />有日报</span>
+      </div>
+
+      <pmpProTotalSummary-modal ref="modalForm" @ok="modalFormOk"></pmpProTotalSummary-modal>
     </a-card>
 </template>
 
@@ -55,9 +64,9 @@
   import moment from 'moment';
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
-  import PmpSummaryTimelineModal from '@views/wqc/modules/PmpSummaryTimelineModal'
+  import PmpProTotalSummaryModal from './modules/PmpProTotalSummaryModal'
 
-  const tableHeaders = [
+  const allCols = [
     {
       title:'用户名',
       align:"center",
@@ -67,204 +76,205 @@
       title:'01',
       align:"center",
       dataIndex: 'first',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'},
     },
     {
       title:'02',
       align:"center",
       dataIndex: 'second',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'03',
       align:"center",
       dataIndex: 'third',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'04',
       align:"center",
       dataIndex: 'fourth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'05',
       align:"center",
       dataIndex: 'fifth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'06',
       align:"center",
       dataIndex: 'sixth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'07',
       align:"center",
       dataIndex: 'seventh',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'08',
       align:"center",
       dataIndex: 'eighth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'09',
       align:"center",
       dataIndex: 'ninth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'10',
       align:"center",
       dataIndex: 'tenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'11',
       align:"center",
       dataIndex: 'eleventh',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'12',
       align:"center",
       dataIndex: 'twelfth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'13',
       align:"center",
       dataIndex: 'thirteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'14',
       align:"center",
       dataIndex: 'fourteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'15',
       align:"center",
       dataIndex: 'fifteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'16',
       align:"center",
       dataIndex: 'sixteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'17',
       align:"center",
       dataIndex: 'seventeenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'18',
       align:"center",
       dataIndex: 'eighteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'19',
       align:"center",
       dataIndex: 'nineteenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'20',
       align:"center",
       dataIndex: 'twentieth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'},
     },
     {
       title:'21',
       align:"center",
       dataIndex: 'twentyFirst',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'22',
       align:"center",
       dataIndex: 'twentySecond',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'23',
       align:"center",
       dataIndex: 'twentyThird',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'24',
       align:"center",
       dataIndex: 'twentyFourth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'25',
       align:"center",
       dataIndex: 'twentyFifth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'26',
       align:"center",
       dataIndex: 'twentySixth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'27',
       align:"center",
       dataIndex: 'twentySeventh',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'28',
       align:"center",
       dataIndex: 'twentyEighth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'29',
       align:"center",
       dataIndex: 'twentyNinth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'30',
       align:"center",
       dataIndex: 'twentyTenth',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     },
     {
       title:'31',
       align:"center",
       dataIndex: 'thirtyFirst',
-      scopedSlots: {customRender: 'checkSlot'}
+      scopedSlots: {customRender: 'summaryStateSlot'}
     }
   ]
 
   export default {
     mixins:[JeecgListMixin],
     components: {
-      PmpSummaryTimelineModal
+      PmpProTotalSummaryModal
     },
     data() {
       return {
-        columns: tableHeaders,
+        columns: [],
+        allCols: allCols,
         monthFormat: 'YYYY-MM',
-        monthValue: '',
+        monthValue: moment(this.date),
         url: {
           add: "/summary/pmpSummary/add",
           delete: "/summary/pmpSummary/delete",
-          list: "/summary/pmpSummary/result",
+          list: "/summary/pmpSummary/statistics",
           deleteBatch: "/summary/pmpTaskSummary/deleteBatch",
           exportXlsUrl: "/summary/pmpTaskSummary/exportXls",
           importExcelUrl: "summary/pmpTaskSummary/importExcel",
@@ -272,29 +282,46 @@
       }
     },
     mounted() {
-      this.initMonthValue();
-
-      this.searchQuery();
+      this.searchReset();
     },
     methods: {
-      initMonthValue() {
+      //初始化年月数据
+      initMonth() {
         this.monthValue = moment(this.date);
       },
-      onChange(date, dateString) {
-        if ('' == dateString)
-          this.initMonthValue();
+      //初始化表格数据
+      initColumns() {
+        let dt = this.monthValue.format("YYYY-MM");
+        this.columns = this.allCols.slice(0, this.getMonthCount(dt) + 1);
       },
+      //年月切换
+      onChange(date, dateString) {
+        if (dateString.length <= 0) {
+          this.initMonth();
+        }
+      },
+      //查询
       searchQuery() {
         this.queryParam.summaryTime = this.monthValue.format("YYYY-MM");
 
+        this.initColumns();
         this.loadData(1);
       },
+      //重置
       searchReset() {
-        this.initMonthValue();
+        this.initMonth();
+        this.initColumns();
 
         this.searchQuery();
+      },
+      //获取年月对应天数
+      getMonthCount(str) {
+        return new Date(str.substr(0, 4), str.substr(5, 2), 0).getDate();
+      },
+      summaryDetails(time, record) {
+        this.$refs.modalForm.show(time, record);
       }
-    },
+    }
   };
 
 </script>

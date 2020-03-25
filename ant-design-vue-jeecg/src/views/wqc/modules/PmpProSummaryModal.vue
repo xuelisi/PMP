@@ -23,15 +23,20 @@
               <!--/>-->
             <!--</a-form-item>-->
             <a-form-item label="任务名称" :labelCol="inputlabelCol" :wrapperCol="inputwrapperCol">
-              <j-tree-select
-                ref="treeSelect"
-                placeholder="请选择任务"
-                v-decorator="['taskid', validatorRules.taskid]"
+              <!--<j-tree-select-->
+                <!--ref="treeSelect"-->
+                <!--placeholder="请选择任务"-->
+                <!--v-decorator="['taskid', validatorRules.taskid]"-->
+                <!--:trigger-change="true"-->
+                <!--dict="pmp_project,taskname,id"-->
+                <!--pidField="parentnode"-->
+                <!--pidValue="0"-->
+              <!--&gt;</j-tree-select>-->
+              <j-select-pmp
+                v-decorator="['taskid', validatorRules.taskid]"
                 :trigger-change="true"
-                dict="pmp_project,taskname,id"
-                pidField="parentnode"
-                pidValue="0"
-              ></j-tree-select>
+                customReturnField="id">
+              </j-select-pmp>
             </a-form-item>
           </a-col>
 
@@ -52,6 +57,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol">
           <j-editor
+            :toolbar="customToolBar"
             v-decorator="['content',{trigger:'input'}]"/>
         </a-form-item>
 
@@ -81,6 +87,7 @@
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
   import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
   import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+  import JSelectPmp from '@/components/jeecgbiz/JSelectPmp.vue'
 
   export default {
     name: "PmpProSummaryModal",
@@ -88,7 +95,7 @@
       JDate,
       JUpload,
       JEditor,
-      JTreeSelect,
+      JSelectPmp,
       JDictSelectTag,
     },
     data () {
@@ -99,6 +106,7 @@
         visible: false,
         model: {},
         summaryTime: '',
+        customToolBar: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
         labelCol: {
           xs: { span: 24 },
           sm: { span: 3 },

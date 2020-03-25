@@ -139,6 +139,7 @@
         title:'小结内容',
         align:"center",
         dataIndex: 'content',
+        // ellipsis: true,
         scopedSlots: {customRender: 'htmlSlot'}
       },
       {

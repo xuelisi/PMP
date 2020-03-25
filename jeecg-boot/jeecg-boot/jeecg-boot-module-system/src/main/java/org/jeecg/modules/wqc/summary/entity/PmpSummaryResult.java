@@ -7,6 +7,7 @@ import java.util.Date;
 @Data
 public class PmpSummaryResult {
     private String realName;
+    private String userName;
     private String first;
     private String second;
     private String third;

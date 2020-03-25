@@ -23,11 +23,11 @@ public interface PmpSummaryMapper extends BaseMapper<PmpSummary> {
 
     void removeSummaryWithTask(String summaryid);
 
-    List<PmpSummaryInfo> querySummaryInfoByDate(String date);
+    List<PmpSummaryInfo> queryByNameAndDate(String date, String userName);
 
     List<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page);
 
-    List<PmpSummaryInfo> querySummaryInfoByUsername(Page<PmpSummaryInfo> page, String userName);
+    List<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName);
 
-    List<PmpSummaryResult> querySummaryResultByDate(Page<PmpSummaryResult> page, String date);
+    List<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
 }
