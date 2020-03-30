@@ -37,7 +37,7 @@ public class PmpSummary implements Serializable {
     private Date createTime;
 	/**更新人*/
 	@Excel(name = "更新人", width = 15)
-    private String updateBy;
+    private java.lang.String updateBy;
 	/**更新日期*/
 	@Excel(name = "更新日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -53,3 +53,4 @@ public class PmpSummary implements Serializable {
 	@Excel(name = "附件", width = 15)
     private String contentAnnex;
 }
+

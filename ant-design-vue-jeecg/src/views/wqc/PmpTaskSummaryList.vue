@@ -107,7 +107,7 @@
   import PmpTaskSummaryModal from './modules/PmpTaskSummaryModal'
   import { deleteAction, getAction,downFile } from '@/api/manage'
 
-  const tableHeaders = [
+  const columns = [
     {
       title:'项目名称',
       align:"center",
@@ -149,7 +149,7 @@
       return {
         description: '任务小结管理页面',
         // 表头
-        columns: tableHeaders,
+        columns: columns,
         url: {
           info: "/summary/pmpTaskSummary/info",
           list: "/summary/pmpTaskSummary/list",

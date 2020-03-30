@@ -25,11 +25,11 @@ public interface IPmpSummaryService extends IService<PmpSummary> {
 
     public void addSummaryWithChief(PmpSummary summary, String userid);
 
-    public Page<PmpSummaryInfo> querySummaryInfoByUsername(Page<PmpSummaryInfo> page, String userName);
+    public Page<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName);
 
     public Page<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page);
 
-    public List<PmpSummaryInfo> querySummaryInfoByDate(String date);
+    public List<PmpSummaryInfo> queryByNameAndDate(String date, String userName);
 
-    public Page<PmpSummaryResult> querySummaryResultByDate(Page<PmpSummaryResult> page, String date);
+    public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
 }

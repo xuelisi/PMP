@@ -45,6 +45,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
     * @param req
     * @return
     */
+   //默认分页查询
    @GetMapping(value = "/list")
     public Result<?> queryPageList(PmpSummaryInfo info,
                                          @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -53,9 +54,8 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
         Page<PmpSummaryInfo> pageList = new Page<PmpSummaryInfo>(pageNo, pageSize);
 
-        //pageList = service.querySummaryInfo(pageList);
-       LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
-        pageList = service.querySummaryInfoByUsername(pageList, sysUser.getUsername());
+        LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
+        pageList = service.queryByName(pageList, sysUser.getUsername());
 
         result.setSuccess(true);
         result.setResult(pageList);
@@ -63,10 +63,12 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         return result;
     }
 
-    @GetMapping(value = "/queryByDate")
-    public Result<?> querySummaryInfoByDate(@RequestParam(name="date",required=true) String date) {
+    //根据用户名、日期查询日报
+    @GetMapping(value = "/queryByNameAndDate")
+    public Result<?> queryByNameAndDate(@RequestParam(name="date",required=true) String date,
+                                            @RequestParam(name="userName",required=true) String userName) {
         Result<List<PmpSummaryInfo>> result = new Result<>();
-		List<PmpSummaryInfo> cmtList = service.querySummaryInfoByDate(date);
+		List<PmpSummaryInfo> cmtList = service.queryByNameAndDate(date, userName);
 
 		result.setResult(cmtList);
         result.setSuccess(true);
@@ -74,33 +76,22 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         return result;
     }
 
-    @GetMapping(value = "/result")
-    public Result<?> querySummaryResultByDate(PmpSummaryInfo info,
+    //查询统计结果
+    @GetMapping(value = "/statistics")
+    public Result<?> queryStatisticsByDate(PmpSummaryInfo info,
                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                    HttpServletRequest req) {
         Result<Page<PmpSummaryResult>> result = new Result<Page<PmpSummaryResult>>();
         Page<PmpSummaryResult> pageList = new Page<PmpSummaryResult>(pageNo, pageSize);
 
-        pageList = service.querySummaryResultByDate(pageList, info.getSummaryTime());
+        pageList = service.queryStatisticsByDate(pageList, info.getSummaryTime());
 
         result.setSuccess(true);
         result.setResult(pageList);
 
         return result;
     }
-
-//   @RequestMapping(value = "/list", method = RequestMethod.GET)
-//   public Result<IPage<PmpSummary>> queryPageList(PmpSummary summary, @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-//                                               @RequestParam(name="pageSize", defaultValue="10") Integer pageSize, HttpServletRequest req) {
-//       Result<IPage<PmpSummary>> result = new Result<IPage<PmpSummary>>();
-//       QueryWrapper<PmpSummary> queryWrapper = QueryGenerator.initQueryWrapper(summary, req.getParameterMap());
-//       Page<PmpSummary> page = new Page<PmpSummary>(pageNo, pageSize);
-//       IPage<PmpSummary> pageList = service.page(page, queryWrapper);
-//       result.setSuccess(true);
-//       result.setResult(pageList);
-//       return result;
-//   }
 
    /**
     *   添加
@@ -118,8 +109,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
        summary.setSummaryTime(info.getSummaryTime());
        summary.setContentAnnex(info.getContentAnnex());
 
-       service.save(summary);
-       if (null != info.getTaskid()) {
+       if ((null != info.getTaskid()) && service.save(summary)) {
            service.addSummaryWithTask(summary, info.getTaskid());
        }
 

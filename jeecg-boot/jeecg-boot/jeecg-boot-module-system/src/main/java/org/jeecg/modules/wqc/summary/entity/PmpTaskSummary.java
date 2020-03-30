@@ -26,16 +26,17 @@ public class PmpTaskSummary implements Serializable {
     
 	/**主键*/
 	@TableId(type = IdType.ID_WORKER_STR)
-    private String id;
+    private java.lang.String id;
 	/**任务id*/
 	@Excel(name = "任务id", width = 15)
-    private String taskId;
+    private java.lang.String taskId;
 	/**小结Id*/
 	@Excel(name = "小结Id", width = 15)
-    private String summaryId;
+    private java.lang.String summaryId;
 
 	public PmpTaskSummary(String id, String taskid) {
 		this.summaryId = id;
 		this.taskId = taskid;
 	}
 }
+

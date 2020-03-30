@@ -46,19 +46,19 @@ public class PmpSummaryServiceImpl extends ServiceImpl<PmpSummaryMapper, PmpSumm
         csMapper.insert(cs);
     }
 
-    public Page<PmpSummaryInfo> querySummaryInfoByUsername(Page<PmpSummaryInfo> page, String userName) {
-        return page.setRecords(smapper.querySummaryInfoByUsername(page, userName));
+    public Page<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName) {
+        return page.setRecords(smapper.queryByName(page, userName));
     }
 
     public Page<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page) {
         return page.setRecords(smapper.querySummaryInfo(page));
     }
 
-    public List<PmpSummaryInfo> querySummaryInfoByDate(String date) {
-        return smapper.querySummaryInfoByDate(date);
+    public List<PmpSummaryInfo> queryByNameAndDate(String date, String userName) {
+        return smapper.queryByNameAndDate(date, userName);
     }
 
-    public Page<PmpSummaryResult> querySummaryResultByDate(Page<PmpSummaryResult> page, String date) {
-        return page.setRecords(smapper.querySummaryResultByDate(page, date));
+    public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date) {
+        return page.setRecords(smapper.queryStatisticsByDate(page, date));
     }
 }
