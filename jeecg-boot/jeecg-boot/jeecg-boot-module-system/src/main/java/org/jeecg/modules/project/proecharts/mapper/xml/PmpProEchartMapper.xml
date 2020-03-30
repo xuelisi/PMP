@@ -6,18 +6,18 @@
     <select id="getPieCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status
-        FROM [XiangMuGuanLi].[dbo].[pmp_project]  a
-        where  parentnode='0' and status is not null
+        FROM [XiangMuGuanLi].[dbo].[pmp_project] a
+        where parentnode='0' and status is not null
         <if test="projecttype !=null and  projecttype !='' ">
             and projecttype = #{projecttype}
         </if>
         <if test="startTime !=null and  startTime !='' ">
-            and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
+            and CONVERT(varchar(100), startdate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
         </if>
         <if test="endTime !=null and  endTime !='' ">
-            and CONVERT(varchar(100), enddate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
+            and CONVERT(varchar(100), startdate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
         </if>
         group by status
     </select>
@@ -25,7 +25,7 @@
     <select id="getYearCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status,
         CONVERT(varchar(4),enddate,23)+'年' as date
         FROM [XiangMuGuanLi].[dbo].[pmp_project] a
@@ -34,10 +34,10 @@
             and projecttype = #{projecttype}
         </if>
         <if test="startTime !=null and  startTime !='' ">
-            and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
+            and CONVERT(varchar(100), startdate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
         </if>
         <if test="endTime !=null and  endTime !='' ">
-            and CONVERT(varchar(100), enddate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
+            and CONVERT(varchar(100), startdate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
         </if>
         group by status,CONVERT(varchar(4),enddate,23)
     </select>
@@ -45,7 +45,7 @@
     <select id="getMonthCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status,
         CONVERT(varchar(7),enddate,23) as date
         FROM [XiangMuGuanLi].[dbo].[pmp_project] a
@@ -65,9 +65,9 @@
     <select id="getPerNoCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select realname from [XiangMuGuanLi].[dbo].[sys_user]
-        where  username=a.create_by)date,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select realname from [XiangMuGuanLi].[dbo].[sys_user]
+        where username=a.create_by)date,
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status
         FROM [XiangMuGuanLi].[dbo].[pmp_project] a
         where parentnode='0' and status is not null
@@ -82,20 +82,20 @@
         </if>
         group by status,create_by
     </select>
-
-<!--    <select id="getPerNoCountInfo" resultType="java.util.Map" statementType="CALLABLE">-->
-<!--	   {call dbo.myPerCount(-->
-<!--	    #{projecttype,jdbcType=VARCHAR,mode=IN},-->
-<!--	    #{startTime,jdbcType=VARCHAR,mode=IN},-->
-<!--	    #{endTime,jdbcType=VARCHAR,mode=IN}-->
-<!--	    )}-->
-<!--	</select>-->
+    <!--    项目柱状图人员统计-->
+    <select id="myPerCount" resultType="java.util.Map" statementType="CALLABLE">
+	   {call dbo.myPerCount(
+	    #{projecttype,jdbcType=VARCHAR,mode=IN},
+	    #{startTime,jdbcType=VARCHAR,mode=IN},
+	    #{endTime,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
     <!-- 项目柱状图部门统计 -->
     <select id="getDepCountInfo" resultType="map">
         select
-        count(status) as number,(  select depart_name from [XiangMuGuanLi].[dbo].[sys_depart]
-        where  org_code=a.sys_org_code)date,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        count(status) as number,( select depart_name from [XiangMuGuanLi].[dbo].[sys_depart]
+        where org_code=a.sys_org_code)date,
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status
         FROM [XiangMuGuanLi].[dbo].[pmp_project] a
         where parentnode='0' and status is not null
@@ -115,10 +115,10 @@
     <select id="getTaskPieCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status
-        FROM [XiangMuGuanLi].[dbo].[pmp_project]  a
-        where  parentnode !='0' and status is not null
+        FROM [XiangMuGuanLi].[dbo].[pmp_project] a
+        where parentnode !='0' and status is not null
         <if test="startTime !=null and  startTime !='' ">
             and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
         </if>
@@ -132,7 +132,7 @@
     <select id="getTaskCountInfo" resultType="map">
         select
         count(status) as number,
-        (  select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
+        ( select item_text from [XiangMuGuanLi].[dbo].[sys_dict_item]
         where dict_id='1237560959334592513' and item_value=a.status)status,
         CONVERT(varchar(100),enddate,23)+'.' as date
         FROM [XiangMuGuanLi].[dbo].[pmp_project] a
@@ -145,4 +145,38 @@
         </if>
         group by status,CONVERT(varchar(100),enddate,23)
     </select>
+    <!-- 项目成员统计 -->
+    <select id="myPmpMember" resultType="java.util.Map" statementType="CALLABLE">
+        {call dbo.myPmpMember(
+        #{depart,jdbcType=VARCHAR,mode=IN}
+        )}
+    </select>
+    <!-- 任务成员统计 -->
+    <select id="myTaskMember" resultType="java.util.Map" statementType="CALLABLE">
+        {call dbo.myTaskMember(
+        #{depart,jdbcType=VARCHAR,mode=IN}
+        )}
+    </select>
+    <!-- 新增项目/任务数统计 -->
+    <select id="newPmpTask" resultType="java.lang.Integer">
+        SELECT count(id) as number
+        FROM [XiangMuGuanLi].[dbo].[pmp_project]
+        where 1=1
+        <if test="parentnode ==1 ">
+            and parentnode ='0'
+        </if>
+        <if test="parentnode ==2 ">
+            and parentnode !='0'
+        </if>
+        <if test="startTime !=null and  startTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) >=CONVERT(varchar(100), #{startTime}, 23)
+        </if>
+        <if test="endTime !=null and  endTime !='' ">
+            and CONVERT(varchar(100), enddate, 23) &lt;= CONVERT(varchar(100), #{endTime}, 23)
+        </if>
+        <if test="projecttype !=null and  projecttype !='' ">
+            and projecttype = #{projecttype}
+        </if>
+    </select>
+
 </mapper>

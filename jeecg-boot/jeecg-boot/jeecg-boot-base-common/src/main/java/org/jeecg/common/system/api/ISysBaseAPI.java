@@ -72,7 +72,7 @@ public interface ISysBaseAPI {
 	 * @param code
 	 * @return
 	 */
-	public List<DictModel> queryDictItemsByCode(String code);
+	public List<DictModel> queryDictItemsByCode(String code,String des);
 
 	/** 查询所有的父级字典，按照create_time排序 */
 	public List<DictModel> queryAllDict();

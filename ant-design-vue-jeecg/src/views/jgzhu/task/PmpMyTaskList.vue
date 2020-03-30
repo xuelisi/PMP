@@ -95,6 +95,7 @@
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
+        :scroll="{ y: 500 }"
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
       >
@@ -248,6 +249,7 @@ export default {
         {
           title: '项目名称',
           align: 'center',
+          width: '18%',
           dataIndex: 'projectname',
           text: '项目名',
           scopedSlots: {
@@ -295,6 +297,7 @@ export default {
         {
           title: '负责人',
           align: 'center',
+          width: '10%',
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
@@ -306,6 +309,7 @@ export default {
         {
           title: '总进度',
           align: 'center',
+          width: '10%',
           dataIndex: 'schedule',
           scopedSlots: { customRender: 'schedule' },
           onFilter: (value, record) => record.schedule.indexOf(value) === 0,
@@ -315,6 +319,7 @@ export default {
         {
           title: '任务分类',
           align: 'center',
+          width: '8%',
           dataIndex: 'projecttype',
           customRender: text => {
             return filterDictText(this.projectTypeDictOptions, text) == text
@@ -328,6 +333,7 @@ export default {
         {
           title: '开始日期',
           align: 'center',
+          width: '6%',
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -347,6 +353,7 @@ export default {
         {
           title: '结束日期',
           align: 'center',
+          width: '6%',
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -375,12 +382,14 @@ export default {
         {
           title: '是否删除',
           align: 'center',
+          width: '6%',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
         },
         {
           title: '操作',
           dataIndex: 'action',
+          width: '10%',
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }

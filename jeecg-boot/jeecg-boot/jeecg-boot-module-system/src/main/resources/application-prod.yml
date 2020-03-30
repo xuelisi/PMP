@@ -106,9 +106,13 @@ spring:
 #          username: sa
 #          password: whxx!xs@5217#
 #          driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-          url: jdbc:sqlserver://216.216.150.20:1433;SelectMethod=cursor;DatabaseName=XiangMuGuanLi
+#          url: jdbc:sqlserver://216.216.150.20:1433;SelectMethod=cursor;DatabaseName=XiangMuGuanLi
+#          username: sa
+#          password: root
+#          driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+          url: jdbc:sqlserver://216.216.150.190:1433;SelectMethod=cursor;DatabaseName=XiangMuGuanLi
           username: sa
-          password: root
+          password: w3c.com!
           driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
           # 多数据源配置
           #multi-datasource1:

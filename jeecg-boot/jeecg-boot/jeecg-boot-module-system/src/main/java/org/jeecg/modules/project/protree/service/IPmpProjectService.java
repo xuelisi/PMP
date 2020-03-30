@@ -38,5 +38,5 @@ public interface IPmpProjectService extends IService<PmpProject> {
      * 查询所有部门信息,并分节点进行显示
      * @return
      */
-    List<PmpProjectTreeModel> queryTreeList();
+    List<PmpProjectTreeModel> queryTreeList(String projectName);
 }

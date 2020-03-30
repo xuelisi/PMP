@@ -38,7 +38,7 @@
 import { queryPmpTreeList } from '@/api/api'
 export default {
   name: 'JSelectDepartModal',
-  props: ['modalWidth', 'multi', 'rootOpened', 'departId'],
+  props: ['modalWidth', 'multi', 'rootOpened', 'departId','projectName'],
   data() {
     return {
       visible: false,
@@ -80,7 +80,10 @@ export default {
       this.checkedKeys = []
     },
     loadDepart() {
-      queryPmpTreeList().then(res => {
+      let params = {
+        projectName: this.projectName
+      }
+      queryPmpTreeList(params).then(res => {
         if (res.success) {
           let arr = [...res.result]
           this.reWriterWithSlot(arr)

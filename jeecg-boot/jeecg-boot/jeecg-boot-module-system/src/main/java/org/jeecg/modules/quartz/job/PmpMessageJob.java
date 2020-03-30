@@ -37,8 +37,8 @@ public class PmpMessageJob implements Job {
 
 		SimpleDateFormat sDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
 		Date date=new Date();
-		List<Map<String,Object>> list=iPmpMessageService.myPmpMessage("2020-03-20");//项目未完成
-		List<Map<String,Object>> listtask=iPmpMessageService.myTaskMessage("2020-03-20");//任务未完成
+		List<Map<String,Object>> list=iPmpMessageService.myPmpMessage(sDateFormat1.format(date));//项目未完成
+		List<Map<String,Object>> listtask=iPmpMessageService.myTaskMessage(sDateFormat1.format(date));//任务未完成
 		for(Map<String, Object> m : list)
 		{
 			Map<String, String> map = new HashMap();
