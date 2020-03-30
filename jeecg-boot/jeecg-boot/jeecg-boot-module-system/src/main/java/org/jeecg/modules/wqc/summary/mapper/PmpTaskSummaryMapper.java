@@ -13,5 +13,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface PmpTaskSummaryMapper extends BaseMapper<PmpTaskSummary> {
+    void updateBySummaryId(String summaryId, String taskId);
 
 }

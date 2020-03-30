@@ -75,6 +75,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="handleComment(record)">评论</a>
               </a-menu-item>
+              <a-menu-item>
+                <a href="javascript:;" @click="handleSummary(record)">日报</a>
+              </a-menu-item>
               <!-- <a-menu-item>
                 <a href="javascript:;" @click="handleRemind(record)">催办</a>
               </a-menu-item>-->
@@ -98,6 +101,7 @@
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
     <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
+    <pmpProSummary-modal ref="summaryModal" @ok="modalFormOk"></pmpProSummary-modal>
     <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
@@ -114,6 +118,9 @@ import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
+import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+
 export default {
   name: 'SysCategoryList',
   mixins: [JeecgListMixin],
@@ -121,7 +128,8 @@ export default {
     PmpTaskListModal,
     PmpTaskdetailsModal,
     PmpCommentModal,
-    TaskRemindModal
+    TaskRemindModal,
+    PmpProSummaryModal
   },
   data() {
     return {
@@ -245,6 +253,7 @@ export default {
     }
   },
   methods: {
+    ...mapGetters(['userInfo']),
     openNotification(title, des) {
       this.$notification.open({
         message: title,
@@ -269,6 +278,20 @@ export default {
         })
       } else {
         this.openNotification('提示', '已禁用,无法评论！')
+      }
+    },
+    handleSummary: function(record) {
+      if (record.isdelete == '0') {
+
+        if ((record.principal.indexOf(this.userInfo().username) >= 0) ||
+          (record.participant.indexOf(this.userInfo().username) >= 0)) {
+
+          this.$refs.summaryModal.add(record.id)
+        } else {
+          this.openNotification('提示', '您不是负责人员或参与人员，不能通过此接口填写日报！')
+        }
+      } else {
+        this.openNotification('提示', '已禁用,无法填写日报！')
       }
     },
     // handleRemind: function(record) {

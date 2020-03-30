@@ -65,7 +65,7 @@
         visible: false,
         summaryData: [],
         url: {
-          time: "/summary/pmpSummary/queryByNameAndDate",
+          query: "/summary/pmpSummary/queryByNameAndDate",
         }
       }
     },
@@ -74,7 +74,7 @@
         this.visible = true;
         this.title = record.realName + "[" + time + "]日报统计";
 
-        this.loadSummary(time, record.realName);
+        this.loadSummary(time, record.userName);
       },
       loadAnnex(annex) {
         let linkList = [];
@@ -99,7 +99,7 @@
       loadSummary(time, userName) {
         this.summaryData = [];
 
-        getAction(this.url.time, { date: time, userName: userName }).then((res) => {
+        getAction(this.url.query, { date: time, userName: userName }).then((res) => {
           if (res.success) {
             for(let i = 0; i < res.result.length; ++i) {
               this.summaryData.push({
@@ -127,7 +127,7 @@
     overflow-y: scroll;
   }
 
-  /*.list-content ol {*/
-    /*font-size: 12px;*/
-  /*}*/
+  .list-content {
+    font-size: 12px;
+  }
 </style>

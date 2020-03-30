@@ -105,7 +105,8 @@
         (
 			select *
 			from pmp_summary
-			where summary_time = #{date}
+			where summary_time = #{date} and
+			  create_by = #{userName}
         ) as s
         left join
         (
@@ -121,7 +122,6 @@
         (
 			select *
 			from sys_user
-			where username = #{userName}
         ) as u on s.create_by = u.username
         where ts.task_id is not null
     </select>
@@ -147,6 +147,7 @@
             (
                 select *
                 from sys_user
+                where username not in ('admin', 'he2672')
             ) as u
             left join
             (

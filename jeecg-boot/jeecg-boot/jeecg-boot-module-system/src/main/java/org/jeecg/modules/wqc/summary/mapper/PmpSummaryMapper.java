@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
 import org.jeecg.modules.wqc.summary.entity.PmpSummaryResult;
+import org.jeecg.modules.wqc.summary.entity.PmpTaskSummary;
 
 import java.util.List;
 

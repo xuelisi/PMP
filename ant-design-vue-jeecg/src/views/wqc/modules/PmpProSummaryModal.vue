@@ -12,26 +12,7 @@
 
         <a-row :gutter="10">
           <a-col :lg="12">
-            <!--//初期设计为向领导汇报，后改为根据项目/任务汇报，保留原始代码-->
-            <!--<a-form-item label="分管领导" :labelCol="inputlabelCol" :wrapperCol="inputwrapperCol">-->
-              <!--<j-dict-select-tag-->
-                <!--:triggerChange="true"-->
-                <!--v-model="chiefid"-->
-                <!--dictCode="sys_user,realname,id"-->
-                <!--placeholder="请选择分管领导名称"-->
-                <!--v-decorator="['chiefid', validatorRules.chiefid]"-->
-              <!--/>-->
-            <!--</a-form-item>-->
             <a-form-item label="任务名称" :labelCol="inputlabelCol" :wrapperCol="inputwrapperCol">
-              <!--<j-tree-select-->
-                <!--ref="treeSelect"-->
-                <!--placeholder="请选择任务"-->
-                <!--v-decorator="['taskid', validatorRules.taskid]"-->
-                <!--:trigger-change="true"-->
-                <!--dict="pmp_project,taskname,id"-->
-                <!--pidField="parentnode"-->
-                <!--pidValue="0"-->
-              <!--&gt;</j-tree-select>-->
               <j-select-pmp
                 v-decorator="['taskid', validatorRules.taskid]"
                 :trigger-change="true"
@@ -53,12 +34,13 @@
         </a-row>
 
         <a-form-item
-          label="任务小结"
+          label="日报内容"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol">
           <j-editor
             :toolbar="customToolBar"
-            v-decorator="['content',{trigger:'input'}]"/>
+            v-decorator="['content', validatorRules.content]"
+            :trigger-change="true"/>
         </a-form-item>
 
         <a-form-item
@@ -126,19 +108,14 @@
         confirmLoading: false,
         validatorRules: {
           taskid: {rules: [
-              {required: true, message: '请输入任务!'},
-            ]},
-          chiefid: {rules: [
-              {required: true, message: '请输入分管领导!'},
+              {required: true, message: '请选择任务!'},
             ]},
           summaryTime: {rules: [
-              {required: true, message: '请输入小结日期!'},
+              {required: true, message: '请输入日报日期!'},
               {validator: this.isDateValid, trigger: 'blur', message: '日期超出范围，请重新选择!'}
             ]},
           content: {rules: [
-            {required: true, message: '请输入任务小结!'},
-          ]},
-          contentAnnex: {rules: [
+            {required: true, message: '请输入日报内容!'},
           ]},
         },
         url: {
@@ -153,6 +130,9 @@
       ...mapGetters(['userInfo']),
       add () {
         this.edit({ summaryTime: this.getNow() });
+      },
+      add (id) {
+        this.edit({ taskid: id, summaryTime: this.getNow() });
       },
       edit (record) {
         this.form.resetFields();
@@ -188,7 +168,6 @@
                method = 'put';
             }
             let formData = Object.assign(this.model, values);
-
             formData.createBy = this.userInfo().username;
             httpAction(httpurl,formData,method).then((res)=>{
               if(res.success){

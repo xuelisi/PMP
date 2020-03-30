@@ -20,6 +20,6 @@ public interface PmpCommentMapper extends BaseMapper<PmpComment> {
 
     List<PmpCommentInfo> queryCommentInfoByTask(@Param("taskid") String taskid, @Param("username") String username);
 
-    List<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
+    List<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
 
 }

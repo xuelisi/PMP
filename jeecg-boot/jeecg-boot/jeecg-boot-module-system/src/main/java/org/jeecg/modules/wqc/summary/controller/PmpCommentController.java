@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.api.ISysBaseAPI;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
@@ -28,6 +29,7 @@ import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -46,7 +48,11 @@ import com.alibaba.fastjson.JSON;
 public class PmpCommentController extends JeecgController<PmpComment, IPmpCommentService> {
 	@Autowired
 	private IPmpCommentService pmpCommentService;
-	
+
+	 @Autowired
+	 @Lazy
+	 private ISysBaseAPI sysBaseAPI;
+
 	/**
 	 * 分页列表查询
 	 *
@@ -66,23 +72,12 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 
 		String taskName = req.getParameter("taskName");
 		String projectName = req.getParameter("projectName");
-		pageList = pmpCommentService.queryCommentInfoByProjectAndTask(pageList, projectName, taskName);//通知公告消息
+		pageList = pmpCommentService.queryByProjectAndTask(pageList, projectName, taskName);//通知公告消息
 
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
 	}
-
-//	 @RequestMapping(value = "/list", method = RequestMethod.GET)
-//	 public Result<List<PmpComment>> queryRealName(@RequestParam(name="taskid",required=true) String taskid) {
-//		 Result<List<PmpComment>> result = new Result<>();
-//		 List<PmpComment> cmtList = pmpCommentService.queryCommentInfoByTask(taskid);
-//
-//		 result.setResult(cmtList);
-//		 result.setSuccess(true);
-//
-//		 return result;
-//	 }
 
 	 @RequestMapping(value = "/query", method = RequestMethod.GET)
 	 public Result<List<PmpCommentInfo>> queryCommentInfoByTask(@RequestParam(name="taskid",required=true) String taskid,
@@ -115,7 +110,9 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	 */
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody PmpComment pmpComment) {
-		pmpCommentService.save(pmpComment);
+		if (pmpCommentService.save(pmpComment)) {
+			sendCommentNote("admin", "wqc");
+		}
 		return Result.ok("评论成功！");
 	}
 	
@@ -193,4 +190,7 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
         return super.importExcel(request, response, PmpComment.class);
     }
 
+    public void sendCommentNote(String formUsername, String toUsername) {
+		sysBaseAPI.sendSysAnnouncement(formUsername, toUsername, "你有新的评论-测试标题", "你有新的评论-测试内容");
+	}
 }

@@ -23,6 +23,8 @@ public interface IPmpSummaryService extends IService<PmpSummary> {
 
     public void addSummaryWithTask(PmpSummary summary, String taskid);
 
+    public void editSummaryWithTask(PmpSummary summary, String taskid);
+
     public void addSummaryWithChief(PmpSummary summary, String userid);
 
     public Page<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName);
