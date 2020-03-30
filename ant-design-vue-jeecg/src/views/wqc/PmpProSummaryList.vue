@@ -89,7 +89,7 @@
       </a-table>
     </div>
 
-    <pmpTaskSummary-modal ref="modalForm" @ok="modalFormOk"></pmpTaskSummary-modal>
+    <pmpProSummary-modal ref="modalForm" @ok="modalFormOk"></pmpProSummary-modal>
   </a-card>
 </template>
 
@@ -97,7 +97,7 @@
 
   import JEllipsis from '@/components/jeecg/JEllipsis'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import PmpTaskSummaryModal from './modules/PmpProSummaryModal'
+  import PmpProSummaryModal from './modules/PmpProSummaryModal'
 
   const columns = [
       {
@@ -150,7 +150,7 @@
     mixins:[JeecgListMixin, JEllipsis],
     components: {
       JEllipsis,
-      PmpTaskSummaryModal
+      PmpProSummaryModal
     },
     data () {
       return {
