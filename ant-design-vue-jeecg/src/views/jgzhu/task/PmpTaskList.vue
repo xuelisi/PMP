@@ -16,7 +16,7 @@
           </a-col>
           <a-col :md="3" :sm="8">
             <a-form-item>
-              <a-radio-group name="radioGroup" v-model="queryParam.isdelete">
+              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
                 <a-radio :value="0">正常</a-radio>
                 <a-radio :value="1">禁用</a-radio>
               </a-radio-group>
@@ -107,6 +107,7 @@
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
+        :scroll="{ y: 500 }"
         :loading="loading"
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
@@ -215,6 +216,7 @@ export default {
         {
           title: '项目名称',
           align: 'center',
+          width: '18%',
           dataIndex: 'projectname'
         },
         {
@@ -227,6 +229,7 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
+          width: '10%',
           customRender: text => {
             //字典值替换通用方法
             return myFilterMultiDictText(this.principal, text)
@@ -236,6 +239,7 @@ export default {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
+          width: '8%',
           scopedSlots: { customRender: 'schedule' },
           onFilter: (value, record) => record.schedule.indexOf(value) === 0,
           sorter: (a, b) => a.schedule - b.schedule,
@@ -245,6 +249,7 @@ export default {
           title: '任务分类',
           align: 'center',
           dataIndex: 'projecttype',
+          width: '8%',
           customRender: text => {
             return filterDictText(this.projectTypeDictOptions, text) == text
               ? filterDictText(this.taskTypeDictOptions, text)
@@ -258,6 +263,7 @@ export default {
           title: '开始日期',
           align: 'center',
           dataIndex: 'startdate',
+          width: '6%',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
           },
@@ -277,6 +283,7 @@ export default {
           title: '结束日期',
           align: 'center',
           dataIndex: 'enddate',
+          width: '6%',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
           },
@@ -304,6 +311,7 @@ export default {
         {
           title: '是否删除',
           align: 'center',
+          width: '6%',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
         },
@@ -311,6 +319,7 @@ export default {
           title: '操作',
           dataIndex: 'action',
           align: 'center',
+          width: '10%',
           scopedSlots: { customRender: 'action' }
         }
       ],

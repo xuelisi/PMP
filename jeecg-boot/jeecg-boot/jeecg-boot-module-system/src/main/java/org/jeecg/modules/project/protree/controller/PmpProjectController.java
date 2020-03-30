@@ -53,7 +53,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	  * @return
 	  */
 	 @RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
-	 public Result<List<PmpProjectTreeModel>> queryTreeList() {
+	 public Result<List<PmpProjectTreeModel>> queryTreeList(@RequestParam(name="projectName") String projectName) {
 		 Result<List<PmpProjectTreeModel>> result = new Result<>();
 		 try {
 			 // 从内存中读取
@@ -61,7 +61,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 //			if (CollectionUtils.isEmpty(list)) {
 //				list = sysDepartService.queryTreeList();
 //			}
-			 List<PmpProjectTreeModel> list = pmpProjectService.queryTreeList();
+			 List<PmpProjectTreeModel> list = pmpProjectService.queryTreeList(projectName);
 			 result.setResult(list);
 			 result.setSuccess(true);
 		 } catch (Exception e) {
@@ -84,6 +84,9 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									HttpServletRequest req) {
+	 	if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+	 		pmpProject.setIsdelete("0");
+		}
 		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
 		 queryWrapper.eq("parentnode","0");
 		 String principal = pmpProject.getPrincipal();

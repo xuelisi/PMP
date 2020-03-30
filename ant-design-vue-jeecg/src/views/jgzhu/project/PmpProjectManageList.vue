@@ -16,7 +16,7 @@
           </a-col>
           <a-col :md="3" :sm="8">
             <a-form-item>
-              <a-radio-group name="radioGroup" v-model="queryParam.isdelete">
+              <a-radio-group name="radioGroup" :defaultValue="0" v-model="queryParam.isdelete">
                 <a-radio :value="0">正常</a-radio>
                 <a-radio :value="1">禁用</a-radio>
               </a-radio-group>
@@ -115,6 +115,7 @@
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
+        scroll="{ y: 500 }"
         :loading="loading"
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
@@ -224,12 +225,12 @@ export default {
             return parseInt(index) + 1
           }
         },
-        {
-          title: '头像',
-          align: 'center',
-          dataIndex: 'photo',
-          scopedSlots: { customRender: 'photo' }
-        },
+        // {
+        //   title: '头像',
+        //   align: 'center',
+        //   dataIndex: 'photo',
+        //   scopedSlots: { customRender: 'photo' }
+        // },
         {
           title: '项目名称',
           align: 'center',
@@ -239,6 +240,7 @@ export default {
         {
           title: '负责人',
           align: 'center',
+          width: '12%',
           dataIndex: 'principal',
           customRender: text => {
             //字典值替换通用方法
@@ -248,6 +250,7 @@ export default {
         {
           title: '总进度',
           align: 'center',
+          width: '10%',
           dataIndex: 'schedule',
           scopedSlots: { customRender: 'schedule' },
           onFilter: (value, record) => record.schedule.indexOf(value) === 0,
@@ -257,6 +260,7 @@ export default {
         {
           title: '项目分类',
           align: 'center',
+          width: '8%',
           dataIndex: 'projecttype',
           customRender: text => {
             //字典值替换通用方法
@@ -269,6 +273,7 @@ export default {
         {
           title: '起始日期',
           align: 'center',
+          width: '8%',
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -288,6 +293,7 @@ export default {
         {
           title: '结束日期',
           align: 'center',
+          width: '8%',
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -307,12 +313,14 @@ export default {
         {
           title: '是否禁用',
           align: 'center',
+          width: '8%',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
         },
         {
           title: '操作',
           dataIndex: 'action',
+          width: '10%',
           align: 'center',
           scopedSlots: { customRender: 'action' }
         }
