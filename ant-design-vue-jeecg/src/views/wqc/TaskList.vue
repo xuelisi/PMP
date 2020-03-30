@@ -35,7 +35,6 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { deleteAction, getAction,downFile } from '@/api/manage'
   import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
-  import PmpSummaryTimelineModal from '@views/wqc/modules/PmpSummaryTimelineModal'
 
   const tableDatas = [
     {
@@ -75,7 +74,6 @@
       JInput,
       JEllipsis,
       PmpCommentModal,
-      PmpSummaryTimelineModal
     },
     data() {
       return {

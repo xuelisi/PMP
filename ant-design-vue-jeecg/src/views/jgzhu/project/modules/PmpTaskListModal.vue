@@ -17,6 +17,7 @@
             v-decorator="['parentnode', validatorRules.parentnode]"
             :trigger-change="true"
             customReturnField="id"
+            :projectName="projectName"
           ></j-select-pmp>
         </a-form-item>
         <a-form-item label="任务名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -58,6 +59,7 @@ export default {
       title: '操作',
       width: 800,
       visible: false,
+      projectName: '',
       model: {},
       labelCol: {
         xs: { span: 24 },

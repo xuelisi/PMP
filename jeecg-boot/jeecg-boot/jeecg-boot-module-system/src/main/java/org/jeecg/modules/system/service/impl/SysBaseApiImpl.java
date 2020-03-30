@@ -170,7 +170,7 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	}
 
 	@Override
-	public List<DictModel> queryDictItemsByCode(String code) {
+	public List<DictModel> queryDictItemsByCode(String code, String des) {
 		return sysDictService.queryDictItemsByCode(code);
 	}
 

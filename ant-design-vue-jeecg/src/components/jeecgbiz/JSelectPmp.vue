@@ -18,6 +18,7 @@
       :multi="multi"
       :rootOpened="rootOpened"
       :depart-id="departIds"
+      :projectName="projectName"
       @ok="handleOK"
       @initComp="initComp"
     />
@@ -45,6 +46,11 @@ export default {
     rootOpened: {
       type: Boolean,
       default: false,
+      required: false
+    },
+    projectName: {
+      type: String,
+      default: '',
       required: false
     },
     value: {

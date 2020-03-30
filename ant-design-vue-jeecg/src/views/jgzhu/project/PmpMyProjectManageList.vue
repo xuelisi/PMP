@@ -64,8 +64,10 @@
               :action="importExcelUrl"
               @change="handleImportExcel"
             >
-              <a-icon type="import" />导入
             </a-upload>
+          </a-menu-item>
+          <a-menu-item key="1">
+            <a-icon type="import" />导入
           </a-menu-item>
           <a-menu-item key="2">
             <a-icon type="download" @click="handleExportXls('项目主表')" />导出
@@ -101,6 +103,7 @@
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
+        :scroll="{ y: 500 }"
         :loading="loading"
         :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
@@ -292,6 +295,7 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
+          width: '12%',
           text: '账号',
           key: 'principal',
           customRender: text => {
@@ -320,6 +324,7 @@ export default {
           title: '总进度',
           align: 'center',
           dataIndex: 'schedule',
+          width: '10%',
           scopedSlots: { customRender: 'schedule' },
           onFilter: (value, record) => record.schedule.indexOf(value) === 0,
           sorter: (a, b) => a.schedule - b.schedule,
@@ -329,6 +334,7 @@ export default {
           title: '项目分类',
           align: 'center',
           dataIndex: 'projecttype',
+          width: '8%',
           customRender: text => {
             //字典值替换通用方法
             return filterDictText(this.projectTypeDictOptions, text)
@@ -340,6 +346,7 @@ export default {
         {
           title: '起始日期',
           align: 'center',
+          width: '8%',
           dataIndex: 'startdate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -359,6 +366,7 @@ export default {
         {
           title: '结束日期',
           align: 'center',
+          width: '8%',
           dataIndex: 'enddate',
           customRender: function(text) {
             return !text ? '' : text.length > 10 ? text.substr(0, 10) : text
@@ -378,6 +386,7 @@ export default {
         {
           title: '是否禁用',
           align: 'center',
+          width: '8%',
           dataIndex: 'isdelete',
           scopedSlots: { customRender: 'isdelete' }
         },
@@ -385,6 +394,7 @@ export default {
           title: '操作',
           dataIndex: 'action',
           align: 'center',
+          width: '10%',
           scopedSlots: { customRender: 'action' }
         }
       ],

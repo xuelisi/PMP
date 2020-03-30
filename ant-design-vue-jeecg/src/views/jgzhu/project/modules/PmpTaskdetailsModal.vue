@@ -19,13 +19,14 @@
         <a-form-item label="任务类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-row :gutter="24">
             <a-col :span="12">
-              <j-dict-select-tag
+              <my-j-dict-select-tag
                 type="list"
                 v-decorator="['projecttype', validatorRules.projecttype]"
                 :trigger-change="true"
                 dictCode="task_type"
                 placeholder="请选择任务类型"
                 :disabled="disableSubmit"
+                :description="description"
               />
             </a-col>
           </a-row>
@@ -171,7 +172,7 @@ import JDate from '@/components/jeecg/JDate'
 import JUpload from '@/components/jeecg/JUpload'
 import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
 import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
-import JDictSelectTag from '@/components/dict/JDictSelectTag'
+import myJDictSelectTag from '@/components/dict/myJDictSelectTag'
 
 export default {
   name: 'PmpTaskdetailsModal',
@@ -180,10 +181,11 @@ export default {
     JUpload,
     JSelectUserByDep,
     JSelectMultiUser,
-    JDictSelectTag
+    myJDictSelectTag
   },
   data() {
     return {
+      description: '',
       disableSubmit: false,
       form: this.$form.createForm(this),
       title: '操作',
@@ -219,7 +221,9 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    this.description = this
+  },
   methods: {
     add() {
       this.edit({})

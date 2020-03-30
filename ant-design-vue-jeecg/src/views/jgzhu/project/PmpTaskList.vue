@@ -295,7 +295,14 @@ export default {
       this.$refs.modalForm1.title = '详情'
       this.$refs.modalForm1.disableSubmit = true
     },
+    handleAdd: function() {
+      this.$refs.modalForm.add()
+      this.$refs.modalForm.title = '新增'
+      this.$refs.modalForm.disableSubmit = false
+      this.$refs.modalForm.projectName = this.$route.query.data.projectname
+    },
     myHandleTaskEdit(record) {
+      debugger
       if (record.isdelete == '0') {
         if (record.createBy == this.username) {
           this.$refs.modalForm.edit(record)
@@ -314,6 +321,7 @@ export default {
           this.$refs.modalForm1.edit(record)
           this.$refs.modalForm1.title = '编辑'
           this.$refs.modalForm1.disableSubmit = false
+          this.$refs.modalForm1.description = this.$route.query.data.projecttype
         } else {
           this.openNotification('提示', '权限不够哦,禁止编辑！')
         }

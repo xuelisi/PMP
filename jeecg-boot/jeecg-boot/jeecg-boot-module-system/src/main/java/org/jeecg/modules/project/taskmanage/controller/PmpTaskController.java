@@ -60,9 +60,11 @@ public class PmpTaskController extends JeecgController<PmpTask, IPmpTaskService>
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
+		if(oConvertUtils.isEmpty(pmpTask.getIsdelete())){
+			pmpTask.setIsdelete("0");
+		}
 		QueryWrapper<PmpTask> queryWrapper = QueryGenerator.initQueryWrapper(pmpTask, req.getParameterMap());
 		queryWrapper.ne("parentnode",'0');
-		queryWrapper.eq("isdelete",'0');
 		String taskprincipal = pmpTask.getPrincipal();
 		if (oConvertUtils.isNotEmpty(taskprincipal)) {
 			String[] result = taskprincipal.split(",");

@@ -98,9 +98,12 @@ public class PmpProjectServiceImpl extends ServiceImpl<PmpProjectMapper, PmpProj
     }
 
     @Override
-    public List<PmpProjectTreeModel> queryTreeList() {
+    public List<PmpProjectTreeModel> queryTreeList(String projectName) {
         LambdaQueryWrapper<PmpProject> query = new LambdaQueryWrapper<PmpProject>();
         query.eq(PmpProject::getIsdelete, CommonConstant.DEL_FLAG_0.toString());
+        if(oConvertUtils.isNotEmpty(projectName)){
+            query.eq(PmpProject::getProjectname,projectName);
+        }
         query.orderByAsc(PmpProject::getTaskname);
         List<PmpProject> list = this.list(query);
         // 调用wrapTreeDataToTreeList方法生成树状数据
