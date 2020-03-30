@@ -65,7 +65,7 @@
       >
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -75,7 +75,7 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown>
+      </a-dropdown> -->
     </div>
 
     <!-- table区域-begin -->
@@ -360,8 +360,8 @@ export default {
           },
           onFilter: (value, record) => record.enddate.indexOf(value) === 0,
           sorter: (a, b) => {
-            let aTimeString = a.startdate
-            let bTimeString = b.startdate
+            let aTimeString = a.enddate
+            let bTimeString = b.enddate
             aTimeString = aTimeString.replace(/-/g, '/')
             bTimeString = bTimeString.replace(/-/g, '/')
             let aTime = new Date(aTimeString).getTime()

@@ -57,7 +57,11 @@
           </a-col>
           <a-col :md="6" :sm="8">
             <a-form-item label="任务分类">
-              <j-dict-select-tag v-model="queryParam.projecttype" dictCode="task_type" placeholder="请输入任务分类"/>
+              <j-dict-select-tag
+                v-model="queryParam.projecttype"
+                dictCode="task_type"
+                placeholder="请输入任务分类"
+              />
             </a-form-item>
           </a-col>
         </a-row>
@@ -78,7 +82,7 @@
       >
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -88,7 +92,7 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown>
+      </a-dropdown> -->
     </div>
 
     <!-- table区域-begin -->
@@ -183,7 +187,7 @@ import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/compon
 import PmpTaskdetailsModal from '@views/jgzhu/project/modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
 import { filterObj, isContainPrincipal } from '@/utils/util'
-import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
+import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
 
 export default {
   name: 'PmpProjectList',
@@ -201,6 +205,9 @@ export default {
       principal: [],
       projectTypeDictOptions: [],
       taskTypeDictOptions: [],
+      /* 排序参数 */
+      isorter: {
+      },
       // 表头
       columns: [
         {
@@ -289,8 +296,8 @@ export default {
           },
           onFilter: (value, record) => record.enddate.indexOf(value) === 0,
           sorter: (a, b) => {
-            let aTimeString = a.startdate
-            let bTimeString = b.startdate
+            let aTimeString = a.enddate
+            let bTimeString = b.enddate
             aTimeString = aTimeString.replace(/-/g, '/')
             bTimeString = bTimeString.replace(/-/g, '/')
             let aTime = new Date(aTimeString).getTime()
