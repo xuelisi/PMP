@@ -9,7 +9,7 @@
     <a-spin :spinning="false">
 
       <div class="scroll-wrap">
-        <a-list size="small" :dataSource="summaryData">
+        <a-list itemLayout="vertical" size="small" :dataSource="summaryData">
           <a-list-item
             slot="renderItem"
             slot-scope="item, index">
@@ -18,7 +18,7 @@
 
               <a slot="title">{{ item.title }}</a>
               <a-avatar slot="avatar" icon="schedule"/>
-              <a slot="description" v-html="item.content" />
+              <a class="list-content" slot="description" v-html="item.content" />
 
             </a-list-item-meta>
 
@@ -126,4 +126,8 @@
     overflow: hidden;
     overflow-y: scroll;
   }
+
+  /*.list-content ol {*/
+    /*font-size: 12px;*/
+  /*}*/
 </style>
