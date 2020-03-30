@@ -17,7 +17,7 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown> -->
+      </a-dropdown>-->
     </div>
 
     <!-- table区域-begin -->
@@ -75,6 +75,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="handleComment(record)">评论</a>
               </a-menu-item>
+              <a-menu-item>
+                <a href="javascript:;" @click="handleSummary(record)">日报</a>
+              </a-menu-item>
               <!-- <a-menu-item>
                 <a href="javascript:;" @click="handleRemind(record)">催办</a>
               </a-menu-item>-->
@@ -98,6 +101,7 @@
     <pmpTaskList-modal ref="modalForm" @ok="modalFormOk"></pmpTaskList-modal>
     <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
+    <pmpProSummary-modal ref="summaryModal" @ok="modalFormOk"></pmpProSummary-modal>
     <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
@@ -110,6 +114,7 @@ import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
 import TaskRemindModal from './modules/TaskRemindModal'
+import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
@@ -121,7 +126,8 @@ export default {
     PmpTaskListModal,
     PmpTaskdetailsModal,
     PmpCommentModal,
-    TaskRemindModal
+    TaskRemindModal,
+    PmpProSummaryModal
   },
   data() {
     return {
@@ -252,6 +258,17 @@ export default {
         icon: <a-icon type="frown" style="color: red" />
       })
     },
+    handleSummary: function(record) {
+      if (record.isdelete == '0') {
+        if (record.principal.indexOf(this.username) >= 0 || record.participant.indexOf(this.username) >= 0) {
+          this.$refs.summaryModal.add(record.id)
+        } else {
+          this.openNotification('提示', '权限不够哦,无法填写日报！')
+        }
+      } else {
+        this.openNotification('提示', '已禁用,无法填写日报！')
+      }
+    },
     handleComment: function(record) {
       if (record.isdelete == '0') {
         let params = {
@@ -302,7 +319,6 @@ export default {
       this.$refs.modalForm.projectName = this.$route.query.data.projectname
     },
     myHandleTaskEdit(record) {
-      debugger
       if (record.isdelete == '0') {
         if (record.createBy == this.username) {
           this.$refs.modalForm.edit(record)
