@@ -22,15 +22,15 @@
               />
               <a slot="title">{{ item.title }}</a>
             </a-list-item-meta>
-            <div slot="actions">
-              <a-popover title="详情">
-                <template slot="content">
-                  <p style="max-width: 500px;">{{ item.details }}</p>
-                </template>
-                <a>详情</a>
-                <!--<a-button type="primary">Hover me</a-button>-->
-              </a-popover>
-            </div>
+            <!--<div slot="actions">-->
+              <!--<a-popover title="详情">-->
+                <!--<template slot="content">-->
+                  <!--<p style="max-width: 500px;">{{ item.details }}</p>-->
+                <!--</template>-->
+                <!--<a>详情</a>-->
+                <!--&lt;!&ndash;<a-button type="primary">Hover me</a-button>&ndash;&gt;-->
+              <!--</a-popover>-->
+            <!--</div>-->
           </a-list-item>
         </a-list>
       </div>
@@ -157,8 +157,8 @@
             for(let i = 0; i < res.result.length; ++i) {
               this.allCmtData.push({
                 title: res.result[i].createTime,
-                description: res.result[i].realName + '：' + this.subText(this.rmHtmlLabel(res.result[i].content)),
-                details: res.result[i].content,
+                description: res.result[i].realName + '：' + res.result[i].content,
+                //details: res.result[i].content,
                 //avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png'
               });
             }

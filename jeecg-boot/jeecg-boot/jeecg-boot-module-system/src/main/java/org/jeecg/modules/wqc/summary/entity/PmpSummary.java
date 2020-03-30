@@ -26,15 +26,15 @@ public class PmpSummary implements Serializable {
     
 	/**主键*/
 	@TableId(type = IdType.ID_WORKER_STR)
-    private java.lang.String id;
+    private String id;
 	/**创建人*/
 	@Excel(name = "创建人", width = 15)
-    private java.lang.String createBy;
+    private String createBy;
 	/**录入日期*/
 	@Excel(name = "录入日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private java.util.Date createTime;
+    private Date createTime;
 	/**更新人*/
 	@Excel(name = "更新人", width = 15)
     private java.lang.String updateBy;
@@ -42,15 +42,15 @@ public class PmpSummary implements Serializable {
 	@Excel(name = "更新日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private java.util.Date updateTime;
+    private Date updateTime;
 	/**小结日期*/
 	@Excel(name = "小结日期", width = 15)
-    private java.lang.String summaryTime;
+    private String summaryTime;
 	/**内容*/
 	@Excel(name = "内容", width = 15)
-    private java.lang.String content;
+    private String content;
 	/**附件*/
 	@Excel(name = "附件", width = 15)
-    private java.lang.String contentAnnex;
+    private String contentAnnex;
 }
 

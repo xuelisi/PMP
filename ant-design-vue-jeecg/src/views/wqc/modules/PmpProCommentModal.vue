@@ -14,12 +14,12 @@
         <a-row :gutter="25">
           <a-col :lg="12">
             <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'projectName', validatorRules.projectName]" :readonly="true" placeholder="" :disabled="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'projectName', validatorRules.projectName]" placeholder="" :readOnly="disableSubmit"></a-input>
             </a-form-item>
           </a-col>
           <a-col :lg="12">
             <a-form-item label="任务名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'taskName', validatorRules.taskName]" :readonly="true" placeholder="" :disabled="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'taskName', validatorRules.taskName]" placeholder="" :readOnly="disableSubmit"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
@@ -27,12 +27,12 @@
         <a-row :gutter="24">
           <a-col :lg="12">
             <a-form-item label="评论人员" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-model="realName" v-decorator="[ 'realName', validatorRules.realName]" placeholder="" :disabled="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'realName', validatorRules.realName]" placeholder="" :readOnly="disableSubmit"></a-input>
             </a-form-item>
           </a-col>
           <a-col :lg="12">
             <a-form-item label="评论时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'createTime', validatorRules.taskName]" placeholder="" :disabled="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'createTime', validatorRules.taskName]" placeholder="" :readOnly="disableSubmit"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
@@ -58,7 +58,7 @@
   import { validateDuplicateValue } from '@/utils/util'
 
   export default {
-    name: "PmpCommentModal",
+    name: "PmpProCommentModal",
     components: {
       JEditor,
     },
@@ -102,6 +102,12 @@
     created () {
     },
     methods: {
+      show(record) {
+        this.title = "详情";
+        this.disableSubmit = true;
+
+        this.edit(record);
+      },
       add () {
         this.edit({});
       },

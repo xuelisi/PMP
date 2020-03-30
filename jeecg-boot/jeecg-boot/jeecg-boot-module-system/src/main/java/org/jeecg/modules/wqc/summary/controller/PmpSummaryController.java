@@ -109,8 +109,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
        summary.setSummaryTime(info.getSummaryTime());
        summary.setContentAnnex(info.getContentAnnex());
 
-       service.save(summary);
-       if (null != info.getTaskid()) {
+       if ((null != info.getTaskid()) && service.save(summary)) {
            service.addSummaryWithTask(summary, info.getTaskid());
        }
 
