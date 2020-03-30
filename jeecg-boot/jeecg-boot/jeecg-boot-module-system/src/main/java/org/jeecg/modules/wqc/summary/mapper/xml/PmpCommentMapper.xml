@@ -32,8 +32,9 @@
         order by c.create_time desc
     </select>
 
-    <select id="queryCommentInfoByProjectAndTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
-        select p.projectname as projectname,
+    <select id="queryByProjectAndTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+        select c.id as id,
+            p.projectname as projectname,
             p.taskname as taskname,
             c.content as content,
             c.create_time as createTime,

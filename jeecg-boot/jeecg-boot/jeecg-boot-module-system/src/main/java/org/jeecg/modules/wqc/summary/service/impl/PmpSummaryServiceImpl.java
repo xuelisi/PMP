@@ -41,6 +41,11 @@ public class PmpSummaryServiceImpl extends ServiceImpl<PmpSummaryMapper, PmpSumm
         tsMapper.insert(ts);
     }
 
+    public void editSummaryWithTask(PmpSummary summary, String taskid) {
+        PmpTaskSummary ts = new PmpTaskSummary(summary.getId(), taskid);
+        tsMapper.updateBySummaryId(ts.getSummaryId(), ts.getTaskId());
+    }
+
     public void addSummaryWithChief(PmpSummary summary, String chiefid) {
         PmpChiefSummary cs = new PmpChiefSummary(summary.getId(), chiefid);
         csMapper.insert(cs);

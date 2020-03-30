@@ -40,7 +40,7 @@
         <a-form-item label="评论内容" :labelCol="ctlabelCol" :wrapperCol="ccwrapperCol">
           <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
                       :autosize="{ minRows: 5}"
-                      :readOnly="true">
+                      :readOnly="disableSubmit">
           </a-textarea>
         </a-form-item>
 
@@ -88,9 +88,8 @@
         },
         confirmLoading: false,
         validatorRules: {
-          taskid: {rules: [
-            ]},
           content: {rules: [
+              {required: true, message: '请输入评论内容!'},
             ]},
         },
         url: {

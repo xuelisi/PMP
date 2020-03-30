@@ -14,6 +14,8 @@ import java.util.Date;
 @Data
 public class PmpCommentInfo{
 
+    private String id;
+
 	private String taskName;
 
 	private String projectName;

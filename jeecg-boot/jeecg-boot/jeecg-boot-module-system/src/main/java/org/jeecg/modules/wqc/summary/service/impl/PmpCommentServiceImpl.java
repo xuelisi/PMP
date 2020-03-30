@@ -37,7 +37,7 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
         return mapper.queryCommentInfoByTask(taskid, username);
     }
 
-    public Page<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName,String taskName) {
-        return page.setRecords(mapper.queryCommentInfoByProjectAndTask(page, projectName, taskName));
+    public Page<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName,String taskName) {
+        return page.setRecords(mapper.queryByProjectAndTask(page, projectName, taskName));
     }
 }

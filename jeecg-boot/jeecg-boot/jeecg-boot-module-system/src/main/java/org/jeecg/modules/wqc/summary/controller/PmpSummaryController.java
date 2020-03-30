@@ -132,10 +132,24 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
     * @return
     */
    @PutMapping(value = "/edit")
-   public Result<?> edit(@RequestBody PmpSummary pmpSummary) {
-       service.updateById(pmpSummary);
+   public Result<?> edit(@RequestBody PmpSummaryInfo info) {
+       PmpSummary summary = new PmpSummary();
+
+       summary.setId(info.getId());
+       summary.setContent(info.getContent());
+       summary.setCreateBy(info.getCreateBy());
+       summary.setSummaryTime(info.getSummaryTime());
+       summary.setContentAnnex(info.getContentAnnex());
+
+       service.updateById(summary);
+       service.editSummaryWithTask(summary, info.getTaskid());
        return Result.ok("编辑成功!");
    }
+//   public Result<?> edit(@RequestBody PmpSummary pmpSummary) {
+//       service.updateById(pmpSummary);
+//       service.editSummaryWithTask(pmpSummary);
+//       return Result.ok("编辑成功!");
+//   }
 
    /**
     *   通过id删除

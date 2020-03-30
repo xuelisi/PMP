@@ -22,45 +22,15 @@
               />
               <a slot="title">{{ item.title }}</a>
             </a-list-item-meta>
-            <!--<div slot="actions">-->
-              <!--<a-popover title="详情">-->
-                <!--<template slot="content">-->
-                  <!--<p style="max-width: 500px;">{{ item.details }}</p>-->
-                <!--</template>-->
-                <!--<a>详情</a>-->
-                <!--&lt;!&ndash;<a-button type="primary">Hover me</a-button>&ndash;&gt;-->
-              <!--</a-popover>-->
-            <!--</div>-->
           </a-list-item>
         </a-list>
       </div>
-        <!--<a-tab-pane tab="我的评论" key="2" forceRender>-->
-          <!--<div class="scroll-wrap">-->
-            <!--<a-list size="small" split="false">-->
-              <!--<a-list-item :key="index" v-for="(item, index) in ownerCmtData">-->
-                <!--<a-list-item-meta :description="item.description">-->
-                  <!--<a-avatar slot="avatar" size="small" shape="square" :src="item.avatar"/>-->
-                  <!--<a slot="title">{{ item.title }}</a>-->
-                <!--</a-list-item-meta>-->
-                <!--<div slot="actions">-->
-                  <!--<a>修改</a>-->
-                <!--</div>-->
-                <!--<div slot="actions">-->
-                  <!--<a>删除</a>-->
-                <!--</div>-->
-              <!--</a-list-item>-->
-            <!--</a-list>-->
-          <!--</div>-->
-        <!--</a-tab-pane>-->
-      <!--</a-tabs>-->
 
       <a-form :form="form" >
             <a-form-item label="任务id" :labelCol="labelCol" :wrapperCol="wrapperCol" style="display:none;">
               <a-input v-decorator="[ 'taskid', validatorRules.taskid]" placeholder="请输入任务id"></a-input>
             </a-form-item>
-            <a-form-item label="评论" :labelCol="labelCol" :wrapperCol="wrapperCol"
-            >
-              <!--<j-editor v-decorator="['content',{trigger:'input'}]"/>-->
+            <a-form-item label="评论" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
                           :autosize="{ minRows: 3}">
               </a-textarea>

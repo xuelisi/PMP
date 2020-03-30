@@ -19,5 +19,5 @@ public interface IPmpCommentService extends IService<PmpComment> {
 
     public List<PmpCommentInfo> queryCommentInfoByTask(String taskid, String username);
 
-    public Page<PmpCommentInfo> queryCommentInfoByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
+    public Page<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
 }
