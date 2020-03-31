@@ -2,7 +2,11 @@ package org.jeecg.modules.wqc.summary.service.impl;
 
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
 import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
+import org.jeecg.modules.wqc.summary.entity.PmpCommentSummary;
+import org.jeecg.modules.wqc.summary.entity.PmpTaskComment;
 import org.jeecg.modules.wqc.summary.mapper.PmpCommentMapper;
+import org.jeecg.modules.wqc.summary.mapper.PmpTaskCommentMapper;
+import org.jeecg.modules.wqc.summary.mapper.PmpCommentSummaryMapper;
 import org.jeecg.modules.wqc.summary.service.IPmpCommentService;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +30,45 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
 
     @Autowired
     private PmpCommentMapper mapper;
+    @Autowired
+    private PmpTaskCommentMapper tcMapper;
+    @Autowired
+    private PmpCommentSummaryMapper csMapper;
 
+
+    public void addCommentWithTask(PmpComment comment, String taskid) {
+        PmpTaskComment ts = new PmpTaskComment(comment.getId(), taskid);
+        tcMapper.insert(ts);
+    }
+
+    public void editCommentWithTask(PmpComment comment, String taskid) {
+        PmpTaskComment ts = new PmpTaskComment(comment.getId(), taskid);
+        tcMapper.updateByCommentId(ts.getCommentId(), ts.getTaskId());
+    }
+
+    public void removeCommentWithTask(String commentid) {
+        tcMapper.removeCommentWithTask(commentid);
+    }
 
     public String queryRealName(String username) {
         return  mapper.queryRealName(username);
     }
 
+    public String queryTaskNameByTaskid(String taskid) {
+        return mapper.queryTaskNameByTaskid(taskid);
+    }
+
+    public String queryCommenteeByTaskid(String taskid) {
+        return mapper.queryCommenteeByTaskid(taskid);
+    }
+
+    public List<PmpCommentSummary> queryUnionByTaskid(String taskid) {
+        return csMapper.queryUnionByTaskid(taskid);
+    }
+
     //根据小结id，查询批阅信息
-    public List<PmpCommentInfo> queryCommentInfoByTask(String taskid, String username) {
-        return mapper.queryCommentInfoByTask(taskid, username);
+    public List<PmpCommentInfo> queryByTask(String taskid, String username) {
+        return mapper.queryByTask(taskid, username);
     }
 
     public Page<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName,String taskName) {

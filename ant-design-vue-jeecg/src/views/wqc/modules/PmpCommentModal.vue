@@ -31,7 +31,7 @@
               <a-input v-decorator="[ 'taskid', validatorRules.taskid]" placeholder="请输入任务id"></a-input>
             </a-form-item>
             <a-form-item label="评论" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
+              <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder=""
                           :autosize="{ minRows: 3}">
               </a-textarea>
             </a-form-item>
@@ -76,10 +76,9 @@
         },
         confirmLoading: false,
         validatorRules: {
-          taskid: {rules: [
-          ]},
           content: {rules: [
-          ]},
+              {required: true, message: '请输入评论内容!'},
+            ]},
         },
         url: {
           add: "/summary/pmpComment/add",

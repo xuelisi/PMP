@@ -57,6 +57,14 @@
           >{{text}}</a>
           <span v-else>{{text}}</span>
         </template>
+        <template slot="principal" slot-scope="text,record">
+          <a
+            href="javascript:;"
+            @click="handleCommentSummary(record)"
+            v-if="record.parentnode!='0'"
+          >{{ getRealName(text) }}</a>
+          <span v-else>{{getRealName(text)}}</span>
+        </template>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
         </span>
@@ -102,6 +110,7 @@
     <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
     <pmpProSummary-modal ref="summaryModal" @ok="modalFormOk"></pmpProSummary-modal>
+    <pmpCommentSummary-modal ref="csModal" @ok="modalFormOk"></pmpCommentSummary-modal>
     <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
@@ -114,12 +123,12 @@ import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
 import TaskRemindModal from './modules/TaskRemindModal'
-import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
+import PmpCommentSummaryModal from '@views/wqc/modules/PmpCommentSummaryModal'
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
@@ -130,7 +139,8 @@ export default {
     PmpTaskdetailsModal,
     PmpCommentModal,
     TaskRemindModal,
-    PmpProSummaryModal
+    PmpProSummaryModal,
+    PmpCommentSummaryModal
   },
   data() {
     return {
@@ -151,10 +161,11 @@ export default {
           title: '负责人',
           align: 'center',
           dataIndex: 'principal',
-          customRender: text => {
-            //字典值替换通用方法
-            return myFilterMultiDictText(this.principal, text)
-          }
+          // customRender: text => {
+          //   //字典值替换通用方法
+          //   return myFilterMultiDictText(this.principal, text)
+          // },
+          scopedSlots: { customRender: 'principal' }
         },
         {
           title: '总进度',
@@ -363,6 +374,15 @@ export default {
         this.openNotification('提示', '已禁用,无法编辑！')
       }
     },
+    handleCommentSummary(record) {
+      if (record.isdelete == '0') {
+        this.$refs.csModal.edit(record)
+        this.$refs.csModal.disableSubmit = false
+        this.$refs.csModal.description = this.$route.query.data.projecttype
+      } else {
+        this.openNotification('提示', '已禁用,无法查看！')
+      }
+    },
     loadData(arg) {
       if (arg == 1) {
         this.ipagination.current = 1
@@ -497,6 +517,9 @@ export default {
           }
         }
       }
+    },
+    getRealName(text) {
+      return myFilterMultiDictText(this.principal, text);
     }
   }
 }

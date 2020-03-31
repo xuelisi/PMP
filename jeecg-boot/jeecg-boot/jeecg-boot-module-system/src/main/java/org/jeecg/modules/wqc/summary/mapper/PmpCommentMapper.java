@@ -18,7 +18,11 @@ public interface PmpCommentMapper extends BaseMapper<PmpComment> {
 
     String queryRealName(String username);
 
-    List<PmpCommentInfo> queryCommentInfoByTask(@Param("taskid") String taskid, @Param("username") String username);
+    String queryTaskNameByTaskid(String taskid);
+
+    String queryCommenteeByTaskid(String taskid);
+
+    List<PmpCommentInfo> queryByTask(@Param("taskid") String taskid, @Param("username") String username);
 
     List<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
 
