@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpTaskCommentMapper">
+
+    <update id="updateByCommentId" >
+        update pmp_task_comment
+        set task_id = #{taskId}
+        where comment_id = #{commentId}
+    </update>
+
+    <update id="removeCommentWithTask" >
+        delete
+        from pmp_task_comment
+        where comment_id = #{commentId}
+    </update>
+
+
+</mapper>

@@ -3,18 +3,23 @@ package org.jeecg.modules.wqc.summary.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.api.ISysBaseAPI;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
 import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
+import org.jeecg.modules.wqc.summary.entity.PmpCommentSummary;
 import org.jeecg.modules.wqc.summary.service.IPmpCommentService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -80,16 +85,28 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	}
 
 	 @RequestMapping(value = "/query", method = RequestMethod.GET)
-	 public Result<List<PmpCommentInfo>> queryCommentInfoByTask(@RequestParam(name="taskid",required=true) String taskid,
+	 public Result<List<PmpCommentInfo>> queryByTask(@RequestParam(name="taskid",required=true) String taskid,
 													 @RequestParam(name="userName",required=true) String userName) {
 		 Result<List<PmpCommentInfo>> result = new Result<>();
-		 List<PmpCommentInfo> cmtList = pmpCommentService.queryCommentInfoByTask(taskid, userName);
+		 List<PmpCommentInfo> cmtList = pmpCommentService.queryByTask(taskid, userName);
 
 		 result.setResult(cmtList);
 		 result.setSuccess(true);
 
 		 return result;
 	 }
+
+	 @GetMapping(value = "/union")
+	 public Result<List<PmpCommentSummary>> queryUnion(@RequestParam(name="taskid",required=true) String taskid) {
+		 Result<List<PmpCommentSummary>> result = new Result<>();
+		 List<PmpCommentSummary> cmtList = pmpCommentService.queryUnionByTaskid(taskid);
+
+		 result.setResult(cmtList);
+		 result.setSuccess(true);
+
+		 return result;
+	 }
+
 
 	 @RequestMapping(value = "/realname", method = RequestMethod.GET)
 	 public Result<String> queryRealName(@RequestParam(name="username",required=true) String username) {
@@ -111,8 +128,9 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody PmpComment pmpComment) {
 		if (pmpCommentService.save(pmpComment)) {
-			sendCommentNote("admin", "wqc");
+			sendCommentNote(pmpComment.getTaskid());
 		}
+
 		return Result.ok("评论成功！");
 	}
 	
@@ -190,7 +208,17 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
         return super.importExcel(request, response, PmpComment.class);
     }
 
-    public void sendCommentNote(String formUsername, String toUsername) {
-		sysBaseAPI.sendSysAnnouncement(formUsername, toUsername, "你有新的评论-测试标题", "你有新的评论-测试内容");
+    public void sendCommentNote(String taskid) {
+		String userName = pmpCommentService.queryCommenteeByTaskid(taskid);
+		String realName = pmpCommentService.queryRealName(userName);
+		String taskName = pmpCommentService.queryTaskNameByTaskid(taskid);
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+
+		Map<String, String> paramMap = new HashMap();
+		paramMap.put("Commentee", realName);
+		paramMap.put("Commentator", sysUser.getRealname());
+		paramMap.put("taskName", taskName);
+		sysBaseAPI.sendSysAnnouncement(sysUser.getUsername(), userName, "你有新的评论通知！", paramMap, "bpm_comment_note");
+		//sysBaseAPI.sendSysAnnouncement(sysUser.getUsername(), userName, "你有新的评论-测试标题", "你有新的评论-测试内容");
 	}
 }

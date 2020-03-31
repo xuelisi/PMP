@@ -72,4 +72,16 @@
           where username = #{username}
 	</select>
 
+    <select id="queryTaskNameByTaskid" parameterType="String" resultType="String">
+        select taskname
+        from pmp_project
+        where id = #{taskid}
+    </select>
+
+    <select id="queryCommenteeByTaskid" parameterType="String" resultType="String">
+        select principal
+        from pmp_project
+        where id = #{taskid}
+    </select>
+
 </mapper>

@@ -137,7 +137,8 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
 
        summary.setId(info.getId());
        summary.setContent(info.getContent());
-       summary.setCreateBy(info.getCreateBy());
+       //summary.setUpdateBy(info.getCreateBy());
+       //summary.setUpdateTime(info.getCreateTime());
        summary.setSummaryTime(info.getSummaryTime());
        summary.setContentAnnex(info.getContentAnnex());
 

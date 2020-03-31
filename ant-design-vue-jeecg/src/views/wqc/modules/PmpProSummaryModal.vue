@@ -139,7 +139,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'id','taskid','chiefid', 'summaryTime','content','contentAnnex'))
+          this.form.setFieldsValue(pick(this.model,'id','taskid', 'summaryTime','content','contentAnnex'))
         })
       },
       close () {

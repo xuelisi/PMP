@@ -75,7 +75,7 @@ public class ShiroConfig {
 //		filterChainDefinitionMap.put("/projecttwotask/pmpProjecttwotask/**", "anon");
 
 		//任务
-		filterChainDefinitionMap.put("/summary/pmpTaskSummary/**", "anon");
+//		filterChainDefinitionMap.put("/summary/pmpTaskSummary/**", "anon");
 
 
 		//大屏请求排除

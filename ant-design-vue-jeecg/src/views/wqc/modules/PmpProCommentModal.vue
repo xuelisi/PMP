@@ -5,7 +5,6 @@
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleOk"
-    :footer="null"
     @cancel="handleCancel"
     cancelText="关闭">
     <a-spin :spinning="confirmLoading">
@@ -14,12 +13,12 @@
         <a-row :gutter="25">
           <a-col :lg="12">
             <a-form-item label="项目名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'projectName', validatorRules.projectName]" placeholder="" :readOnly="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'projectName', validatorRules.projectName]" placeholder="" :readOnly="true"></a-input>
             </a-form-item>
           </a-col>
           <a-col :lg="12">
             <a-form-item label="任务名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'taskName', validatorRules.taskName]" placeholder="" :readOnly="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'taskName', validatorRules.taskName]" placeholder="" :readOnly="true"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
@@ -27,20 +26,24 @@
         <a-row :gutter="24">
           <a-col :lg="12">
             <a-form-item label="评论人员" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'realName', validatorRules.realName]" placeholder="" :readOnly="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'realName', validatorRules.realName]" placeholder="" :readOnly="true"></a-input>
             </a-form-item>
           </a-col>
           <a-col :lg="12">
             <a-form-item label="评论时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input v-decorator="[ 'createTime', validatorRules.taskName]" placeholder="" :readOnly="disableSubmit"></a-input>
+              <a-input v-decorator="[ 'createTime', validatorRules.taskName]" placeholder="" :readOnly="true"></a-input>
             </a-form-item>
           </a-col>
         </a-row>
 
         <a-form-item label="评论内容" :labelCol="ctlabelCol" :wrapperCol="ccwrapperCol">
-          <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder="评论..."
-                      :autosize="{ minRows: 5}"
-                      :readOnly="disableSubmit">
+          <a-textarea
+            v-decorator="['content', validatorRules.content]"
+            placeholder=""
+            :autosize="{ minRows: 5}"
+            :trigger-change="true"
+            :readOnly="disableSubmit">
+
           </a-textarea>
         </a-form-item>
 
@@ -56,6 +59,14 @@
   import { httpAction } from '@/api/manage'
   import JEditor from '@/components/jeecg/JEditor'
   import { validateDuplicateValue } from '@/utils/util'
+
+  const debug = (msg) => {
+    console.log('*************************');
+    console.log('*************************');
+    console.log(msg);
+    console.log('*************************');
+    console.log('*************************');
+  }
 
   export default {
     name: "PmpProCommentModal",
@@ -89,8 +100,8 @@
         confirmLoading: false,
         validatorRules: {
           content: {rules: [
-              {required: true, message: '请输入评论内容!'},
-            ]},
+            {required: true, message: '请输入评论内容!'},
+          ]},
         },
         url: {
           add: "/summary/pmpComment/add",
@@ -125,6 +136,11 @@
       handleOk () {
         const that = this;
         // 触发表单验证
+
+        debug(this.form);
+
+        return;
+
         this.form.validateFields((err, values) => {
           if (!err) {
             that.confirmLoading = true;
