@@ -72,7 +72,7 @@
               <a-menu-item>
                 <a href="javascript:;" @click="handleDetail1(record)">详情</a>
               </a-menu-item>
-              <a-menu-item>
+              <a-menu-item v-show="record.parentnode!=0">
                 <a href="javascript:;" @click="handleComment(record)">评论</a>
               </a-menu-item>
               <a-menu-item>
@@ -114,7 +114,6 @@ import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
 import TaskRemindModal from './modules/TaskRemindModal'
-import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
@@ -254,7 +253,6 @@ export default {
     }
   },
   methods: {
-    ...mapGetters(['userInfo']),
     openNotification(title, des) {
       this.$notification.open({
         message: title,
@@ -290,20 +288,6 @@ export default {
         })
       } else {
         this.openNotification('提示', '已禁用,无法评论！')
-      }
-    },
-    handleSummary: function(record) {
-      if (record.isdelete == '0') {
-
-        if ((record.principal.indexOf(this.userInfo().username) >= 0) ||
-          (record.participant.indexOf(this.userInfo().username) >= 0)) {
-
-          this.$refs.summaryModal.add(record.id)
-        } else {
-          this.openNotification('提示', '您不是负责人员或参与人员，不能通过此接口填写日报！')
-        }
-      } else {
-        this.openNotification('提示', '已禁用,无法填写日报！')
       }
     },
     // handleRemind: function(record) {

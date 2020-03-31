@@ -243,7 +243,6 @@
         // this.form.resetFields()
       },
       handleSubmit () {
-        debugger
         let that = this
         let loginParams = {};
         that.loginBtn = true;
@@ -251,7 +250,6 @@
         if (that.customActiveKey === 'tab1') {
           that.form.validateFields([ 'username', 'password', 'rememberMe' ], { force: true }, (err, values) => {
             if (!err) {
-              debugger
               loginParams.username = values.username
               // update-begin- --- author:scott ------ date:20190805 ---- for:密码加密逻辑暂时注释掉，有点问题
               //loginParams.password = md5(values.password)
