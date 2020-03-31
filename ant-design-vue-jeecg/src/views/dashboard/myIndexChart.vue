@@ -22,12 +22,12 @@
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="任务延误率" total="31%">
+        <chart-card :loading="loading" title="任务延误率" total="11%">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
-            <mini-progress color="red" :target="100" :percentage="31" :height="8" />
+            <mini-progress color="red" :target="100" :percentage="11" :height="8" />
           </div>
           <template slot="footer">
             <trend flag="down" style="margin-right: 16px;">
@@ -94,102 +94,24 @@
           >
             <div style="background: #ECECEC; padding: 30px">
               <a-row :gutter="16">
-                <a-col :span="4">
-                  <a-card>
-                    <a-statistic
-                      title="朱金钢"
-                      :value="128"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
-                <a-col :span="4">
-                  <a-card>
-                   <a-statistic
-                      title="夏凌峰"
-                      :value="112"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
-                <a-col :span="4">
-                  <a-card>
-                   <a-statistic
-                      title="吴庆超"
-                      :value="108"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
-                <a-col :span="4">
-                  <a-card>
-                   <a-statistic
-                      title="李群"
-                      :value="128"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
-                <a-col :span="4">
-                  <a-card>
-                    <a-statistic
-                      title="江联锋"
-                      :value="75"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
-                <a-col :span="4">
-                  <a-card>
-                    <a-statistic
-                      title="廖磊"
-                      :value="66"
-                      :precision="0"
-                      suffix="次"
-                      :valueStyle="{color: '#3f8600'}"
-                      style="margin-right: 50px"
-                    >
-                      <template v-slot:prefix>
-                        <a-icon type="arrow-up" />
-                      </template>
-                    </a-statistic>
-                  </a-card>
-                </a-col>
+                <a-list :dataSource="visitTopSixInfo" :grid="{ gutter: 16, column: 6 }">
+                  <a-list-item slot="renderItem" slot-scope="item">
+                    <a-card>
+                      <a-statistic
+                        :title="getRealname(item.userid)"
+                        :value="item.visit"
+                        :precision="0"
+                        suffix="次"
+                        :valueStyle="{color: '#3f8600'}"
+                        style="margin-right: 50px"
+                      >
+                        <template v-slot:prefix>
+                          <a-icon type="arrow-up" />
+                        </template>
+                      </a-statistic>
+                    </a-card>
+                  </a-list-item>
+                </a-list>
               </a-row>
             </div>
           </a-card>
@@ -245,21 +167,14 @@ import ATooltip from 'ant-design-vue/es/tooltip/Tooltip'
 import MiniArea from '@/components/chart/MiniArea'
 import MiniBar from '@/components/chart/MiniBar'
 import MiniProgress from '@/components/chart/MiniProgress'
-import RankList from '@/components/chart/RankList'
 import Bar from '@/components/chart/Bar'
 import LineChartMultid from '@/components/chart/LineChartMultid'
 import HeadInfo from '@/components/tools/HeadInfo.vue'
 
 import Trend from '@/components/Trend'
-import { getLoginfo, getVisitInfo } from '@/api/api'
+import { getLoginfo, getVisitInfo, getVisitTopSixInfo } from '@/api/api'
+import { initDictOptions, filterDictText } from '@/components/dict/JDictSelectUtil'
 
-const rankList = []
-for (let i = 0; i < 7; i++) {
-  rankList.push({
-    name: '白鹭岛 ' + (i + 1) + ' 号店',
-    total: 1234.56 - i * 100
-  })
-}
 const barData = []
 for (let i = 0; i < 12; i += 1) {
   barData.push({
@@ -276,7 +191,6 @@ export default {
     MiniArea,
     MiniBar,
     MiniProgress,
-    RankList,
     Bar,
     Trend,
     LineChartMultid,
@@ -284,13 +198,14 @@ export default {
   },
   data() {
     return {
+      principalDictOptions: [],
       loading: true,
       center: null,
-      rankList,
       barData,
       loginfo: {},
       visitFields: ['ip', 'visit'],
       visitInfo: [],
+      visitTopSixInfo: [],
       indicator: <a-icon type="loading" style="font-size: 24px" spin />
     }
   },
@@ -299,8 +214,17 @@ export default {
       this.loading = !this.loading
     }, 1000)
     this.initLogInfo()
+    //初始化字典 - 项目状态
+    initDictOptions('sys_user,realname,username').then(res => {
+      if (res.success) {
+        this.principalDictOptions = res.result
+      }
+    })
   },
   methods: {
+    getRealname(text) {
+      return filterDictText(this.principalDictOptions, text)
+    },
     initLogInfo() {
       getLoginfo(null).then(res => {
         if (res.success) {
@@ -312,8 +236,14 @@ export default {
       })
       getVisitInfo().then(res => {
         if (res.success) {
-          console.log('aaaaaa', res.result)
+          //  console.log('aaaaaa', res.result)
           this.visitInfo = res.result
+        }
+      })
+      getVisitTopSixInfo().then(res => {
+        if (res.success) {
+          console.log('aaaaaa', res.result)
+          this.visitTopSixInfo = res.result
         }
       })
     }

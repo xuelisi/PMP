@@ -86,6 +86,7 @@ const doReovkeData = (params)=>getAction("/sys/annountCement/doReovkeData",param
 //获取系统访问量
 const getLoginfo = (params)=>getAction("/sys/loginfo",params);
 const getVisitInfo = (params)=>getAction("/sys/visitInfo",params);
+const getVisitTopSixInfo = (params)=>getAction("/sys/visitTopSixInfo",params);
 //数据日志访问
 // const getDataLogList = (params)=>getAction("/sys/dataLog/list",params);
 
@@ -102,6 +103,7 @@ const loadCategoryData = (params)=>getAction("/sys/category/loadAllData",params)
 export {
   // imgView,
   // doMian,
+  getVisitTopSixInfo,
   queryPmpTreeList,
   addRole,
   editRole,
