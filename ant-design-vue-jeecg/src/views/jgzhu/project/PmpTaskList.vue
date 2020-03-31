@@ -7,7 +7,7 @@
       <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>-->
-      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete" />删除
@@ -17,7 +17,7 @@
           批量操作
           <a-icon type="down" />
         </a-button>
-      </a-dropdown>
+      </a-dropdown>-->
     </div>
 
     <!-- table区域-begin -->
@@ -114,6 +114,7 @@ import PmpTaskListModal from './modules/PmpTaskListModal'
 import PmpTaskdetailsModal from './modules/PmpTaskdetailsModal'
 import PmpCommentModal from '@views/wqc/modules/PmpCommentModal'
 import TaskRemindModal from './modules/TaskRemindModal'
+import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
 import { USER_NAME } from '@/store/mutation-types'
 import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
@@ -261,6 +262,17 @@ export default {
         icon: <a-icon type="frown" style="color: red" />
       })
     },
+    handleSummary: function(record) {
+      if (record.isdelete == '0') {
+        if (record.principal.indexOf(this.username) >= 0 || record.participant.indexOf(this.username) >= 0) {
+          this.$refs.summaryModal.add(record.id)
+        } else {
+          this.openNotification('提示', '权限不够哦,无法填写日报！')
+        }
+      } else {
+        this.openNotification('提示', '已禁用,无法填写日报！')
+      }
+    },
     handleComment: function(record) {
       if (record.isdelete == '0') {
         let params = {
@@ -325,7 +337,6 @@ export default {
       this.$refs.modalForm.projectName = this.$route.query.data.projectname
     },
     myHandleTaskEdit(record) {
-      debugger
       if (record.isdelete == '0') {
         if (record.createBy == this.username) {
           this.$refs.modalForm.edit(record)
