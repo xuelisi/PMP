@@ -19,16 +19,19 @@ import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.constant.DataBaseConstant;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.api.ISysBaseAPI;
+import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.ComboModel;
 import org.jeecg.common.system.vo.DictModel;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.system.vo.SysDepartModel;
 import org.jeecg.common.util.IPUtils;
 import org.jeecg.common.util.SpringContextUtils;
+import org.jeecg.common.util.TokenUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.message.entity.SysMessageTemplate;
 import org.jeecg.modules.message.service.ISysMessageTemplateService;
 import org.jeecg.modules.message.websocket.WebSocket;
+import org.jeecg.modules.shiro.vo.DefContants;
 import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.mapper.*;
 import org.jeecg.modules.system.service.ISysDepartService;
@@ -102,7 +105,15 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 		if(sysUser!=null){
 			sysLog.setUserid(sysUser.getUsername());
 			sysLog.setUsername(sysUser.getRealname());
-
+		}else{
+			// 查询用户信息
+			if(logType == 1){
+				LoginUser user = getUserByName(LogContent.split(":")[1].split(",")[0].trim());
+				if(user!=null){
+					sysLog.setUserid(user.getUsername());
+					sysLog.setUsername(user.getRealname());
+				}
+			}
 		}
 		sysLog.setCreateTime(new Date());
 		//保存系统日志

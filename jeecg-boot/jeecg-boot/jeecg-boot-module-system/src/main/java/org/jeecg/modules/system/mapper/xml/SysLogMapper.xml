@@ -66,4 +66,15 @@
      </if>
     </select>
 
+    <!-- 首页访问统计 -->
+    <select id="findVisitTopSixCount" resultType="java.util.HashMap">
+        <if test="dbType == 'SQLSERVER'">
+            select top 6 userid,count(*) as visit
+            from sys_log
+            where log_type = 1 and create_time &gt;= #{dayStart} and create_time &lt; #{dayEnd} and userid is not null
+            group by userid
+            order by visit desc
+        </if>
+    </select>
+
 </mapper>
