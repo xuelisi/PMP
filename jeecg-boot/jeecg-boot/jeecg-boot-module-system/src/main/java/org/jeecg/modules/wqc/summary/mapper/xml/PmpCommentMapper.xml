@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpCommentMapper">
 
-    <select id="queryCommentInfoByTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+    <select id="queryByTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
         select p.projectname as projectname,
         p.taskname as taskname,
         c.content as content,
@@ -79,7 +79,7 @@
     </select>
 
     <select id="queryCommenteeByTaskid" parameterType="String" resultType="String">
-        select principal
+        select isnull(principal, create_by)
         from pmp_project
         where id = #{taskid}
     </select>

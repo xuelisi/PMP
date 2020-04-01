@@ -43,14 +43,14 @@
         </template>
 
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a @click="commentEdit(record)">编辑</a>
 
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => commentDelete(record)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -69,6 +69,8 @@
 
   import JEllipsis from '@/components/jeecg/JEllipsis'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { deleteAction, getAction,downFile } from '@/api/manage'
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
   import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
   import PmpProCommentModal from './modules/PmpProCommentModal'
@@ -135,9 +137,43 @@
       }
     },
     methods: {
-      details(record) {
-        this.$refs.modalForm.show(record);
+      ...mapGetters(['userInfo']),
+      openNotification(title, des) {
+        this.$notification.open({
+          message: title,
+          description: des,
+          icon: <a-icon type="frown" style="color: red" />
+      })
       },
+      isOwner(record) {
+        return (record.createBy.indexOf(this.userInfo().username) >= 0);
+      },
+      commentEdit(record) {
+        if (this.isOwner(record)) {
+          this.$refs.modalForm.edit(record);
+        } else {
+          this.openNotification('提示', '权限不够哦,无法编辑评论！')
+        }
+      },
+      commentDelete(record) {
+        if (this.isOwner(record)) {
+          if(!this.url.delete){
+            this.$message.error("请设置url.delete属性!")
+            return
+          }
+          let that = this;
+          deleteAction(that.url.delete, {id: record.id}).then((res) => {
+            if (res.success) {
+              that.$message.success(res.message);
+              that.loadData();
+            } else {
+              that.$message.warning(res.message);
+            }
+          });
+        } else {
+          this.openNotification('提示', '权限不够哦,无法删除评论！')
+        }
+      }
     }
   }
 </script>

@@ -136,11 +136,6 @@
       handleOk () {
         const that = this;
         // 触发表单验证
-
-        debug(this.form);
-
-        return;
-
         this.form.validateFields((err, values) => {
           if (!err) {
             that.confirmLoading = true;
