@@ -54,4 +54,12 @@ public interface SysLogMapper extends BaseMapper<SysLog> {
 	 * @return
 	 */
 	List<Map<String,Object>> findVisitCount(@Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd, @Param("dbType") String dbType);
+
+	/**
+	 *   首页：根据时间统计访问数量/ip数量
+	 * @param dayStart
+	 * @param dayEnd
+	 * @return
+	 */
+	List<Map<String,Object>> findVisitTopSixCount(@Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd, @Param("dbType") String dbType);
 }

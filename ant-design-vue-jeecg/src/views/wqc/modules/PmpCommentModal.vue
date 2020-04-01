@@ -136,7 +136,6 @@
       },
       handleOk () {
         const that = this;
-        debugger
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
