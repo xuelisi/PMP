@@ -220,6 +220,7 @@ import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
 import { filterObj, isContainPrincipal } from '@/utils/util'
 import Vue from 'vue'
 import { USER_NAME } from '@/store/mutation-types'
+import { queryProjectInfo } from '@/api/api'
 
 export default {
   name: 'PmpProjectList',
@@ -240,6 +241,7 @@ export default {
       taskTypeDictOptions: [],
       searchText: '',
       searchInput: null,
+      projecttype: '0',
       // 表头
       columns: [
         {
@@ -582,9 +584,17 @@ export default {
     myHandleDetailEdit(record) {
       if (record.isdelete == '0') {
         if (record.createBy == this.username || isContainPrincipal(record.principal, this.username)) {
-          this.$refs.modalForm1.edit(record)
-          this.$refs.modalForm1.title = '编辑'
-          this.$refs.modalForm1.disableSubmit = false
+          let params = {
+            projectname: record.projectname
+          }
+          queryProjectInfo(params).then(res => {
+            if (res.success) {
+              this.$refs.modalForm1.edit(record)
+              this.$refs.modalForm1.title = '编辑'
+              this.$refs.modalForm1.disableSubmit = false
+              this.$refs.modalForm1.description = res.result.projecttype
+            }
+          })
         } else {
           this.openNotification('提示', '权限不够哦,禁止编辑！')
         }

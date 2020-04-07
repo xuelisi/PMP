@@ -232,6 +232,7 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		 try {
 			 pmpProjectService.addSysCategory(pmpProject);
 			 pmpProjectService.updateMyNode(pmpProject.getProjectname(),pmpProject.getParentnode(),pmpProject.getId());
+
 			 result.success("添加成功！");
 		 } catch (Exception e) {
 			 log.error(e.getMessage(),e);
@@ -350,6 +351,24 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 		}
 		return Result.ok(pmpProject);
 	}
+
+	 /**
+	  * 通过projectname查询
+	  *
+	  * @param projectname
+	  * @return
+	  */
+	 @GetMapping(value = "/queryByProjectName")
+	 public Result<?> queryByProjectName(@RequestParam(name="projectname",required=true) String projectname) {
+		 QueryWrapper<PmpProject> queryWrapper = new QueryWrapper<PmpProject>();
+		 queryWrapper.eq("projectname", projectname);
+		 queryWrapper.eq("parentnode", '0');
+		 PmpProject pmpProject = pmpProjectService.getOne(queryWrapper);
+		 if(pmpProject==null) {
+			 return Result.error("未找到对应数据");
+		 }
+		 return Result.ok(pmpProject);
+	 }
 
     /**
     * 导出excel

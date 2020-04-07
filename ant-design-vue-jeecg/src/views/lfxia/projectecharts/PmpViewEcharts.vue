@@ -42,7 +42,7 @@
           </a-col>
           <a-col :span="4">
             <dl style="margin-top:120px">
-              <dt style="font-size:80px;color:#23b7e5;font-family:'微软雅黑'">{{number}}</dt>
+              <dt style="font-size:70px;color:#23b7e5;font-family:'微软雅黑'">{{number}}</dt>
               <dt style="font-size:15px;font-family:'微软雅黑';color:black">新增项目</dt>
             </dl>
           </a-col>

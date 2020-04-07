@@ -5,7 +5,7 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.png" class="logo" alt="logo">
-            <span class="title">芜湖新兴项目管理平台</span>
+            <span class="title">芜湖新兴项目管理</span>
           </a>
         </div>
         <div class="desc">
@@ -99,7 +99,7 @@
           }
 
           .title {
-            font-size: 33px;
+            font-size: 31px;
             color: rgba(0, 0, 0, .85);
             font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             font-weight: 600;
