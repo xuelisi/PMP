@@ -17,7 +17,7 @@
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
         @click.native="toggle"/>
 
-      <span v-if="device === 'desktop'">欢迎进入 项目管理快速开发平台</span>
+      <span v-if="device === 'desktop'">欢迎进入项目管理快速开发平台</span>
       <span v-else>PMP</span>
 
       <user-menu :theme="theme"/>

@@ -1,5 +1,6 @@
 package org.jeecg.modules.wqc.summary.mapper;
 
+import java.util.Map;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +25,6 @@ public interface PmpCommentMapper extends BaseMapper<PmpComment> {
 
     List<PmpCommentInfo> queryByTask(@Param("taskid") String taskid, @Param("username") String username);
 
-    List<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName, String taskName);
+    List<PmpCommentInfo> query(Page<PmpCommentInfo> page, Map<String, String> map);
 
 }

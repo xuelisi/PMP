@@ -1,11 +1,9 @@
 <template>
   <a-card :bordered="false">
-
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-
           <a-col :md="6" :sm="8">
             <a-form-item label="起止日期">
               <a-range-picker
@@ -26,16 +24,10 @@
                 <a-input placeholder="请输入任务名称" v-model="queryParam.taskName"></a-input>
               </a-form-item>
             </a-col>
-
-            <a-col :md="6" :sm="8">
-              <a-form-item label="评论人员">
-                <a-input placeholder="请输入评论人员" v-model="queryParam.commentator"></a-input>
-              </a-form-item>
-            </a-col>
           </template>
 
           <a-col :md="6" :sm="8">
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+            <span style="float: left; overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
               <a @click="handleToggleSearch" style="margin-left: 8px">
@@ -49,31 +41,36 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
+    <!-- 操作按钮区域 -->
+    <div class="table-operator">
+      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+    </div>
 
     <!-- table区域-begin -->
     <div>
       <a-table
         bordered
         rowKey="id"
-        :loading="loading"
         :columns="columns"
+        :loading="loading"
         :dataSource="dataSource"
         :pagination="ipagination"
         @change="handleTableChange">
 
+
         <template slot="ellipsisSlot" slot-scope="text">
-          <j-ellipsis :value="text"/>
+          <j-ellipsis :value="rmHtmlLabel(text)"></j-ellipsis>
         </template>
 
         <span slot="action" slot-scope="text, record">
-          <a @click="commentEdit(record)">编辑</a>
+          <a @click="handleEdit(record)">编辑</a>
 
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => commentDelete(record)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -84,93 +81,98 @@
       </a-table>
     </div>
 
-    <pmpProComment-modal ref="modalForm" @ok="modalFormOk"></pmpProComment-modal>
+    <pmp-summary-modal ref="modalForm" @ok="modalFormOk"></pmp-summary-modal>
   </a-card>
 </template>
 
 <script>
 
   import moment from 'moment';
-  import JDate from '@/components/jeecg/JDate.vue'
   import JEllipsis from '@/components/jeecg/JEllipsis'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { deleteAction, getAction,downFile } from '@/api/manage'
-  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
-  import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
-
-  import PmpProCommentModal from './modules/PmpProCommentModal'
-  import ACol from "ant-design-vue/es/grid/Col";
+  import PmpSummaryModal from './modules/PmpSummaryModal'
 
   const columns = [
-    {
-      title: '#',
-      dataIndex: '',
-      key:'rowIndex',
-      width:60,
-      align:"center",
-      customRender: function (t, r, index) {
-        return parseInt(index)+1;
+      {
+        title: '#',
+        dataIndex: '',
+        key:'rowIndex',
+        width:60,
+        align:"center",
+        customRender:function (t,r,index) {
+          return parseInt(index)+1;
+        }
+      },
+      {
+        title:'项目名称',
+        align:"center",
+        dataIndex: 'projectName',
+      },
+      {
+        title:'任务名称',
+        align:"center",
+        dataIndex: 'taskName',
+      },
+      {
+        title:'小结内容',
+        align:"center",
+        dataIndex: 'content',
+        // ellipsis: true,
+        scopedSlots: {customRender: 'ellipsisSlot'}
+      },
+      {
+        title:'小结日期',
+        align:"center",
+        dataIndex: 'summaryTime',
+      },
+      {
+        title:'填报时间',
+        align:"center",
+        dataIndex: 'createTime',
+      },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        align:"center",
+        scopedSlots: { customRender: 'action' }
       }
-    },
-    {
-      title:'项目名称',
-      align:"center",
-      dataIndex: 'projectName'
-    },
-    {
-      title:'任务名称',
-      align:"center",
-      dataIndex: 'taskName'
-    },
-    {
-      title:'评论内容',
-      align:"center",
-      dataIndex: 'content',
-      scopedSlots: {customRender: 'ellipsisSlot'}
-    },
-    {
-      title:'评论人员',
-      align:"center",
-      dataIndex: 'realName',
-    },
-    {
-      title:'评论时间',
-      align:"center",
-      dataIndex: 'createTime',
-    },
-    {
-      title: '操作',
-      align:"center",
-      dataIndex: 'action',
-      scopedSlots: { customRender: 'action' }
-    }
-  ]
+    ]
 
   export default {
-    name: "PmpProComment",
+    name: "PmpSummary",
     mixins:[JeecgListMixin, JEllipsis],
     components: {
-      ACol,
-      JDate,
       JEllipsis,
-      PmpProCommentModal
-    },
-    data () {
-      return {
-        columns,
-        queryParam: {taskName: '', projectName: '', commentator: ''},
-        rangeDate: [moment(this.date), moment(this.date)],
-        url: {
-          list: "/summary/pmpComment/list",
-          delete: "/summary/pmpComment/delete",
-        },
-      }
+      PmpSummaryModal
     },
     mounted() {
       this.searchReset();
     },
+    data () {
+      return {
+        columns,
+        queryParam: {taskName: '', projectName: ''},
+        rangeDate: [moment(this.date), moment(this.date)],
+        url: {
+          list: "/summary/pmpSummary/list",
+          add: "/summary/pmpSummary/add",
+          delete: "/summary/pmpSummary/delete",
+        },
+      }
+    },
     methods: {
-      ...mapGetters(['userInfo']),
+      //剔除html标签
+      rmHtmlLabel(str) {
+        return str.replace(/<[^>]+>/g, '');
+      },
+      //文本限长
+      subText(str) {
+        let len = 10;
+        if (str.length > len)
+          return str.substring(0, len) + '...';
+        else
+          return str;
+      },
       initRangeDate() {
         this.rangeDate = [moment(this.getBeforeDate(30)), moment(this.date)];
       },
@@ -194,50 +196,12 @@
 
         this.queryParam.taskName = '';
         this.queryParam.projectName = '';
-        this.queryParam.commentator = '';
 
         this.searchQuery();
       },
-      openNotification(title, des) {
-        this.$notification.open({
-          message: title,
-          description: des,
-          icon: <a-icon type="frown" style="color: red" />
-      })
-      },
-      isOwner(record) {
-        return (record.createBy.indexOf(this.userInfo().username) >= 0);
-      },
-      commentEdit(record) {
-        if (this.isOwner(record)) {
-          this.$refs.modalForm.edit(record);
-        } else {
-          this.openNotification('提示', '权限不够哦,无法编辑评论！')
-        }
-      },
-      commentDelete(record) {
-        if (this.isOwner(record)) {
-          if(!this.url.delete){
-            this.$message.error("请设置url.delete属性!")
-            return
-          }
-          let that = this;
-          deleteAction(that.url.delete, {id: record.id}).then((res) => {
-            if (res.success) {
-              that.$message.success(res.message);
-              that.loadData();
-            } else {
-              that.$message.warning(res.message);
-            }
-          });
-        } else {
-          this.openNotification('提示', '权限不够哦,无法删除评论！')
-        }
-      }
     }
   }
 </script>
 
-<style scoped>
-  @import '~@assets/less/common.less'
+<style>
 </style>
