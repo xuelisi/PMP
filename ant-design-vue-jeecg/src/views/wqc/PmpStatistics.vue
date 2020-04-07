@@ -55,7 +55,7 @@
         <span>说明：<a-icon type="check-circle" />有日报</span>
       </div>
 
-      <pmpProTotalSummary-modal ref="modalForm" @ok="modalFormOk"></pmpProTotalSummary-modal>
+      <pmp-statistics-modal ref="modalForm" @ok="modalFormOk"></pmp-statistics-modal>
     </a-card>
 </template>
 
@@ -64,7 +64,7 @@
   import moment from 'moment';
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { deleteAction, getAction, putAction, downFile } from '@/api/manage'
-  import PmpProTotalSummaryModal from './modules/PmpProTotalSummaryModal'
+  import PmpStatisticsModal from './modules/PmpStatisticsModal'
 
   const allCols = [
     {
@@ -263,7 +263,7 @@
   export default {
     mixins:[JeecgListMixin],
     components: {
-      PmpProTotalSummaryModal
+      PmpStatisticsModal
     },
     data() {
       return {

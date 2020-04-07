@@ -69,7 +69,7 @@
   }
 
   export default {
-    name: "PmpProCommentModal",
+    name: "PmpCommentEdtModal",
     components: {
       JEditor,
     },

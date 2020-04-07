@@ -72,29 +72,38 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
-		Result<Page<PmpCommentInfo>> result = new Result<Page<PmpCommentInfo>>();
-		Page<PmpCommentInfo> pageList = new Page<PmpCommentInfo>(pageNo, pageSize);
-
+		String begDate = req.getParameter("begDate");
+		String endDate = req.getParameter("endDate");
 		String taskName = req.getParameter("taskName");
 		String projectName = req.getParameter("projectName");
-		pageList = pmpCommentService.queryByProjectAndTask(pageList, projectName, taskName);//通知公告消息
+		String commentator = req.getParameter("commentator");
+		Result<Page<PmpCommentInfo>> result = new Result<Page<PmpCommentInfo>>();
+		Page<PmpCommentInfo> pageList = new Page<>(pageNo, pageSize);
+
+		Map<String, String> paramMap = new HashMap<>();
+		paramMap.put("begDate", begDate);
+		paramMap.put("endDate", endDate);
+		paramMap.put("taskName", taskName == null ? "" : taskName);
+		paramMap.put("projectName", projectName == null ? "" : projectName);
+		paramMap.put("commentator", commentator == null ? "" : commentator);
+		pageList = pmpCommentService.query(pageList, paramMap);//通知公告消息
 
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
 	}
 
-	 @RequestMapping(value = "/query", method = RequestMethod.GET)
-	 public Result<List<PmpCommentInfo>> queryByTask(@RequestParam(name="taskid",required=true) String taskid,
-													 @RequestParam(name="userName",required=true) String userName) {
-		 Result<List<PmpCommentInfo>> result = new Result<>();
-		 List<PmpCommentInfo> cmtList = pmpCommentService.queryByTask(taskid, userName);
-
-		 result.setResult(cmtList);
-		 result.setSuccess(true);
-
-		 return result;
-	 }
+//	 @RequestMapping(value = "/query", method = RequestMethod.GET)
+//	 public Result<List<PmpCommentInfo>> queryByTask(@RequestParam(name="taskid",required=true) String taskid,
+//													 @RequestParam(name="userName",required=true) String userName) {
+//		 Result<List<PmpCommentInfo>> result = new Result<>();
+//		 List<PmpCommentInfo> cmtList = pmpCommentService.queryByTask(taskid, userName);
+//
+//		 result.setResult(cmtList);
+//		 result.setSuccess(true);
+//
+//		 return result;
+//	 }
 
 	 @GetMapping(value = "/union")
 	 public Result<List<PmpCommentSummary>> queryUnion(@RequestParam(name="taskid",required=true) String taskid) {
@@ -106,7 +115,6 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 
 		 return result;
 	 }
-
 
 	 @RequestMapping(value = "/realname", method = RequestMethod.GET)
 	 public Result<String> queryRealName(@RequestParam(name="username",required=true) String username) {
@@ -214,7 +222,7 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 		String taskName = pmpCommentService.queryTaskNameByTaskid(taskid);
 		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
 
-		Map<String, String> paramMap = new HashMap();
+		HashMap<String, String> paramMap = new HashMap<>();
 		paramMap.put("Commentee", realName);
 		paramMap.put("Commentator", sysUser.getRealname());
 		paramMap.put("taskName", taskName);

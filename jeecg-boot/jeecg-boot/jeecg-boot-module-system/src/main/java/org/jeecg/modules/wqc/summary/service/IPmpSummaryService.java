@@ -1,6 +1,8 @@
 package org.jeecg.modules.wqc.summary.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -27,11 +29,7 @@ public interface IPmpSummaryService extends IService<PmpSummary> {
 
     public void addSummaryWithChief(PmpSummary summary, String userid);
 
-    public Page<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName);
-
-    public Page<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page);
-
-    public List<PmpSummaryInfo> queryByNameAndDate(String date, String userName);
+    public Page<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map);
 
     public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
 }

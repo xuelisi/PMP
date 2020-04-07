@@ -84,7 +84,7 @@
       </a-table>
     </div>
 
-    <pmpProComment-modal ref="modalForm" @ok="modalFormOk"></pmpProComment-modal>
+    <pmp-comment-edt-modal ref="modalForm" @ok="modalFormOk"></pmp-comment-edt-modal>
   </a-card>
 </template>
 
@@ -98,7 +98,7 @@
   import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
   import { initDictOptions, filterDictText, filterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
-  import PmpProCommentModal from './modules/PmpProCommentModal'
+  import PmpCommentEdtModal from './modules/PmpCommentEdtModal'
   import ACol from "ant-design-vue/es/grid/Col";
 
   const columns = [
@@ -147,13 +147,13 @@
   ]
 
   export default {
-    name: "PmpProComment",
+    name: "PmpComment",
     mixins:[JeecgListMixin, JEllipsis],
     components: {
       ACol,
       JDate,
       JEllipsis,
-      PmpProCommentModal
+      PmpCommentEdtModal
     },
     data () {
       return {

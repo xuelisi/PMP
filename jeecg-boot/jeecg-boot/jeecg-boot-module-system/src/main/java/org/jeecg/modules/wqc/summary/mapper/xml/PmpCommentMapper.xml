@@ -2,7 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpCommentMapper">
 
-    <select id="queryCommentInfoByTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+    <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+        select c.id as id,
+            p.projectname as projectname,
+            p.taskname as taskname,
+            c.content as content,
+            c.create_time as createTime,
+            c.create_by as createBy,
+            u.realname as realName
+        from
+        (
+            select *
+            from pmp_project
+            where (parentnode != '0' and parentnode is not null)
+            <if test="map.projectName!=null">
+                and projectname like '%${map.projectName}%'
+            </if>
+            <if test="map.taskName!=null">
+                and taskname like '%${map.taskName}%'
+            </if>
+            <if test="map.taskid!=null">
+                and id = '${map.taskid}'
+            </if>
+        ) as p
+        left join
+        (
+            select *
+            from pmp_comment
+            where 1 = 1
+            <if test="map.begDate!=null and map.endDate!=null">
+                and create_time &lt; '${map.endDate}'
+                and create_time &gt; '${map.begDate}'
+            </if>
+        ) as c on p.id = c.taskid
+        left join
+        (
+            select *
+            from sys_user
+        )as u on u.username = c.create_by
+        where c.id is not null
+        <if test="map.commentator!=null">
+            and u.realname like '%${map.commentator}%'
+        </if>
+        order by c.create_time desc
+    </select>
+
+    <select id="queryByTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
         select p.projectname as projectname,
         p.taskname as taskname,
         c.content as content,
@@ -32,40 +77,6 @@
         order by c.create_time desc
     </select>
 
-    <select id="queryByProjectAndTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
-        select c.id as id,
-            p.projectname as projectname,
-            p.taskname as taskname,
-            c.content as content,
-            c.create_time as createTime,
-            c.create_by as createBy,
-            u.realname as realName
-        from
-        (
-            select *
-            from pmp_project
-            where (parentnode != '0' and parentnode is not null)
-        <if test="projectName!=null">
-            and projectname like ('%' + #{projectName} + '%')
-        </if>
-        <if test="taskName!=null">
-            and taskname like ('%' + #{taskName} + '%')
-        </if>
-        ) as p
-        left join
-        (
-            select *
-            from pmp_comment
-        ) as c on p.id = c.taskid
-        left join
-        (
-			select *
-			from sys_user
-        )as u on u.username = c.create_by
-        where c.id is not null
-        order by c.create_time desc
-    </select>
-
     <select id="queryRealName" parameterType="String"  resultType="String">
           select realname
           from sys_user
@@ -79,7 +90,7 @@
     </select>
 
     <select id="queryCommenteeByTaskid" parameterType="String" resultType="String">
-        select principal
+        select isnull(principal, create_by)
         from pmp_project
         where id = #{taskid}
     </select>

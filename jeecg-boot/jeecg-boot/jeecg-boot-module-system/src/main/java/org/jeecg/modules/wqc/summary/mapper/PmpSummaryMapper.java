@@ -3,12 +3,10 @@ package org.jeecg.modules.wqc.summary.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import org.jeecg.modules.wqc.summary.entity.PmpSummary;
-import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
-import org.jeecg.modules.wqc.summary.entity.PmpSummaryResult;
-import org.jeecg.modules.wqc.summary.entity.PmpTaskSummary;
+import org.jeecg.modules.wqc.summary.entity.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 任务小结
@@ -24,11 +22,7 @@ public interface PmpSummaryMapper extends BaseMapper<PmpSummary> {
 
     void removeSummaryWithTask(String summaryid);
 
-    List<PmpSummaryInfo> queryByNameAndDate(String date, String userName);
-
-    List<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page);
-
-    List<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName);
+    List<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map);
 
     List<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
 }

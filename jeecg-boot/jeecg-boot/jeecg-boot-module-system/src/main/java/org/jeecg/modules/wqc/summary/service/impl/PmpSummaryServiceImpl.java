@@ -1,6 +1,7 @@
 package org.jeecg.modules.wqc.summary.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.wqc.summary.entity.*;
@@ -51,16 +52,8 @@ public class PmpSummaryServiceImpl extends ServiceImpl<PmpSummaryMapper, PmpSumm
         csMapper.insert(cs);
     }
 
-    public Page<PmpSummaryInfo> queryByName(Page<PmpSummaryInfo> page, String userName) {
-        return page.setRecords(smapper.queryByName(page, userName));
-    }
-
-    public Page<PmpSummaryInfo> querySummaryInfo(Page<PmpSummaryInfo> page) {
-        return page.setRecords(smapper.querySummaryInfo(page));
-    }
-
-    public List<PmpSummaryInfo> queryByNameAndDate(String date, String userName) {
-        return smapper.queryByNameAndDate(date, userName);
+    public Page<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map) {
+        return page.setRecords(smapper.query(page, map));
     }
 
     public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date) {
