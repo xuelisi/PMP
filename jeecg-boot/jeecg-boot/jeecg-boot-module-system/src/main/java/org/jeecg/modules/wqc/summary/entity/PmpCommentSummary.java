@@ -13,9 +13,7 @@ import java.util.Date;
 
 
 @Data
-public class PmpCommentSummary implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class PmpCommentSummary {
     private String taskId;
 
     private String createBy;

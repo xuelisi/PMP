@@ -1296,7 +1296,7 @@ instanceKlass org/apache/maven/model/superpom/DefaultSuperPomProvider
 instanceKlass org/apache/maven/settings/TrackableBase
 instanceKlass org/apache/maven/settings/building/SettingsBuildingRequest
 instanceKlass org/apache/maven/cli/configuration/SettingsXmlConfigurationProcessor
-instanceKlass org/apache/maven/model/profile/activation/JdkVersionProfileActivator$RangeValue
+instanceKlass org/apache/maven/model/profile/activation/JdkVersionProfileActivator$rangeDate
 instanceKlass org/apache/maven/model/profile/activation/JdkVersionProfileActivator
 instanceKlass org/apache/maven/model/path/DefaultPathTranslator
 instanceKlass org/apache/maven/repository/metadata/MetadataGraphEdge

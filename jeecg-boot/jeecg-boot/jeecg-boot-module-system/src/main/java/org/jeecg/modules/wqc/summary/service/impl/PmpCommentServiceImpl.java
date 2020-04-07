@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.Map;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -71,7 +72,7 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
         return mapper.queryByTask(taskid, username);
     }
 
-    public Page<PmpCommentInfo> queryByProjectAndTask(Page<PmpCommentInfo> page, String projectName,String taskName) {
-        return page.setRecords(mapper.queryByProjectAndTask(page, projectName, taskName));
+    public Page<PmpCommentInfo> query(Page<PmpCommentInfo> page, Map<String, String> map) {
+        return page.setRecords(mapper.query(page, map));
     }
 }

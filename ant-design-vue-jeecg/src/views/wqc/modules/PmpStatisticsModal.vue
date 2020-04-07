@@ -55,7 +55,7 @@
   }
 
   export default {
-    name: "PmpProTotalSummaryModal",
+    name: "PmpStatisticsModal",
     components: {
     },
     data() {
@@ -100,7 +100,6 @@
         this.summaryData = [];
         getAction(this.url.query, { summaryTime: time, owner: userName }).then((res) => {
           if (res.success) {
-            debug(res);
             for(let i = 0; i < res.result.total; ++i) {
               this.summaryData.push({
                 title: this.loadTitle(res.result.records[i]),

@@ -17,9 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import org.jeecg.common.system.vo.LoginUser;
 import org.apache.shiro.SecurityUtils;
 
@@ -51,28 +50,31 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
                                          @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                          HttpServletRequest req) {
-        Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
-        Page<PmpSummaryInfo> pageList = new Page<PmpSummaryInfo>(pageNo, pageSize);
+        String owner = req.getParameter("owner");
+        String begDate = req.getParameter("begDate");
+        String endDate = req.getParameter("endDate");
+        String taskName = req.getParameter("taskName");
+        String projectName = req.getParameter("projectName");
+        String summaryTime = req.getParameter("summaryTime");
 
+        Page<PmpSummaryInfo> pageList = new Page<>(pageNo, pageSize);
         LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
-        pageList = service.queryByName(pageList, sysUser.getUsername());
+        Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
+
+        Map<String, String> paramMap = new HashMap<>();
+        owner = (null == owner) ? sysUser.getUsername() : owner;
+
+        paramMap.put("owner", owner);
+        paramMap.put("begDate", begDate);
+        paramMap.put("endDate", endDate);
+        paramMap.put("summaryTime", summaryTime);
+        paramMap.put("taskName", taskName == null ? "" : taskName);
+        paramMap.put("projectName", projectName == null ? "" : projectName);
+
+        pageList = service.query(pageList, paramMap);//通知公告消息
 
         result.setSuccess(true);
         result.setResult(pageList);
-
-        return result;
-    }
-
-    //根据用户名、日期查询日报
-    @GetMapping(value = "/queryByNameAndDate")
-    public Result<?> queryByNameAndDate(@RequestParam(name="date",required=true) String date,
-                                            @RequestParam(name="userName",required=true) String userName) {
-        Result<List<PmpSummaryInfo>> result = new Result<>();
-		List<PmpSummaryInfo> cmtList = service.queryByNameAndDate(date, userName);
-
-		result.setResult(cmtList);
-        result.setSuccess(true);
-
         return result;
     }
 
@@ -85,7 +87,15 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         Result<Page<PmpSummaryResult>> result = new Result<Page<PmpSummaryResult>>();
         Page<PmpSummaryResult> pageList = new Page<PmpSummaryResult>(pageNo, pageSize);
 
-        pageList = service.queryStatisticsByDate(pageList, info.getSummaryTime());
+        //设置默认时间为当前月份，前台由于使用mixim，造成初始可能没有查询参数
+        String summaryTime = info.getSummaryTime();
+        if (null == summaryTime) {
+            java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM");
+            java.util.Date currTime = new java.util.Date();
+            summaryTime = formatter.format(currTime);
+        }
+
+        pageList = service.queryStatisticsByDate(pageList, summaryTime);
 
         result.setSuccess(true);
         result.setResult(pageList);

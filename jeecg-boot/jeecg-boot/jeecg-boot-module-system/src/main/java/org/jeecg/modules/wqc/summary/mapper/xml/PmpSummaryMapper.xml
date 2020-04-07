@@ -14,116 +14,56 @@
         where summary_id = #{summaryid}
     </update>
 
-    <select id="queryByName" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
-        select s.id as id,
-			p.id as taskid,
-			p.taskname as taskName,
-			p.projectname as projectName,
-			p.principal as chiefName,
-			s.create_by as createBy,
-			s.create_time as createTime,
-			s.summary_time as summaryTime,
-			s.content as content,
-			s.content_annex as contentAnnex
-        from
+    <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
+        select ps.id as id,
+            ps.create_by as createBy,
+            ps.create_time as createTime,
+            ps.summary_time as summaryTime,
+            ps.content as content,
+            ps.content_annex as contentAnnex,
+            pp.taskname as taskName,
+            pp.projectname as projectName,
+            pp.principal
+        FROM
         (
-			select *
-			from pmp_summary
-            where create_by = #{userName}
-        ) as s
+            select *
+            from pmp_summary
+            where 1 = 1
+            <if test="map.owner!=null">
+                and create_by = '${map.owner}'
+            </if>
+            <if test="map.summaryTime!=null">
+                and summary_time = '${map.summaryTime}'
+            </if>
+            <if test="map.begDate!=null and map.endDate!=null">
+                and summary_time &lt;= '${map.endDate}'
+                and summary_time &gt;= '${map.begDate}'
+            </if>
+        ) as ps
         left join
         (
-			select *
-			from pmp_task_summary
-        ) as ts on s.id = ts.summary_id
+            select *
+            from pmp_task_summary
+        ) as pts on ps.id = pts.summary_id
         left join
         (
-			select *
-			from pmp_project
-        ) as p on ts.task_id = p.id
-        left join
-        (
-			select *
-			from sys_user
-        ) as u on p.principal = u.username
-        where ts.task_id is not null
-    </select>
-
-    <select id="querySummaryInfo" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
-        select s.id as id,
-			p.id as taskid,
-			p.taskname as taskName,
-			p.projectname as projectName,
-			p.principal as chiefName,
-			s.create_by as createBy,
-			s.create_time as createTime,
-			s.summary_time as summaryTime,
-			s.content as content,
-			s.content_annex as contentAnnex
-        from
-        (
-			select *
-			from pmp_summary
-        ) as s
-        left join
-        (
-			select *
-			from pmp_task_summary
-        ) as ts on s.id = ts.summary_id
-        left join
-        (
-			select *
-			from pmp_project
-        ) as p on ts.task_id = p.id
-        left join
-        (
-			select *
-			from sys_user
-        ) as u on p.principal = u.username
-        where ts.task_id is not null
+            select *
+            from pmp_project
+            where 1 = 1
+            <if test="map.projectName!=null">
+                and projectname like '%${map.projectName}%'
+            </if>
+            <if test="map.taskName!=null">
+                and taskname like '%${map.taskName}%'
+            </if>
+        ) as pp on pp.id = pts.task_id
+        where pp.id is not null
     </select>
 
     <select id="queryUserId" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
         select *
         from pmp_summary
         where create_by like '%' + isnull(@userName, '') + '%'
-    </select>
-
-    <select id="queryByNameAndDate" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
-        select s.id as id,
-			p.id as taskid,
-			p.taskname as taskName,
-			p.projectname as projectName,
-			p.principal as chiefName,
-			s.create_by as createBy,
-			u.realname as realName,
-			s.create_time as createTime,
-			s.summary_time as summaryTime,
-			s.content as content,
-			s.content_annex as contentAnnex
-        from
-        (
-			select *
-			from pmp_summary
-			where summary_time = #{date} and
-			  create_by = #{userName}
-        ) as s
-        left join
-        (
-			select *
-			from pmp_task_summary
-        ) as ts on s.id = ts.summary_id
-        left join
-        (
-			select *
-			from pmp_project
-        ) as p on ts.task_id = p.id
-        left join
-        (
-			select *
-			from sys_user
-        ) as u on s.create_by = u.username
-        where ts.task_id is not null
     </select>
 
     <select id="queryStatisticsByDate" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryResult">
