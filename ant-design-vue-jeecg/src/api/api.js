@@ -58,6 +58,7 @@ const deleteByDepartId   = (params)=>deleteAction("/sys/sysDepart/delete",params
 
 //项目管理
 const queryPmpTreeList = (params)=>getAction("/protree/pmpProject/queryTreeList",params);
+const queryProjectInfo = (params)=>getAction("/protree/pmpProject/queryByProjectName",params);
 
 //日志管理
 //const getLogList = (params)=>getAction("/sys/log/list",params);
@@ -87,6 +88,7 @@ const doReovkeData = (params)=>getAction("/sys/annountCement/doReovkeData",param
 const getLoginfo = (params)=>getAction("/sys/loginfo",params);
 const getVisitInfo = (params)=>getAction("/sys/visitInfo",params);
 const getVisitTopSixInfo = (params)=>getAction("/sys/visitTopSixInfo",params);
+const getVisitPmpInfo = (params)=>getAction("/sys/visitPmpInfo",params);
 //数据日志访问
 // const getDataLogList = (params)=>getAction("/sys/dataLog/list",params);
 
@@ -103,6 +105,8 @@ const loadCategoryData = (params)=>getAction("/sys/category/loadAllData",params)
 export {
   // imgView,
   // doMian,
+  queryProjectInfo,
+  getVisitPmpInfo,
   getVisitTopSixInfo,
   queryPmpTreeList,
   addRole,
