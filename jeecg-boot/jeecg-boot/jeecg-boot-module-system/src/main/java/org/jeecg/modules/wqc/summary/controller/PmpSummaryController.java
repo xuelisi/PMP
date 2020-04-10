@@ -9,7 +9,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
-import org.jeecg.modules.wqc.summary.entity.PmpSummaryResult;
+import org.jeecg.modules.wqc.summary.entity.PmpSummaryStatistics;
 import org.jeecg.modules.wqc.summary.service.IPmpSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -84,8 +84,8 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                    HttpServletRequest req) {
-        Result<Page<PmpSummaryResult>> result = new Result<Page<PmpSummaryResult>>();
-        Page<PmpSummaryResult> pageList = new Page<PmpSummaryResult>(pageNo, pageSize);
+        Result<Page<PmpSummaryStatistics>> result = new Result<Page<PmpSummaryStatistics>>();
+        Page<PmpSummaryStatistics> pageList = new Page<PmpSummaryStatistics>(pageNo, pageSize);
 
         //设置默认时间为当前月份，前台由于使用mixim，造成初始可能没有查询参数
         String summaryTime = info.getSummaryTime();

@@ -68,7 +68,7 @@
         where create_by like '%' + isnull(@userName, '') + '%'
     </select>
 
-    <select id="queryStatisticsByDate" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryResult">
+    <select id="queryStatisticsByDate" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryStatistics">
         select realname,
 			username,
 			[01] as first, [02] as second, [03] as third,

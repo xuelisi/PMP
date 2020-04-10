@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import org.jeecg.modules.wqc.summary.entity.PmpSummary;
 import org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo;
-import org.jeecg.modules.wqc.summary.entity.PmpSummaryResult;
+import org.jeecg.modules.wqc.summary.entity.PmpSummaryStatistics;
 
 
 /**
@@ -31,5 +31,5 @@ public interface IPmpSummaryService extends IService<PmpSummary> {
 
     public Page<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map);
 
-    public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
+    public Page<PmpSummaryStatistics> queryStatisticsByDate(Page<PmpSummaryStatistics> page, String date);
 }

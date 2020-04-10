@@ -48,11 +48,11 @@ public class PmpSummaryReminderJob implements Job {
 			date = ymdFormat.format(calendar.getTime());
 		}
 
-		//节假日不提醒
+		log.info("小结日期：" + date);
 		if (!isHoliday(dateStr)) {
 			List<Map<String, String>> list = ipsrService.unFilledMembers(date);
 			for(Map<String, String> item : list) {
-				//log.info("username: " + item.get("username") + "realname: " + item.get("realname"));
+				log.info("小结提醒：" + item.get("username") + item.get("realname") + dateStr);
 				sendSummaryReminder("admin", item.get("username"), item.get("realname"), dateStr);
 			}
 		}

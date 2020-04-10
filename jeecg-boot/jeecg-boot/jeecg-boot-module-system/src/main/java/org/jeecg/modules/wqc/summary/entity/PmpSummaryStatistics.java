@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class PmpSummaryResult {
+public class PmpSummaryStatistics {
     private String realName;
     private String userName;
     private String first;

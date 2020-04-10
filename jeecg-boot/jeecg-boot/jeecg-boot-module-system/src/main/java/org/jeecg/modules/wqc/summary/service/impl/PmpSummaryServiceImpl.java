@@ -56,7 +56,7 @@ public class PmpSummaryServiceImpl extends ServiceImpl<PmpSummaryMapper, PmpSumm
         return page.setRecords(smapper.query(page, map));
     }
 
-    public Page<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date) {
+    public Page<PmpSummaryStatistics> queryStatisticsByDate(Page<PmpSummaryStatistics> page, String date) {
         return page.setRecords(smapper.queryStatisticsByDate(page, date));
     }
 }

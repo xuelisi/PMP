@@ -24,5 +24,5 @@ public interface PmpSummaryMapper extends BaseMapper<PmpSummary> {
 
     List<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map);
 
-    List<PmpSummaryResult> queryStatisticsByDate(Page<PmpSummaryResult> page, String date);
+    List<PmpSummaryStatistics> queryStatisticsByDate(Page<PmpSummaryStatistics> page, String date);
 }
