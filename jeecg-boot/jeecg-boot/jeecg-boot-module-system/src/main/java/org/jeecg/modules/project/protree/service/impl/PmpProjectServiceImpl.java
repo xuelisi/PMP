@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 项目管理
@@ -109,5 +110,10 @@ public class PmpProjectServiceImpl extends ServiceImpl<PmpProjectMapper, PmpProj
         // 调用wrapTreeDataToTreeList方法生成树状数据
         List<PmpProjectTreeModel> listResult = FindsDepartsChildrenUtil.myWrapTreeDataToTreeList(list);
         return listResult;
+    }
+
+    @Override
+    public List<Map<String, Object>> ganttList() {
+        return pmpProjectMapper.ganttList();
     }
 }
