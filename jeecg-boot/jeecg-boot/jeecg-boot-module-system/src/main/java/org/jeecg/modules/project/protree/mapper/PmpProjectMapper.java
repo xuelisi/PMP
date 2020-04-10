@@ -1,6 +1,7 @@
 package org.jeecg.modules.project.protree.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -33,4 +34,7 @@ public interface PmpProjectMapper extends BaseMapper<PmpProject> {
     Page<PmpProject> myProjectpar(Page<PmpProject> page, @Param("principal") String principal, @Param("projectname") String projectname, @Param("isdelete") String isdelete);
 
     public List<PmpProject>  getCountInfo();
+
+    //甘特图
+    List<Map<String, Object>> ganttList();
 }
