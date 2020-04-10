@@ -16,6 +16,7 @@
 
     <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
         select ps.id as id,
+            pp.id as taskid,
             ps.create_by as createBy,
             ps.create_time as createTime,
             ps.summary_time as summaryTime,
@@ -58,6 +59,7 @@
             </if>
         ) as pp on pp.id = pts.task_id
         where pp.id is not null
+        order by ps.create_time desc
     </select>
 
     <select id="queryUserId" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">

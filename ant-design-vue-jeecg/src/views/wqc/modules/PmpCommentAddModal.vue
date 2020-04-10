@@ -9,32 +9,46 @@
     cancelText="关闭">
     <a-spin :spinning="confirmLoading">
 
-      <div class="scroll-wrap">
-        <a-list size="small">
-          <a-list-item :key="index" v-for="(item, index) in allCmtData">
-            <a-list-item-meta
-              :description="item.description">
-              <a-avatar
-                slot="avatar"
-                size="small"
-                shape="square"
-                :src="item.avatar"
-              />
-              <a slot="title">{{ item.title }}</a>
-            </a-list-item-meta>
-          </a-list-item>
-        </a-list>
-      </div>
-
       <a-form :form="form" >
-            <a-form-item label="任务id" :labelCol="labelCol" :wrapperCol="wrapperCol" style="display:none;">
+        <a-row :gutter="8">
+          <a-col :span="12">
+            <a-form-item label="通知人员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 17 }">
+              <j-select-multi-user
+                v-decorator="['commentee', validatorRules.commentee]"
+                :trigger-change="true"
+                :disabled="disableSubmit" />
+            </a-form-item>
+          </a-col>
+
+          <a-col :span="12">
+            <a-form-item label="评论类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 17 }">
+              <j-dict-select-tag
+                placeholder="请选择"
+                :disabled="disableSubmit"
+                :triggerChange = "true"
+                v-decorator = "['category', validatorRules.category]"
+                dictCode = "pmp_category,category_name,id" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="24">
+          <a-col :span="0">
+            <a-form-item label="任务" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-input v-decorator="[ 'taskid', validatorRules.taskid]" placeholder="请输入任务id"></a-input>
             </a-form-item>
+          </a-col>
+          <a-col :span="24">
             <a-form-item label="评论" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-textarea v-decorator="[ 'content', validatorRules.content]" placeholder=""
-                          :autosize="{ minRows: 3}">
+              <a-textarea
+                v-decorator="[ 'content', validatorRules.content]"
+                placeholder=""
+                :disabled="disableSubmit"
+                :autosize="{ minRows: 3}">
               </a-textarea>
             </a-form-item>
+          </a-col>
+        </a-row>
       </a-form>
 
     </a-spin>
@@ -48,22 +62,36 @@
   import JEditor from '@/components/jeecg/JEditor'
   import { validateDuplicateValue } from '@/utils/util'
   import ATextarea from "ant-design-vue/es/input/TextArea";
+  import JDictSelectTag from '@/components/dict/JDictSelectTag'
   import { deleteAction, getAction,downFile } from '@/api/manage'
+  import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
+
+  const debug = (msg) => {
+    console.log('*************************');
+    console.log('*************************');
+    console.log(msg);
+    console.log('*************************');
+    console.log('*************************');
+  }
 
   export default {
     name: "PmpCommentAddModal",
     components: {
       ATextarea,
       JEditor,
+      JDictSelectTag,
+      JSelectMultiUser
     },
     data () {
       return {
+        category: '',
         recvRecord: [],
         allCmtData: [],
         ownerCmtData: [],
+        disableSubmit: false,
         form: this.$form.createForm(this),
         title:"操作",
-        width: 1000,
+        width: 800,
         visible: false,
         model: {},
         labelCol: {
@@ -78,6 +106,12 @@
         validatorRules: {
           content: {rules: [
               {required: true, message: '请输入评论内容!'},
+            ]},
+          commentee: {rules: [
+              {required: true, message: '请选择通知人员!'},
+            ]},
+          category: {rules: [
+              {required: true, message: '请选择评论类型!'},
             ]},
         },
         url: {
@@ -147,7 +181,7 @@
               method = 'post';
             }else{
               httpurl+=this.url.edit;
-               method = 'put';
+              method = 'put';
             }
             let formData = Object.assign(this.model, values);
             httpAction(httpurl,formData,method).then((res)=>{
@@ -159,9 +193,7 @@
               }
             }).finally(() => {
               that.confirmLoading = false;
-              //that.close();
-
-              this.initPage(this.recvRecord);
+              that.close();
             })
           }
         })

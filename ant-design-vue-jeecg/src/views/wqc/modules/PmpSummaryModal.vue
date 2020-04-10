@@ -71,6 +71,14 @@
   import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
   import JSelectPmp from '@/components/jeecgbiz/JSelectPmp.vue'
 
+  const debug = (msg) => {
+    console.log('*************************');
+    console.log('*************************');
+    console.log(msg);
+    console.log('*************************');
+    console.log('*************************');
+  }
+
   export default {
     name: "PmpSummaryModal",
     components: {

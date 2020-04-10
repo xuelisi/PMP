@@ -1,13 +1,11 @@
 package org.jeecg.modules.wqc.summary.service.impl;
 
-import org.jeecg.modules.wqc.summary.entity.PmpComment;
-import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
-import org.jeecg.modules.wqc.summary.entity.PmpCommentSummary;
-import org.jeecg.modules.wqc.summary.entity.PmpTaskComment;
+import org.jeecg.modules.wqc.summary.entity.*;
 import org.jeecg.modules.wqc.summary.mapper.PmpCommentMapper;
 import org.jeecg.modules.wqc.summary.mapper.PmpTaskCommentMapper;
 import org.jeecg.modules.wqc.summary.mapper.PmpCommentSummaryMapper;
 import org.jeecg.modules.wqc.summary.service.IPmpCommentService;
+import org.jeecg.modules.wqc.summary.mapper.PmpCommentCategoryMapper;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +33,21 @@ public class PmpCommentServiceImpl extends ServiceImpl<PmpCommentMapper, PmpComm
     private PmpTaskCommentMapper tcMapper;
     @Autowired
     private PmpCommentSummaryMapper csMapper;
+    @Autowired
+    private PmpCommentCategoryMapper pccMapper;
 
+    public void removeCommentWithCategory(String categoryid) {
+        pccMapper.removeByCommentId(categoryid);
+    }
+
+    public void addCommentWithCategory(PmpComment pmpComment, String categoryid) {
+        PmpCommentCategory pcc = new PmpCommentCategory(pmpComment.getId(), categoryid);
+        pccMapper.insert(pcc);
+    }
+
+    public void editCommentWithCategory(PmpComment pmpComment, String categoryid) {
+        pccMapper.updateByCatetoryId(pmpComment.getId(), categoryid);
+    }
 
     public void addCommentWithTask(PmpComment comment, String taskid) {
         PmpTaskComment ts = new PmpTaskComment(comment.getId(), taskid);

@@ -32,6 +32,12 @@
                 <a-input placeholder="请输入评论人员" v-model="queryParam.commentator"></a-input>
               </a-form-item>
             </a-col>
+
+            <a-col :md="6" :sm="8">
+              <a-form-item label="评论类型">
+                <a-input placeholder="请输入评论类型" v-model="queryParam.category"></a-input>
+              </a-form-item>
+            </a-col>
           </template>
 
           <a-col :md="6" :sm="8">
@@ -134,6 +140,11 @@
       dataIndex: 'realName',
     },
     {
+      title:'评论类型',
+      align:"center",
+      dataIndex: 'category',
+    },
+    {
       title:'评论时间',
       align:"center",
       dataIndex: 'createTime',
@@ -158,7 +169,12 @@
     data () {
       return {
         columns,
-        queryParam: {taskName: '', projectName: '', commentator: ''},
+        queryParam: {
+          taskName: '',
+          projectName: '',
+          commentator: '',
+          category: ''
+        },
         rangeDate: [moment(this.date), moment(this.date)],
         url: {
           list: "/summary/pmpComment/list",
@@ -172,7 +188,7 @@
     methods: {
       ...mapGetters(['userInfo']),
       initRangeDate() {
-        this.rangeDate = [moment(this.getBeforeDate(30)), moment(this.date)];
+        this.rangeDate = [moment(this.getBeforeDate(30)), moment(this.getBeforeDate(-1))];
       },
       getBeforeDate(count) {
         let newDate = new Date();
@@ -195,6 +211,7 @@
         this.queryParam.taskName = '';
         this.queryParam.projectName = '';
         this.queryParam.commentator = '';
+        this.queryParam.category = '';
 
         this.searchQuery();
       },

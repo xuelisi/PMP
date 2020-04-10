@@ -13,7 +13,7 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('任务批阅')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('评论类别')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
@@ -84,24 +84,24 @@
       </a-table>
     </div>
 
-    <pmpComment-modal ref="modalForm" @ok="modalFormOk"></pmpComment-modal>
+    <pmpCategory-modal ref="modalForm" @ok="modalFormOk"></pmpCategory-modal>
   </a-card>
 </template>
 
 <script>
 
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import PmpCommentModal from './modules/PmpCommentModal'
+  import PmpCategoryModal from './modules/PmpCategoryModal'
 
   export default {
-    name: "PmpCommentList",
+    name: "PmpCategoryList",
     mixins:[JeecgListMixin],
     components: {
-      PmpCommentModal
+      PmpCategoryModal
     },
     data () {
       return {
-        description: '任务批阅管理页面',
+        description: '评论类别管理页面',
         // 表头
         columns: [
           {
@@ -115,15 +115,14 @@
             }
           },
           {
-            title:'任务id',
+            title:'类别名称',
             align:"center",
-            dataIndex: 'taskid'
+            dataIndex: 'categoryName'
           },
           {
-            title:'内容',
+            title:'类别编码',
             align:"center",
-            dataIndex: 'content',
-            scopedSlots: {customRender: 'htmlSlot'}
+            dataIndex: 'categoryCode'
           },
           {
             title: '操作',
@@ -133,11 +132,11 @@
           }
         ],
         url: {
-          list: "/summary/pmpComment/list",
-          delete: "/summary/pmpComment/delete",
-          deleteBatch: "/summary/pmpComment/deleteBatch",
-          exportXlsUrl: "/summary/pmpComment/exportXls",
-          importExcelUrl: "summary/pmpComment/importExcel",
+          list: "/summary/pmpCategory/list",
+          delete: "/summary/pmpCategory/delete",
+          deleteBatch: "/summary/pmpCategory/deleteBatch",
+          exportXlsUrl: "/summary/pmpCategory/exportXls",
+          importExcelUrl: "summary/pmpCategory/importExcel",
         },
         dictOptions:{
         },
