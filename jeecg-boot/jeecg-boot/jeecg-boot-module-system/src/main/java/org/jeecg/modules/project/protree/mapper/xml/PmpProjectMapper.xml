@@ -47,4 +47,11 @@
 		 FROM [XiangMuGuanLi].[dbo].[pmp_project]
 		 group by status
 	</select>
+
+	<select id="ganttList" resultType="map">
+	SELECT top 30 *,DATEDIFF(DAY,startdate,enddate) as duration ,
+		(CASE WHEN parentnode ='0' THEN 'NULL' else parentnode  END ) as parentId
+		FROM [XiangMuGuanLi].[dbo].[pmp_project]
+		where isdelete='0'
+	</select>
 </mapper>

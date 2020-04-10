@@ -10,6 +10,7 @@ import org.jeecg.modules.project.protree.entity.PmpProjectTreeModel;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 项目管理
@@ -39,4 +40,7 @@ public interface IPmpProjectService extends IService<PmpProject> {
      * @return
      */
     List<PmpProjectTreeModel> queryTreeList(String projectName);
+
+    //甘特图
+    List<Map<String, Object>> ganttList();
 }
