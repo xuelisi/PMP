@@ -47,6 +47,13 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 	@Autowired
 		 private IPmpProjectService pmpProjectService;
 
+	 //甘特图
+	 @GetMapping(value = "/ganttList")
+	 public Result<?> ganttList(PmpProject pmpProject,  HttpServletRequest req) {
+		 List<Map<String, Object>> list =pmpProjectService.ganttList();
+		 return Result.ok(list);
+	 }
+
 	 /**
 	  * 查询数据 查出所有部门,并以树结构数据格式响应给前端
 	  *
@@ -213,6 +220,11 @@ public class PmpProjectController extends JeecgController<PmpProject, IPmpProjec
 
 	 @GetMapping(value = "/childList")
 	 public Result<List<PmpProject>> queryChildPageList(PmpProject pmpProject,HttpServletRequest req) {
+		if(oConvertUtils.isEmpty(pmpProject.getIsdelete())){
+			pmpProject.setIsdelete("0");
+		}else{
+			pmpProject.setIsdelete(null);
+		}
 		 Result<List<PmpProject>> result = new Result<List<PmpProject>>();
 		 QueryWrapper<PmpProject> queryWrapper = QueryGenerator.initQueryWrapper(pmpProject, req.getParameterMap());
 		 List<PmpProject> list = pmpProjectService.list(queryWrapper);

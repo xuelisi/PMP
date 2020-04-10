@@ -26,6 +26,7 @@
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择
         <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+        <a-checkbox style="margin-left: 24px"  @change="onIsDelChange" v-model="queryParam.isdelete">显示禁用</a-checkbox>
       </div>
 
       <a-table
@@ -265,6 +266,14 @@ export default {
     }
   },
   methods: {
+    onIsDelChange(e) {
+        if(e.target.checked){
+          this.queryParam.isdelete = '-1'
+        }else{
+           this.queryParam.isdelete = null
+        }
+        this.loadData(1)
+      },
     openNotification(title, des) {
       this.$notification.open({
         message: title,
@@ -477,7 +486,7 @@ export default {
         let params = this.getQueryParams() //查询条件
         params[this.pidField] = nodeId
         getAction(this.url.childList, params).then(res => {
-          console.log('11111', res)
+          //console.log('11111', res)
           if (res.success) {
             if (res.result && res.result.length > 0) {
               row.children = this.getDataByResult(res.result)
@@ -504,7 +513,7 @@ export default {
       }
     },
     getRealName(text) {
-      return myFilterMultiDictText(this.principal, text);
+      return myFilterMultiDictText(this.principal, text)
     }
   }
 }
