@@ -57,9 +57,14 @@
         :pagination="ipagination"
         @change="handleTableChange">
 
-
         <template slot="ellipsisSlot" slot-scope="text">
           <j-ellipsis :value="rmHtmlLabel(text)"></j-ellipsis>
+        </template>
+
+        <template slot="summaryStatus" slot-scope="text, record">
+          <a-tag :color="record.summaryTime === record.createTime.substring(0, 10) ? 'green' : 'volcano'">
+            {{ record.summaryTime === record.createTime.substring(0, 10) ? '正常' : '补录'}}
+          </a-tag>
         </template>
 
         <span slot="action" slot-scope="text, record">
@@ -126,9 +131,10 @@
         dataIndex: 'summaryTime',
       },
       {
-        title:'填报时间',
+        title:'填报状态',
         align:"center",
         dataIndex: 'createTime',
+        scopedSlots: { customRender: 'summaryStatus' }
       },
       {
         title: '操作',
@@ -198,6 +204,9 @@
         this.queryParam.projectName = '';
 
         this.searchQuery();
+      },
+      handleEdit(record) {
+        this.$refs.modalForm.edit(record);
       },
     }
   }

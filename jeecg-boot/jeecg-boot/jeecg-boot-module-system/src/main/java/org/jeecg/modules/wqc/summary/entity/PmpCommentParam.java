@@ -11,22 +11,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @Description: 任务批阅
+ * @Author: jeecg-boot
+ * @Date:   2020-03-11
+ * @Version: V1.0
+ */
 @Data
-public class PmpCommentInfo{
+public class PmpCommentParam {
 
-    private String id;
+	private String id;
 
-	private String taskName;
+	private String taskid;
 
-	private String projectName;
+	private String content;
 
-    private String realName;
+	private String commentee;
 
-    private String createBy;
-
-    private Date createTime;
-
-    private String content;
-
-    private String category;
+	private String category;
 }

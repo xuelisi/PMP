@@ -42,4 +42,6 @@ public class PmpSummaryInfo {
 
     //提交附件
     private String contentAnnex;
+
+    private String category;
 }

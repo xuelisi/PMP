@@ -17,6 +17,12 @@ import java.util.List;
  */
 public interface IPmpCommentService extends IService<PmpComment> {
 
+    public void removeCommentWithCategory(String categoryid);
+
+    public void addCommentWithCategory(PmpComment pmpComment, String categoryid);
+
+    public void editCommentWithCategory(PmpComment pmpComment, String categoryid);
+
     public String queryRealName(String username);
 
     public String queryTaskNameByTaskid(String taskid);

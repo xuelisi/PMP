@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.quartz.mapper.PmpSummaryReminderMapper">
+    <select id="unFilledMembers" parameterType="String" resultType="java.util.Map">
+		select su.username,
+			su.realname
+		from sys_user su
+		left join
+		(
+			select *
+			from pmp_summary
+			where summary_time = '${date}'
+		) as ps on su.username = ps.create_by
+		where ps.summary_time is null
+			and su.username not in ('admin', 'he2672')
+    </select>
+</mapper>

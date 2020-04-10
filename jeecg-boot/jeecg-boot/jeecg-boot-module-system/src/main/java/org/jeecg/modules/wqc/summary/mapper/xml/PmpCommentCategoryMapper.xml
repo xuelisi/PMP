@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpCommentCategoryMapper">
+
+    <update id="removeByCommentId" >
+        delete
+        from pmp_comment_category
+        where comment_id = #{commentid}
+    </update>
+
+    <update id="updateByCatetoryId" >
+        update pmp_comment_category
+        set category_id = #{categoryid}
+        where comment_id = #{commentid}
+    </update>
+</mapper>

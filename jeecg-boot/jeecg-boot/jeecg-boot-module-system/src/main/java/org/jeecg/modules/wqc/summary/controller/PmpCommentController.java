@@ -1,9 +1,6 @@
 package org.jeecg.modules.wqc.summary.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -18,6 +15,7 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.wqc.summary.entity.PmpComment;
+import org.jeecg.modules.wqc.summary.entity.PmpCommentParam;
 import org.jeecg.modules.wqc.summary.entity.PmpCommentInfo;
 import org.jeecg.modules.wqc.summary.entity.PmpCommentSummary;
 import org.jeecg.modules.wqc.summary.service.IPmpCommentService;
@@ -76,6 +74,8 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 		String endDate = req.getParameter("endDate");
 		String taskName = req.getParameter("taskName");
 		String projectName = req.getParameter("projectName");
+		String category = req.getParameter("category");
+		String commentee = req.getParameter("commentee");
 		String commentator = req.getParameter("commentator");
 		Result<Page<PmpCommentInfo>> result = new Result<Page<PmpCommentInfo>>();
 		Page<PmpCommentInfo> pageList = new Page<>(pageNo, pageSize);
@@ -85,6 +85,8 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 		paramMap.put("endDate", endDate);
 		paramMap.put("taskName", taskName == null ? "" : taskName);
 		paramMap.put("projectName", projectName == null ? "" : projectName);
+		paramMap.put("category", category == null ? "" : category);
+		paramMap.put("commentee", commentee == null ? "" : commentee);
 		paramMap.put("commentator", commentator == null ? "" : commentator);
 		pageList = pmpCommentService.query(pageList, paramMap);//通知公告消息
 
@@ -93,17 +95,17 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 		return result;
 	}
 
-//	 @RequestMapping(value = "/query", method = RequestMethod.GET)
-//	 public Result<List<PmpCommentInfo>> queryByTask(@RequestParam(name="taskid",required=true) String taskid,
-//													 @RequestParam(name="userName",required=true) String userName) {
-//		 Result<List<PmpCommentInfo>> result = new Result<>();
-//		 List<PmpCommentInfo> cmtList = pmpCommentService.queryByTask(taskid, userName);
-//
-//		 result.setResult(cmtList);
-//		 result.setSuccess(true);
-//
-//		 return result;
-//	 }
+	 @RequestMapping(value = "/query", method = RequestMethod.GET)
+	 public Result<List<PmpCommentInfo>> queryByTask(@RequestParam(name="taskid",required=true) String taskid,
+													 @RequestParam(name="userName",required=true) String userName) {
+		 Result<List<PmpCommentInfo>> result = new Result<>();
+		 List<PmpCommentInfo> cmtList = pmpCommentService.queryByTask(taskid, userName);
+
+		 result.setResult(cmtList);
+		 result.setSuccess(true);
+
+		 return result;
+	 }
 
 	 @GetMapping(value = "/union")
 	 public Result<List<PmpCommentSummary>> queryUnion(@RequestParam(name="taskid",required=true) String taskid) {
@@ -115,6 +117,7 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 
 		 return result;
 	 }
+
 
 	 @RequestMapping(value = "/realname", method = RequestMethod.GET)
 	 public Result<String> queryRealName(@RequestParam(name="username",required=true) String username) {
@@ -134,9 +137,21 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<?> add(@RequestBody PmpComment pmpComment) {
+	public Result<?> add(@RequestBody PmpCommentParam param) {
+		PmpComment pmpComment = new PmpComment();
+		pmpComment.setId(generateSummaryId());
+		pmpComment.setTaskid(param.getTaskid());
+		pmpComment.setContent(param.getContent());
+		pmpComment.setCommentee(param.getCommentee());
 		if (pmpCommentService.save(pmpComment)) {
-			sendCommentNote(pmpComment.getTaskid());
+			pmpCommentService.addCommentWithCategory(pmpComment, param.getCategory());
+
+			String taskname = pmpCommentService.queryTaskNameByTaskid(param.getTaskid());
+			String from = ((LoginUser)SecurityUtils.getSubject().getPrincipal()).getUsername();
+			String list[] = param.getCommentee().split(",");
+			for (String to : list) {
+				sendCommentNote(from, to, taskname);
+			}
 		}
 
 		return Result.ok("评论成功！");
@@ -149,10 +164,20 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<?> edit(@RequestBody PmpComment pmpComment) {
+	public Result<?> edit(@RequestBody PmpCommentParam param) {
+		PmpComment pmpComment = new PmpComment();
+		pmpComment.setId(param.getId());
+		pmpComment.setContent(param.getContent());
+
 		pmpCommentService.updateById(pmpComment);
+		pmpCommentService.editCommentWithCategory(pmpComment, param.getCategory());
+
 		return Result.ok("编辑成功!");
 	}
+//	 public Result<?> edit(@RequestBody PmpComment pmpComment) {
+//		 pmpCommentService.updateById(pmpComment);
+//		 return Result.ok("编辑成功!");
+//	 }
 	
 	/**
 	 *   通过id删除
@@ -163,6 +188,8 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
 	@DeleteMapping(value = "/delete")
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
 		pmpCommentService.removeById(id);
+		pmpCommentService.removeCommentWithCategory(id);
+
 		return Result.ok("删除成功!");
 	}
 	
@@ -216,17 +243,18 @@ public class PmpCommentController extends JeecgController<PmpComment, IPmpCommen
         return super.importExcel(request, response, PmpComment.class);
     }
 
-    public void sendCommentNote(String taskid) {
-		String userName = pmpCommentService.queryCommenteeByTaskid(taskid);
-		String realName = pmpCommentService.queryRealName(userName);
-		String taskName = pmpCommentService.queryTaskNameByTaskid(taskid);
-		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+	 private String generateSummaryId() {
+		 return UUID.randomUUID().toString().replace("-", "");
+	 }
 
+    private void sendCommentNote(String from, String to, String taskname) {
+		String Commentee = pmpCommentService.queryRealName(to);
+		String Commentator = pmpCommentService.queryRealName(from);
 		HashMap<String, String> paramMap = new HashMap<>();
-		paramMap.put("Commentee", realName);
-		paramMap.put("Commentator", sysUser.getRealname());
-		paramMap.put("taskName", taskName);
-		sysBaseAPI.sendSysAnnouncement(sysUser.getUsername(), userName, "你有新的评论通知！", paramMap, "bpm_comment_note");
-		//sysBaseAPI.sendSysAnnouncement(sysUser.getUsername(), userName, "你有新的评论-测试标题", "你有新的评论-测试内容");
+		paramMap.put("Commentee", Commentee);
+		paramMap.put("Commentator", Commentator);
+		paramMap.put("taskName", taskname);
+
+		sysBaseAPI.sendSysAnnouncement(from, to, "你有新的评论通知！", paramMap, "bpm_comment_note");
 	}
 }

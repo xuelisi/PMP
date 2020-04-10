@@ -130,8 +130,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
        return Result.ok("添加成功！");
    }
 
-    @RequestMapping(value = "/generateSummaryId", method = RequestMethod.GET)
-    public String generateSummaryId() {
+    private String generateSummaryId() {
        return UUID.randomUUID().toString().replace("-", "");
     }
 
