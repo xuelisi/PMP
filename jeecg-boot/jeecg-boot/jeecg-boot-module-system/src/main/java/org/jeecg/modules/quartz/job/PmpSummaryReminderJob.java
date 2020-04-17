@@ -34,6 +34,7 @@ public class PmpSummaryReminderJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+		log.info("******执行小结提醒任务******");
 		reminder();
 	}
 

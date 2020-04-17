@@ -62,9 +62,8 @@
           <a
             href="javascript:;"
             @click="handleCommentSummary(record)"
-            v-if="record.parentnode!='0'"
           >{{ getRealName(text) }}</a>
-          <span v-else>{{getRealName(text)}}</span>
+          <!--<span v-else>{{getRealName(text)}}</span>-->
         </template>
         <span slot="isdelete" slot-scope="text">
           <a-tag :color="text==1 ? 'volcano' : 'green'">{{ text == 0 ? '正常':'禁用'}}</a-tag>
@@ -111,7 +110,7 @@
     <pmpTaskdetails-modal ref="modalForm1" @ok="modalFormOk"></pmpTaskdetails-modal>
     <pmpComment-modal ref="modalForm2" @ok="modalFormOk"></pmpComment-modal>
     <pmpProSummary-modal ref="summaryModal" @ok="modalFormOk"></pmpProSummary-modal>
-    <pmpCommentSummary-modal ref="csModal" @ok="modalFormOk"></pmpCommentSummary-modal>
+    <pmp-c-s-union-modal ref="csModal" @ok="modalFormOk"></pmp-c-s-union-modal>
     <!-- <taskRemind-modal ref="modalForm3" @ok="modalFormOk"></taskRemind-modal> -->
   </a-card>
 </template>
@@ -129,7 +128,8 @@ import { isContainPrincipal } from '@/utils/util'
 import { initDictOptions, filterDictText, myFilterMultiDictText } from '@/components/dict/JDictSelectUtil'
 
 import PmpProSummaryModal from '@views/wqc/modules/PmpProSummaryModal'
-import PmpCommentSummaryModal from '@views/wqc/modules/PmpCommentSummaryModal'
+//import PmpCSUnionModal from '@views/wqc/modules/PmpCSUnionModal'
+import PmpCSUnionModal from '../../wqc/modules/PmpCSUnionModal'
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
@@ -141,7 +141,7 @@ export default {
     PmpCommentModal,
     TaskRemindModal,
     PmpProSummaryModal,
-    PmpCommentSummaryModal
+    PmpCSUnionModal
   },
   data() {
     return {

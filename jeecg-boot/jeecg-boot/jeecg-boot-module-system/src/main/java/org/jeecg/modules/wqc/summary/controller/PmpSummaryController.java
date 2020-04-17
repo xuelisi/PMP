@@ -23,33 +23,33 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.apache.shiro.SecurityUtils;
 
 /**
-* @Description: 任务小结
-* @Author: jeecg-boot
-* @Date:   2020-03-06
-* @Version: V1.0
-*/
+ * @Description: 任务小结
+ * @Author: jeecg-boot
+ * @Date: 2020-03-06
+ * @Version: V1.0
+ */
 @RestController
 @RequestMapping("/summary/pmpSummary")
 @Slf4j
 public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummaryService> {
-   @Autowired
-   private IPmpSummaryService service;
+    @Autowired
+    private IPmpSummaryService service;
 
-   /**
-    * 分页列表查询
-    *
-    * @param pmpSummary
-    * @param pageNo
-    * @param pageSize
-    * @param req
-    * @return
-    */
-   //默认分页查询
-   @GetMapping(value = "/list")
+    /**
+     * 分页列表查询
+     *
+     * @param pmpSummary
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    //默认分页查询
+    @GetMapping(value = "/list")
     public Result<?> queryPageList(PmpSummaryInfo info,
-                                         @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                         @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                         HttpServletRequest req) {
+                                   @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                   @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                   HttpServletRequest req) {
         String owner = req.getParameter("owner");
         String begDate = req.getParameter("begDate");
         String endDate = req.getParameter("endDate");
@@ -58,7 +58,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         String summaryTime = req.getParameter("summaryTime");
 
         Page<PmpSummaryInfo> pageList = new Page<>(pageNo, pageSize);
-        LoginUser sysUser = (LoginUser)SecurityUtils.getSubject().getPrincipal();
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
         Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
 
         Map<String, String> paramMap = new HashMap<>();
@@ -81,9 +81,9 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
     //查询统计结果
     @GetMapping(value = "/statistics")
     public Result<?> queryStatisticsByDate(PmpSummaryInfo info,
-                                   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                   HttpServletRequest req) {
+                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                           HttpServletRequest req) {
         Result<Page<PmpSummaryStatistics>> result = new Result<Page<PmpSummaryStatistics>>();
         Page<PmpSummaryStatistics> pageList = new Page<PmpSummaryStatistics>(pageNo, pageSize);
 
@@ -103,125 +103,125 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         return result;
     }
 
-   /**
-    *   添加
-    *
-    * @param pmpSummary
-    * @return
-    */
-   @PostMapping(value = "/add")
-   public Result<?> add(@RequestBody PmpSummaryInfo info) {
-       PmpSummary summary = new PmpSummary();
+    /**
+     * 添加
+     *
+     * @param pmpSummary
+     * @return
+     */
+    @PostMapping(value = "/add")
+    public Result<?> add(@RequestBody PmpSummaryInfo info) {
+        PmpSummary summary = new PmpSummary();
 
-       summary.setId(generateSummaryId());
-       summary.setContent(info.getContent());
-       summary.setCreateBy(info.getCreateBy());
-       summary.setSummaryTime(info.getSummaryTime());
-       summary.setContentAnnex(info.getContentAnnex());
+        summary.setId(generateSummaryId());
+        summary.setContent(info.getContent());
+        summary.setCreateBy(info.getCreateBy());
+        summary.setSummaryTime(info.getSummaryTime());
+        summary.setContentAnnex(info.getContentAnnex());
 
-       if ((null != info.getTaskid()) && service.save(summary)) {
-           service.addSummaryWithTask(summary, info.getTaskid());
-       }
+        if ((null != info.getTaskid()) && service.save(summary)) {
+            service.addSummaryWithTask(summary, info.getTaskid());
+        }
 
 //       if (null != info.queryUserId()) {
 //           service.addSummaryWithChief(summary, info.queryUserId());
 //       }
 
-       return Result.ok("添加成功！");
-   }
-
-    private String generateSummaryId() {
-       return UUID.randomUUID().toString().replace("-", "");
+        return Result.ok("添加成功！");
     }
 
-   /**
-    *  编辑
-    *
-    * @param pmpSummary
-    * @return
-    */
-   @PutMapping(value = "/edit")
-   public Result<?> edit(@RequestBody PmpSummaryInfo info) {
-       PmpSummary summary = new PmpSummary();
+    private String generateSummaryId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 
-       summary.setId(info.getId());
-       summary.setContent(info.getContent());
-       //summary.setUpdateBy(info.getCreateBy());
-       //summary.setUpdateTime(info.getCreateTime());
-       summary.setSummaryTime(info.getSummaryTime());
-       summary.setContentAnnex(info.getContentAnnex());
+    /**
+     * 编辑
+     *
+     * @param pmpSummary
+     * @return
+     */
+    @PutMapping(value = "/edit")
+    public Result<?> edit(@RequestBody PmpSummaryInfo info) {
+        PmpSummary summary = new PmpSummary();
 
-       service.updateById(summary);
-       service.editSummaryWithTask(summary, info.getTaskid());
-       return Result.ok("编辑成功!");
-   }
+        summary.setId(info.getId());
+        summary.setContent(info.getContent());
+        //summary.setUpdateBy(info.getCreateBy());
+        //summary.setUpdateTime(info.getCreateTime());
+        summary.setSummaryTime(info.getSummaryTime());
+        summary.setContentAnnex(info.getContentAnnex());
+
+        service.updateById(summary);
+        service.editSummaryWithTask(summary, info.getTaskid());
+        return Result.ok("编辑成功!");
+    }
 //   public Result<?> edit(@RequestBody PmpSummary pmpSummary) {
 //       service.updateById(pmpSummary);
 //       service.editSummaryWithTask(pmpSummary);
 //       return Result.ok("编辑成功!");
 //   }
 
-   /**
-    *   通过id删除
-    *
-    * @param id
-    * @return
-    */
-   @DeleteMapping(value = "/delete")
-   public Result<?> delete(@RequestParam(name="id",required=true) String id) {
-       service.removeById(id);
-       service.removeSummaryWithTask(id);
-       return Result.ok("删除成功!");
-   }
+    /**
+     * 通过id删除
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping(value = "/delete")
+    public Result<?> delete(@RequestParam(name = "id", required = true) String id) {
+        service.removeById(id);
+        service.removeSummaryWithTask(id);
+        return Result.ok("删除成功!");
+    }
 
-   /**
-    *  批量删除
-    *
-    * @param ids
-    * @return
-    */
-   @DeleteMapping(value = "/deleteBatch")
-   public Result<?> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-       this.service.removeByIds(Arrays.asList(ids.split(",")));
-       return Result.ok("批量删除成功!");
-   }
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    @DeleteMapping(value = "/deleteBatch")
+    public Result<?> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
+        this.service.removeByIds(Arrays.asList(ids.split(",")));
+        return Result.ok("批量删除成功!");
+    }
 
-   /**
-    * 通过id查询
-    *
-    * @param id
-    * @return
-    */
-   @GetMapping(value = "/queryById")
-   public Result<?> queryById(@RequestParam(name="id",required=true) String id) {
-       PmpSummary pmpSummary = service.getById(id);
-       if(pmpSummary==null) {
-           return Result.error("未找到对应数据");
-       }
-       return Result.ok(pmpSummary);
-   }
+    /**
+     * 通过id查询
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/queryById")
+    public Result<?> queryById(@RequestParam(name = "id", required = true) String id) {
+        PmpSummary pmpSummary = service.getById(id);
+        if (pmpSummary == null) {
+            return Result.error("未找到对应数据");
+        }
+        return Result.ok(pmpSummary);
+    }
 
-   /**
-   * 导出excel
-   *
-   * @param request
-   * @param pmpSummary
-   */
-   @RequestMapping(value = "/exportXls")
-   public ModelAndView exportXls(HttpServletRequest request, PmpSummary pmpSummary) {
-       return super.exportXls(request, pmpSummary, PmpSummary.class, "任务小结");
-   }
+    /**
+     * 导出excel
+     *
+     * @param request
+     * @param pmpSummary
+     */
+    @RequestMapping(value = "/exportXls")
+    public ModelAndView exportXls(HttpServletRequest request, PmpSummary pmpSummary) {
+        return super.exportXls(request, pmpSummary, PmpSummary.class, "任务小结");
+    }
 
-   /**
+    /**
      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
-   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-       return super.importExcel(request, response, PmpSummary.class);
-   }
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
+    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+        return super.importExcel(request, response, PmpSummary.class);
+    }
 
 }

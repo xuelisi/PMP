@@ -3,9 +3,11 @@
     :title="title"
     :width="width"
     :visible="visible"
+    :closable="false"
+    :footer="null"
+    :mask="false"
     @ok="close"
-    @cancel="close"
-    cancelText="关闭">
+    @cancel="close">
     <a-spin :spinning="false">
 
       <div class="scroll-wrap">
@@ -61,7 +63,7 @@
     data() {
       return {
         title: '',
-        width: 800,
+        width: 620,
         visible: false,
         summaryData: [],
         url: {
@@ -72,7 +74,7 @@
     methods: {
       show(time, record) {
         this.visible = true;
-        this.title = record.realName + "[" + time + "]日报统计";
+        this.title = record.realName + "[" + time + "]";
 
         this.loadSummary(time, record.userName);
       },
@@ -119,14 +121,33 @@
 </script>
 
 <style>
-  .scroll_block {
-    padding: 10px;
-    height: 500px;
-    overflow: hidden;
-    overflow-y: scroll;
+  .ant-popover-title {
+    text-align: left;
+    height: 30px;
+    line-height: 30px;
   }
 
-  .list-content {
-    font-size: 12px;
+  .ant-card-body {
+    padding: 0;
+  }
+
+  .ant-list-vertical .ant-list-item-meta {
+    margin-bottom: 0px;
+  }
+
+  .ant-list-vertical .ant-list-item-content {
+    display: block;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+  }
+
+  .scroll-wrap {
+    width: 600px;
+    margin: 0;
+    padding: 0;
+    max-height: 300px;
+    overflow: hidden;
+    overflow-y: scroll;
   }
 </style>
