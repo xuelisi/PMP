@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.project.protree.mapper.PmpProjectMapper">
+    <select id="updateMyNode" resultType="java.lang.String" statementType="CALLABLE">
+	   {call dbo.UpdateSubNode(
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{parentNodeId,jdbcType=VARCHAR,mode=IN},
+	    #{id,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="isDelteSubNode" resultType="java.lang.String" statementType="CALLABLE">
+	   {call dbo.isDelteSubNode(
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{id,jdbcType=VARCHAR,mode=IN},
+	    #{isdelete,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="IsSuperior" resultType="java.lang.Integer" statementType="CALLABLE">
+	   {call dbo.IsSuperior(
+	    #{id,jdbcType=VARCHAR,mode=IN},
+	    #{principal,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="myProject" resultType="org.jeecg.modules.project.protree.entity.PmpProject" statementType="CALLABLE">
+	   {call dbo.myProject(
+	    #{principal,jdbcType=VARCHAR,mode=IN},
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{isdelete,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<select id="myProjectpar" resultType="org.jeecg.modules.project.protree.entity.PmpProject" statementType="CALLABLE">
+	   {call dbo.myProjectpar(
+	    #{principal,jdbcType=VARCHAR,mode=IN},
+	    #{projectname,jdbcType=VARCHAR,mode=IN},
+	    #{isdelete,jdbcType=VARCHAR,mode=IN}
+	    )}
+	</select>
+
+	<!-- 项目饼图根据条件查询 -->
+	<select id="getCountInfo" resultType="map">
+		select
+		 count(status) as number,status
+		 FROM [XiangMuGuanLi].[dbo].[pmp_project]
+		 group by status
+	</select>
+
+	<select id="ganttList" resultType="map">
+	SELECT top 30 *,DATEDIFF(DAY,startdate,enddate) as duration ,
+		(CASE WHEN parentnode ='0' THEN 'NULL' else parentnode  END ) as parentId
+		FROM [XiangMuGuanLi].[dbo].[pmp_project]
+		where isdelete='0'
+	</select>
+</mapper>

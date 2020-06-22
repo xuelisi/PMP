@@ -31,6 +31,10 @@ public interface CacheConstant {
 	 */
 	public static final String SYS_DEPARTS_CACHE = "sys:cache:depart:alldata";
 
+	/**
+	 * 全部任务信息缓存
+	 */
+	public static final String SYS_TASKS_CACHE = "sys:cache:task:alldata";
 
 	/**
 	 * 全部部门ids缓存

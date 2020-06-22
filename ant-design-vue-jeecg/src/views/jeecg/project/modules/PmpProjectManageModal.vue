@@ -17,6 +17,7 @@
             :fileList="fileList"
             @preview="handlePreview"
             @change="handleChange"
+            v-decorator="['photo',  validatorRules.photo]"
           >
             <div v-if="fileList.length < 1">
               <a-icon type="plus" />
@@ -118,9 +119,6 @@ export default {
         principal: { rules: [{ required: true, message: '请输入负责人!' }] },
         participant: { rules: [] },
         emergencylevel: { rules: [] },
-        config: {
-          rules: [{ type: 'object', required: true, message: '请选择起止日期!' }]
-        },
         rangeConfig: {
           rules: [{ type: 'array', required: true, message: '请选择起止日期!' }]
         },
@@ -148,18 +146,17 @@ export default {
             this.model,
             'photo',
             'projectname',
-            'projectnumber',
             'projecttype',
             'projectcontent',
             'principal',
             'participant',
             'emergencylevel',
-            'startdate',
-            'enddate',
+            range-picker[0].format('YYYY-MM-DD'),
+            range-picker[1].format('YYYY-MM-DD'),
             'schedule',
             'remark',
             'annex',
-            'isdelete'
+            0
           )
         )
       })
@@ -209,20 +206,19 @@ export default {
       this.form.setFieldsValue(
         pick(
           row,
-          'photo',
-          'projectname',
-          'projectnumber',
-          'projecttype',
-          'projectcontent',
-          'principal',
-          'participant',
-          'emergencylevel',
-          'startdate',
-          'enddate',
-          'schedule',
-          'remark',
-          'annex',
-          'isdelete'
+           'photo',
+            'projectname',
+            'projecttype',
+            'projectcontent',
+            'principal',
+            'participant',
+            'emergencylevel',
+            range-picker[0].format('YYYY-MM-DD'),
+            range-picker[1].format('YYYY-MM-DD'),
+            'schedule',
+            'remark',
+            'annex',
+            0
         )
       )
     },

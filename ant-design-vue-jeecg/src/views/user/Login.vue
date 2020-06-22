@@ -11,7 +11,7 @@
               size="large"
               v-decorator="['username',validatorRules.username,{ validator: this.handleUsernameOrEmail }]"
               type="text"
-              placeholder="请输入帐户名 / jeecg">
+              placeholder="请输入帐户名">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -22,12 +22,12 @@
               size="large"
               type="password"
               autocomplete="false"
-              placeholder="密码 / 123456">
+              placeholder="密码">
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
 
-          <a-row :gutter="0">
+          <!-- <a-row :gutter="0">
             <a-col :span="14">
               <a-form-item>
                 <a-input
@@ -44,7 +44,7 @@
             <a-col  :span="10">
               <j-graphic-code @success="generateCode" ref="jgraphicCodeRef" style="float: right" remote></j-graphic-code>
             </a-col>
-          </a-row>
+          </a-row> -->
 
 
         </a-tab-pane>
@@ -204,12 +204,12 @@
         validatorRules:{
           username:{rules: [{ required: true, message: '请输入用户名!',validator: 'click'}]},
           password:{rules: [{ required: true, message: '请输入密码!',validator: 'click'}]},
-          mobile:{rules: [{validator:this.validateMobile}]},
-          captcha:{rule: [{ required: true, message: '请输入验证码!'}]},
-          inputCode:{rules: [{ required: true, message: '请输入验证码!'},{validator: this.validateInputCode}]}
+          // mobile:{rules: [{validator:this.validateMobile}]},
+          // captcha:{rule: [{ required: true, message: '请输入验证码!'}]},
+          // inputCode:{rules: [{ required: true, message: '请输入验证码!'},{validator: this.validateInputCode}]}
         },
-        verifiedCode:"",
-        inputCodeContent:"",
+      //  verifiedCode:"",
+      //  inputCodeContent:"",
         inputCodeNull:true,
 
         departList:[],
@@ -248,7 +248,7 @@
         that.loginBtn = true;
         // 使用账户密码登陆
         if (that.customActiveKey === 'tab1') {
-          that.form.validateFields([ 'username', 'password','inputCode', 'rememberMe' ], { force: true }, (err, values) => {
+          that.form.validateFields([ 'username', 'password', 'rememberMe' ], { force: true }, (err, values) => {
             if (!err) {
               loginParams.username = values.username
               // update-begin- --- author:scott ------ date:20190805 ---- for:密码加密逻辑暂时注释掉，有点问题
@@ -257,9 +257,9 @@
               loginParams.password = values.password
               loginParams.remember_me = values.rememberMe
               // update-begin- --- author:scott ------ date:20190805 ---- for:密码加密逻辑暂时注释掉，有点问题
-              let checkParams = this.$refs.jgraphicCodeRef.getLoginParam()
-              loginParams.captcha = checkParams.checkCode
-              loginParams.checkKey = checkParams.checkKey
+              // let checkParams = this.$refs.jgraphicCodeRef.getLoginParam()
+              // loginParams.captcha = checkParams.checkCode
+              // loginParams.checkKey = checkParams.checkKey
 
               that.Login(loginParams).then((res) => {
                 this.departConfirm(res)
@@ -372,25 +372,25 @@
         }
 
       },
-      validateInputCode(rule,value,callback){
-        if(!value || this.verifiedCode==this.inputCodeContent){
-          callback();
-        }else{
-          callback("您输入的验证码不正确!");
-        }
-      },
-      generateCode(value){
-        this.verifiedCode = value.toLowerCase()
-      },
-      inputCodeChange(e){
-        this.inputCodeContent = e.target.value
-        if(!e.target.value||0==e.target.value){
-          this.inputCodeNull=true
-        }else{
-          this.inputCodeContent = this.inputCodeContent.toLowerCase()
-          this.inputCodeNull=false
-        }
-      },
+      // validateInputCode(rule,value,callback){
+      //   if(!value || this.verifiedCode==this.inputCodeContent){
+      //     callback();
+      //   }else{
+      //     callback("您输入的验证码不正确!");
+      //   }
+      // },
+      // generateCode(value){
+      //   this.verifiedCode = value.toLowerCase()
+      // },
+      // inputCodeChange(e){
+      //   this.inputCodeContent = e.target.value
+      //   if(!e.target.value||0==e.target.value){
+      //     this.inputCodeNull=true
+      //   }else{
+      //     this.inputCodeContent = this.inputCodeContent.toLowerCase()
+      //     this.inputCodeNull=false
+      //   }
+      // },
       departConfirm(res){
         if(res.success){
           let multi_depart = res.result.multi_depart

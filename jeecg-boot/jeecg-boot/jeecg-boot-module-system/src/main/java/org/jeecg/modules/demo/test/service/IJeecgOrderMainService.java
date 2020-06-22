@@ -32,13 +32,13 @@ public interface IJeecgOrderMainService extends IService<JeecgOrderMain> {
 	
 	/**
 	 * 删除一对多
-	 * @param jformOrderMain
+	 * @param id
 	 */
 	public void delMain (String id);
 	
 	/**
 	 * 批量删除一对多
-	 * @param jformOrderMain
+	 * @param idList
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 }

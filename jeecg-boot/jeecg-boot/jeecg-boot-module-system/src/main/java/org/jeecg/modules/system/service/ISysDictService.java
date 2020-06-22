@@ -21,6 +21,8 @@ public interface ISysDictService extends IService<SysDict> {
 
     public List<DictModel> queryDictItemsByCode(String code);
 
+	public List<DictModel> myQueryDictItemsByCode(String code, String description);
+
     List<DictModel> queryTableDictItemsByCode(String table, String text, String code);
     
 	public List<DictModel> queryTableDictItemsByCodeAndFilter(String table, String text, String code, String filterSql);

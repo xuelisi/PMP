@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpSummaryMapper">
+
+    <update id="removeById">
+        delete
+        from pmp_summary
+        where id = #{id}
+    </update>
+
+    <update id="removeSummaryWithTask">
+        delete
+        from pmp_task_summary
+        where summary_id = #{summaryid}
+    </update>
+
+    <select id="queryUsernameByRealName" resultType="String">
+        select username
+        from sys_user
+        where realname =#{realName}
+    </select>
+
+    <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
+        select ps.id as id,
+        pp.id as taskid,
+        ps.create_by as createBy,
+        ps.create_time as createTime,
+        ps.summary_time as summaryTime,
+        ps.content as content,
+        ps.content_annex as contentAnnex,
+        pp.taskname as taskName,
+        pp.projectname as projectName,
+        pp.principal,
+        pst.type as sumtype
+        from (
+        select *
+        from pmp_summary
+        where 1 = 1
+        <if test="map.owner!=null">
+            and create_by = '${map.owner}'
+        </if>
+        <if test="map.summaryTime!=null">
+            and summary_time = '${map.summaryTime}'
+        </if>
+        <if test="map.begDate!=null and map.endDate!=null">
+            and summary_time &lt;= '${map.endDate}'
+            and summary_time &gt;= '${map.begDate}'
+        </if>
+        ) as ps
+        left join (
+        select *
+        from pmp_task_summary
+        ) as pts on ps.id = pts.summary_id
+        left join (
+        select *
+        from pmp_project
+        where 1 = 1
+        <if test="map.projectName!=null">
+            and projectname like '%${map.projectName}%'
+        </if>
+        <if test="map.taskName!=null">
+            and taskname like '%${map.taskName}%'
+        </if>
+        ) as pp on pp.id = pts.task_id
+        left join (
+        select id, type
+        from pmp_sumtype
+        ) as pst on pst.id = ps.type
+        where pp.id is not null
+        order by ps.create_time desc
+    </select>
+
+    <select id="queryUserId" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
+        select *
+        from pmp_summary
+        where create_by like '%' + isnull(@userName, '') + '%'
+    </select>
+
+    <select id="queryStatisticsByDate" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryStatistics">
+        select realname,
+			username,
+			[01] as first, [02] as second, [03] as third,
+            [04] as fourth, [05] as fifth, [06] as sixth, [07] as seventh,
+            [08] as eighth, [09] as ninth, [10] as tenth, [11] as eleventh,
+            [12] as twelfth, [13] as thirteenth, [14] as fourteenth, [15] as fifteenth,
+            [16] as sixteenth, [17] as seventeenth, [18] as eighteenth, [19] as nineteenth,
+            [20] as twentieth, [21] as twentyFirst, [22] as twentySecond, [23] as twentyThird,
+            [24] as twentyFourth, [25] as twentyFifth, [26] as twentySixth, [27] as twentySeventh,
+            [28] as twentyEighth, [29] as twentyNinth, [30] as twentyTenth, [31] as thirtyFirst
+        from
+        (
+            select convert(nvarchar(10), s.create_time, 120) as createTime,
+				u.username as username,
+                u.realname as realname,
+                right(left(s.summary_time, 10), 2) as stIndex
+            from
+            (
+                select *
+                from sys_user
+                where username not in ('admin', 'he2672')
+            ) as u
+            left join
+            (
+                select *
+                from pmp_summary
+                where left(summary_time, 7) = left(#{date}, 7)
+            ) as s on u.username = s.create_by
+        ) as t
+        PIVOT
+        (
+            min(t.createTime) for t.stIndex in
+             ([01],[02],[03],[04],[05],[06],[07],[08],[09],
+             [10],[11],[12],[13],[14],[15],[16],[17],[18],[19],
+             [20],[21],[22],[23],[24],[25],[26],[27],[28],[29],
+             [30],[31])
+        ) as pv
+    </select>
+</mapper>

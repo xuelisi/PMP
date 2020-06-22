@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.wqc.summary.mapper.PmpCommentMapper">
+
+    <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+        select pc.id as id,
+            pp.projectname as projectname,
+            pp.taskname as taskname,
+            pc.content as content,
+            pc.create_time as createTime,
+            pc.create_by as createBy,
+            su.realname as realName,
+            pct.category_name as category
+        from
+        (
+            select *
+            from pmp_comment
+            where 1 = 1
+            <if test="map.begDate!=null and map.endDate!=null">
+                and create_time &lt;= '${map.endDate}'
+                and create_time &gt;= '${map.begDate}'
+            </if>
+            <if test="map.commentee!=null">
+                and commentee like '%${map.commentee}%'
+            </if>
+        ) as pc
+        left join
+        (
+            select *
+            from pmp_project
+            where (parentnode != '0' and parentnode is not null)
+            <if test="map.projectName!=null">
+                and projectname like '%${map.projectName}%'
+            </if>
+            <if test="map.taskName!=null">
+                and taskname like '%${map.taskName}%'
+            </if>
+            <if test="map.taskid!=null">
+                and id = '${map.taskid}'
+            </if>
+        ) as pp on pp.id = pc.taskid
+        left join
+        (
+            select *
+            from sys_user
+            where 1 = 1
+            <if test="map.commentator!=null">
+                and realname like '%${map.commentator}%'
+            </if>
+        )as su on su.username = pc.create_by
+        left join
+        (
+            select *
+            from pmp_comment_category
+        ) as pcc on pcc.comment_id = pc.id
+        left join
+        (
+            select *
+            from pmp_category
+            where 1 = 1
+            <if test="map.category!=null">
+                and category_name like '%${map.category}%'
+            </if>
+        ) as pct on pct.id = pcc.category_id
+        where pc.id is not null
+            and su.realname is not null
+            and pct.category_name is not null
+        order by pc.create_time desc
+    </select>
+
+    <select id="queryByTask" resultType="org.jeecg.modules.wqc.summary.entity.PmpCommentInfo">
+        select p.projectname as projectname,
+        p.taskname as taskname,
+        c.content as content,
+        c.create_time as createTime,
+        c.create_by as createBy,
+        u.realname as realName
+        from
+        (
+            select *
+            from pmp_project
+            where id = #{taskid}
+            <if test="username!=null and username!=''">
+                and create_by = #{username}
+            </if>
+        ) as p
+        left join
+        (
+            select *
+            from pmp_comment
+        ) as c on p.id = c.taskid
+        left join
+        (
+            select *
+            from sys_user
+        )as u on u.username = c.create_by
+        where c.id is not null
+        order by c.create_time desc
+    </select>
+
+    <select id="queryRealName" parameterType="String"  resultType="String">
+          select realname
+          from sys_user
+          where username = #{username}
+	</select>
+
+    <select id="queryTaskNameByTaskid" parameterType="String" resultType="String">
+        select taskname
+        from pmp_project
+        where id = #{taskid}
+    </select>
+
+    <select id="queryCommenteeByTaskid" parameterType="String" resultType="String">
+        select isnull(principal, create_by)
+        from pmp_project
+        where id = #{taskid}
+    </select>
+
+</mapper>

@@ -64,15 +64,15 @@ public class LoginController {
 		//update-begin--Author:scott  Date:20190805 for：暂时注释掉密码加密逻辑，有点问题
 
 		//update-begin-author:taoyan date:20190828 for:校验验证码
-		Object checkCode = redisUtil.get(sysLoginModel.getCheckKey());
-		if(checkCode==null) {
-			result.error500("验证码失效");
-			return result;
-		}
-		if(!checkCode.equals(sysLoginModel.getCaptcha())) {
-			result.error500("验证码错误");
-			return result;
-		}
+//		Object checkCode = redisUtil.get(sysLoginModel.getCheckKey());
+//		if(checkCode==null) {
+//			result.error500("验证码失效");
+//			return result;
+//		}
+//		if(!checkCode.equals(sysLoginModel.getCaptcha())) {
+//			result.error500("验证码错误");
+//			return result;
+//		}
 		//update-end-author:taoyan date:20190828 for:校验验证码
 		
 		//1. 校验用户是否有效
@@ -180,8 +180,68 @@ public class LoginController {
 		result.setResult(oConvertUtils.toLowerCasePageList(list));
 		return result;
 	}
-	
-	
+
+	/**
+	 * 获取访问量
+	 * @return
+	 */
+	@GetMapping("visitTopSixInfo")
+	public Result<List<Map<String,Object>>> visitTopSixInfo() {
+		Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.add(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date dayStart = calendar.getTime();
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.add(Calendar.MONTH, 1);
+		calendar.set(Calendar.DAY_OF_MONTH, 0);
+		Date dayEnd = calendar.getTime();
+		List<Map<String,Object>> list = logService.findVisitTopSixCount(dayStart, dayEnd);
+		result.setResult(oConvertUtils.toLowerCasePageList(list));
+		return result;
+	}
+
+	/**
+	 * 获取访问量
+	 * @return
+	 */
+	@GetMapping("visitPmpInfo")
+	public Result<List<Map<String,Object>>> visitPmpInfo() {
+		Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.add(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date monthStart = calendar.getTime();
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.add(Calendar.MONTH, 1);
+		calendar.set(Calendar.DAY_OF_MONTH, 0);
+		Date monthEnd = calendar.getTime();
+		Calendar calendar1 = new GregorianCalendar();
+		calendar1.set(Calendar.HOUR_OF_DAY,0);
+		calendar1.set(Calendar.MINUTE,0);
+		calendar1.set(Calendar.SECOND,0);
+		calendar1.set(Calendar.MILLISECOND,0);
+		calendar1.add(Calendar.DAY_OF_MONTH, 1);
+		Date weekEnd = calendar1.getTime();
+		calendar1.add(calendar1.DAY_OF_MONTH, -7);
+		Date weekStart = calendar1.getTime();
+		List<Map<String,Object>> list = logService.findVisitPmpCount(monthStart, monthEnd, weekStart, weekEnd);
+		result.setResult(oConvertUtils.toLowerCasePageList(list));
+		return result;
+	}
+
 	/**
 	 * 登陆成功选择用户当前部门
 	 * @param user

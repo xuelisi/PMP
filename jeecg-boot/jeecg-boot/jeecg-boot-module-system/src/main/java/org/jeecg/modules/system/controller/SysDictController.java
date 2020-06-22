@@ -134,6 +134,57 @@ public class SysDictController {
 			if(dictCode.indexOf(",")!=-1) {
 				//关联表字典（举例：sys_user,realname,id）
 				String[] params = dictCode.split(",");
+
+				if(params.length<3) {
+					result.error500("字典Code格式不正确！");
+					return result;
+				}
+				//SQL注入校验（只限制非法串改数据库）
+				final String[] sqlInjCheck = {params[0],params[1],params[2]};
+				SqlInjectionUtil.filterContent(sqlInjCheck);
+
+				if(params.length==4) {
+					//SQL注入校验（查询条件SQL 特殊check，此方法仅供此处使用）
+					SqlInjectionUtil.specialFilterContent(params[3]);
+					ls = sysDictService.queryTableDictItemsByCodeAndFilter(params[0],params[1],params[2],params[3]);
+				}else if (params.length==3) {
+					ls = sysDictService.queryTableDictItemsByCode(params[0],params[1],params[2]);
+				}else{
+					result.error500("字典Code格式不正确！");
+					return result;
+				}
+			}else {
+				//字典表
+				ls = sysDictService.queryDictItemsByCode(dictCode);
+			}
+
+			result.setSuccess(true);
+			result.setResult(ls);
+			log.info(result.toString());
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			result.error500("操作失败");
+			return result;
+		}
+
+		return result;
+	}
+
+	/**
+	 * 获取字典数据
+	 * @param dictCode 字典code
+	 * @param dictCode 表名,文本字段,code字段  | 举例：sys_user,realname,id
+	 * @return
+	 */
+	@RequestMapping(value = "/myGetDictItems/{dictCode}", method = RequestMethod.GET)
+	public Result<List<DictModel>> myGetDictItems(@PathVariable String dictCode,@RequestParam(name="description") String description) {
+		log.info(" dictCode : "+ dictCode);
+		Result<List<DictModel>> result = new Result<List<DictModel>>();
+		List<DictModel> ls = null;
+		try {
+			if(dictCode.indexOf(",")!=-1) {
+				//关联表字典（举例：sys_user,realname,id）
+				String[] params = dictCode.split(",");
 				
 				if(params.length<3) {
 					result.error500("字典Code格式不正确！");
@@ -155,7 +206,7 @@ public class SysDictController {
 				}
 			}else {
 				//字典表
-				 ls = sysDictService.queryDictItemsByCode(dictCode);
+				 ls = sysDictService.myQueryDictItemsByCode(dictCode, description);
 			}
 
 			 result.setSuccess(true);

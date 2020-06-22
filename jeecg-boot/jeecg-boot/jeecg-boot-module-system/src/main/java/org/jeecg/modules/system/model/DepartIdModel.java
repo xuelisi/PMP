@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jeecg.modules.project.protree.entity.PmpProjectTreeModel;
 import org.jeecg.modules.system.entity.SysDepart;
 
 /**
@@ -29,7 +30,19 @@ public class DepartIdModel implements Serializable {
     private String title;
     
     List<DepartIdModel> children = new ArrayList<>();
-    
+
+    /**
+     * 将SysDepartTreeModel的部分数据放在该对象当中
+     * @param treeModel
+     * @return
+     */
+    public DepartIdModel convert1(PmpProjectTreeModel treeModel) {
+        this.key = treeModel.getId();
+        this.value = treeModel.getId();
+        this.title = treeModel.getTaskname();
+        return this;
+    }
+
     /**
      * 将SysDepartTreeModel的部分数据放在该对象当中
      * @param treeModel

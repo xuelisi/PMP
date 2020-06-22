@@ -56,6 +56,10 @@ const queryParentName   = (params)=>getAction("/sys/sysDepart/queryParentName",p
 const searchByKeywords   = (params)=>getAction("/sys/sysDepart/searchBy",params);
 const deleteByDepartId   = (params)=>deleteAction("/sys/sysDepart/delete",params);
 
+//项目管理
+const queryPmpTreeList = (params)=>getAction("/protree/pmpProject/queryTreeList",params);
+const queryProjectInfo = (params)=>getAction("/protree/pmpProject/queryByProjectName",params);
+
 //日志管理
 //const getLogList = (params)=>getAction("/sys/log/list",params);
 const deleteLog = (params)=>deleteAction("/sys/log/delete",params);
@@ -75,6 +79,7 @@ const editDictItem = (params)=>putAction("/sys/dictItem/edit",params);
 
 //字典标签专用（通过code获取字典数组）
 export const ajaxGetDictItems = (code, params)=>getAction(`/sys/dict/getDictItems/${code}`,params);
+export const myGetDictItems = (code, params)=>getAction(`/sys/dict/myGetDictItems/${code}`,params);
 
 //系统通告
 const doReleaseData = (params)=>getAction("/sys/annountCement/doReleaseData",params);
@@ -82,6 +87,8 @@ const doReovkeData = (params)=>getAction("/sys/annountCement/doReovkeData",param
 //获取系统访问量
 const getLoginfo = (params)=>getAction("/sys/loginfo",params);
 const getVisitInfo = (params)=>getAction("/sys/visitInfo",params);
+const getVisitTopSixInfo = (params)=>getAction("/sys/visitTopSixInfo",params);
+const getVisitPmpInfo = (params)=>getAction("/sys/visitPmpInfo",params);
 //数据日志访问
 // const getDataLogList = (params)=>getAction("/sys/dataLog/list",params);
 
@@ -98,6 +105,10 @@ const loadCategoryData = (params)=>getAction("/sys/category/loadAllData",params)
 export {
   // imgView,
   // doMian,
+  queryProjectInfo,
+  getVisitPmpInfo,
+  getVisitTopSixInfo,
+  queryPmpTreeList,
   addRole,
   editRole,
   checkRoleCode,
