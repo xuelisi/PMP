@@ -1,6 +1,4 @@
-<template
-  slot="summaryStateSlot"
-  slot-scope="text, record">
+<template>
   <div>
     <a-popover
       trigger="hover"

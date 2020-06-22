@@ -22,6 +22,8 @@ public interface PmpSummaryMapper extends BaseMapper<PmpSummary> {
 
     void removeSummaryWithTask(String summaryid);
 
+    String queryUsernameByRealName(String realName);
+
     List<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map);
 
     List<PmpSummaryStatistics> queryStatisticsByDate(Page<PmpSummaryStatistics> page, String date);

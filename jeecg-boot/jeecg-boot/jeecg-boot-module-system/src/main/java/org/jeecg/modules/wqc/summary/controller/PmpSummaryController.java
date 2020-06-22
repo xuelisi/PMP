@@ -50,7 +50,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                    HttpServletRequest req) {
-        String owner = req.getParameter("owner");
+        String owner = req.getParameter("createBy");
         String begDate = req.getParameter("begDate");
         String endDate = req.getParameter("endDate");
         String taskName = req.getParameter("taskName");
@@ -58,11 +58,11 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         String summaryTime = req.getParameter("summaryTime");
 
         Page<PmpSummaryInfo> pageList = new Page<>(pageNo, pageSize);
-        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
         Result<Page<PmpSummaryInfo>> result = new Result<Page<PmpSummaryInfo>>();
 
         Map<String, String> paramMap = new HashMap<>();
-        owner = (null == owner) ? sysUser.getUsername() : owner;
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        owner = (null == owner) ? sysUser.getUsername() : queryUserName(owner);
 
         paramMap.put("owner", owner);
         paramMap.put("begDate", begDate);
@@ -76,6 +76,10 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         result.setSuccess(true);
         result.setResult(pageList);
         return result;
+    }
+
+    private String queryUserName(String realName) {
+        return service.queryUsernameByRealName(realName);
     }
 
     //查询统计结果
@@ -114,6 +118,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         PmpSummary summary = new PmpSummary();
 
         summary.setId(generateSummaryId());
+        summary.setType(info.getSumtype());
         summary.setContent(info.getContent());
         summary.setCreateBy(info.getCreateBy());
         summary.setSummaryTime(info.getSummaryTime());
@@ -145,6 +150,7 @@ public class PmpSummaryController extends JeecgController<PmpSummary, IPmpSummar
         PmpSummary summary = new PmpSummary();
 
         summary.setId(info.getId());
+        summary.setType(info.getSumtype());
         summary.setContent(info.getContent());
         //summary.setUpdateBy(info.getCreateBy());
         //summary.setUpdateTime(info.getCreateTime());

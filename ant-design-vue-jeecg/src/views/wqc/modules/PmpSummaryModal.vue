@@ -31,27 +31,42 @@
               />
             </a-form-item>
           </a-col>
+
+          <a-col :lg="12">
+            <a-form-item label="小结类型" :labelCol="inputlabelCol" :wrapperCol="inputwrapperCol">
+              <j-dict-select-tag
+                v-model="sumtype"
+                placeholder="请选择小结类型"
+                :triggerChange="true"
+                dictCode="pmp_sumtype,type,id"
+                v-decorator="['sumtype', validatorRules.sumtype]"/>
+            </a-form-item>
+          </a-col>
         </a-row>
 
-        <a-form-item
-          label="日报内容"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol">
-          <j-editor
-            :toolbar="customToolBar"
-            v-decorator="['content', validatorRules.content]"
-            :trigger-change="true"/>
-        </a-form-item>
+        <a-row>
+          <a-form-item
+            label="日报内容"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol">
+            <j-editor
+              :toolbar="customToolBar"
+              v-decorator="['content', validatorRules.content]"
+              :trigger-change="true"/>
+          </a-form-item>
+        </a-row>
 
-        <a-form-item
-          label="附件"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol">
-          <j-upload
-            v-decorator="['contentAnnex', validatorRules.contentAnnex]"
-            :trigger-change="true">
-          </j-upload>
-        </a-form-item>
+        <a-row>
+          <a-form-item
+            label="附件"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol">
+            <j-upload
+              v-decorator="['contentAnnex', validatorRules.contentAnnex]"
+              :trigger-change="true">
+            </j-upload>
+          </a-form-item>
+        </a-row>
 
       </a-form>
     </a-spin>
@@ -61,15 +76,14 @@
 <script>
 
   import pick from 'lodash.pick'
-  import { httpAction } from '@/api/manage'
+  import {httpAction} from '@/api/manage'
   import JDate from '@/components/jeecg/JDate'
   import JUpload from '@/components/jeecg/JUpload'
   import JEditor from '@/components/jeecg/JEditor'
-  import { validateDuplicateValue } from '@/utils/util'
-  import JTreeSelect from '@/components/jeecg/JTreeSelect'
-  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
-  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+  import {validateDuplicateValue} from '@/utils/util'
   import JSelectPmp from '@/components/jeecgbiz/JSelectPmp.vue'
+  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
+  import {mapState, mapGetters, mapActions, mapMutations} from 'vuex'
 
   const debug = (msg) => {
     console.log('*************************');
@@ -88,43 +102,55 @@
       JSelectPmp,
       JDictSelectTag,
     },
-    data () {
+    data() {
       return {
         form: this.$form.createForm(this),
-        title:"操作",
-        width:800,
+        title: "操作",
+        width: 800,
         visible: false,
         model: {},
+        sumtype: '',
         summaryTime: '',
         customToolBar: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
         labelCol: {
-          xs: { span: 24 },
-          sm: { span: 3 },
+          xs: {span: 20},
+          sm: {span: 4},
         },
         wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 20 },
+          xs: {span: 20},
+          sm: {span: 19},
         },
         inputlabelCol: {
-          xs: { span: 20 },
-          sm: { span: 7 },
+          xs: {span: 20},
+          sm: {span: 8},
         },
         inputwrapperCol: {
-          xs: { span: 20 },
-          sm: { span: 15 },
+          xs: {span: 20},
+          sm: {span: 15},
         },
         confirmLoading: false,
         validatorRules: {
-          taskid: {rules: [
+          sumtype: {
+            rules: [
+              {required: true, message: '请选择类型!'},
+            ]
+          },
+          taskid: {
+            rules: [
               {required: true, message: '请选择任务!'},
-            ]},
-          summaryTime: {rules: [
+            ]
+          },
+          summaryTime: {
+            rules: [
               {required: true, message: '请输入日报日期!'},
               {validator: this.isDateValid, trigger: 'blur', message: '日期超出范围，请重新选择!'}
-            ]},
-          content: {rules: [
-            {required: true, message: '请输入日报内容!'},
-          ]},
+            ]
+          },
+          content: {
+            rules: [
+              {required: true, message: '请输入日报内容!'},
+            ]
+          },
         },
         url: {
           add: "/summary/pmpSummary/add",
@@ -132,25 +158,25 @@
         },
       }
     },
-    created () {
+    created() {
     },
     methods: {
       ...mapGetters(['userInfo']),
-      add () {
-        this.edit({ summaryTime: this.getNow() });
+      add() {
+        this.edit({summaryTime: this.getNow()});
       },
-      add (id) {
-        this.edit({ taskid: id, summaryTime: this.getNow() });
+      add(id) {
+        this.edit({taskid: id, summaryTime: this.getNow()});
       },
-      edit (record) {
+      edit(record) {
         this.form.resetFields();
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'id','taskid', 'summaryTime','content','contentAnnex'))
+          this.form.setFieldsValue(pick(this.model, 'id', 'taskid', 'summaryTime', 'content', 'contentAnnex'))
         })
       },
-      close () {
+      close() {
         this.$emit('close');
         this.visible = false;
       },
@@ -160,7 +186,7 @@
 
         return false;
       },
-      handleOk () {
+      handleOk() {
         const that = this;
         // 触发表单验证
         this.form.validateFields((err, values) => {
@@ -168,35 +194,35 @@
             that.confirmLoading = true;
             let httpurl = '';
             let method = '';
-            if(!this.model.id){
-              httpurl+=this.url.add;
+            if (!this.model.id) {
+              httpurl += this.url.add;
               method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-               method = 'put';
+            } else {
+              httpurl += this.url.edit;
+              method = 'put';
             }
             let formData = Object.assign(this.model, values);
             formData.createBy = this.userInfo().username;
-            httpAction(httpurl,formData,method).then((res)=>{
-              if(res.success){
+            httpAction(httpurl, formData, method).then((res) => {
+              if (res.success) {
                 that.$message.success(res.message);
                 that.$emit('ok');
-              }else{
+              } else {
                 that.$message.warning(res.message);
               }
             }).finally(() => {
               that.confirmLoading = false;
               that.close();
             })
-          }
-         
+
+           }
         })
       },
-      handleCancel () {
+      handleCancel() {
         this.close()
       },
-      popupCallback(row){
-        this.form.setFieldsValue(pick(row,'taskid','content','contentAnnex'))
+      popupCallback(row) {
+        this.form.setFieldsValue(pick(row, 'taskid', 'content', 'contentAnnex'))
       },
       getNow() {
         var date = new Date();

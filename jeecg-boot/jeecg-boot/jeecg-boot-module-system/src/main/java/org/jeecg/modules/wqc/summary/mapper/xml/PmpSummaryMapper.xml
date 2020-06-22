@@ -14,6 +14,12 @@
         where summary_id = #{summaryid}
     </update>
 
+    <select id="queryUsernameByRealName" resultType="String">
+        select username
+        from sys_user
+        where realname =#{realName}
+    </select>
+
     <select id="query" parameterType="map" resultType="org.jeecg.modules.wqc.summary.entity.PmpSummaryInfo">
         select ps.id as id,
         pp.id as taskid,
@@ -24,9 +30,9 @@
         ps.content_annex as contentAnnex,
         pp.taskname as taskName,
         pp.projectname as projectName,
-        pp.principal
-        FROM
-        (
+        pp.principal,
+        pst.type as sumtype
+        from (
         select *
         from pmp_summary
         where 1 = 1
@@ -41,13 +47,11 @@
             and summary_time &gt;= '${map.begDate}'
         </if>
         ) as ps
-        left join
-        (
+        left join (
         select *
         from pmp_task_summary
         ) as pts on ps.id = pts.summary_id
-        left join
-        (
+        left join (
         select *
         from pmp_project
         where 1 = 1
@@ -58,6 +62,10 @@
             and taskname like '%${map.taskName}%'
         </if>
         ) as pp on pp.id = pts.task_id
+        left join (
+        select id, type
+        from pmp_sumtype
+        ) as pst on pst.id = ps.type
         where pp.id is not null
         order by ps.create_time desc
     </select>

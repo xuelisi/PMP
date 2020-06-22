@@ -27,6 +27,9 @@ public class PmpSummaryInfo {
     //主管名称
     private String chiefName;
 
+    //小结类型
+    private  String sumtype;
+
     //提交人
     private String createBy;
 

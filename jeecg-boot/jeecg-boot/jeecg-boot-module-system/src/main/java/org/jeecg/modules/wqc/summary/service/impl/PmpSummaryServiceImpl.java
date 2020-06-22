@@ -52,6 +52,10 @@ public class PmpSummaryServiceImpl extends ServiceImpl<PmpSummaryMapper, PmpSumm
         csMapper.insert(cs);
     }
 
+    public String queryUsernameByRealName(String realname) {
+        return smapper.queryUsernameByRealName(realname);
+    }
+
     public Page<PmpSummaryInfo> query(Page<PmpSummaryInfo> page, Map<String, String> map) {
         return page.setRecords(smapper.query(page, map));
     }

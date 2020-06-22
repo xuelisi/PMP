@@ -1,13 +1,12 @@
 <template>
-  <a-modal
-    :title="title"
-    :width="width"
-    :visible="visible"
-    :closable="false"
-    :footer="null"
-    :mask="false"
-    @ok="close"
-    @cancel="close">
+  <a-modal ref="modal"
+           :mask="false"
+           :title="title"
+           :width="width"
+           :footer="null"
+           :closable="false"
+           :visible="visible"
+           @cancel="close">
     <a-spin :spinning="false">
 
       <div class="scroll-wrap">
@@ -20,7 +19,7 @@
 
               <a slot="title">{{ item.title }}</a>
               <a-avatar slot="avatar" icon="schedule"/>
-              <a class="list-content" slot="description" v-html="item.content" />
+              <a class="list-content" slot="description" v-html="item.content"/>
 
             </a-list-item-meta>
 
@@ -37,39 +36,31 @@
 
 <script>
 
-  import { httpAction } from '@/api/manage'
-  import { deleteAction, getAction,downFile } from '@/api/manage'
-
-  const debug = (msg) => {
-    console.log('*************************');
-    console.log('*************************');
-    console.log(msg);
-    console.log('*************************');
-    console.log('*************************');
-  }
-
-  const getFileName = (path) => {
-    if(path.lastIndexOf("\\")>=0){
-      let reg=new RegExp("\\\\","g");
-      path = path.replace(reg,"/");
-    }
-    return path.substring(path.lastIndexOf("/")+1);
-  }
+  import {httpAction} from '@/api/manage'
+  import {deleteAction, getAction, downFile} from '@/api/manage'
+  import {debug, getDay, getDate, getFileName, dateFormat} from '@/api/wqc'
 
   export default {
     name: "PmpStatisticsModal",
-    components: {
-    },
+    components: {},
     data() {
       return {
         title: '',
-        width: 620,
+        width: 650,
         visible: false,
+        isMove: false,
+        isEnter: false,
         summaryData: [],
+        curMousePos: { x: '', y: '' },
         url: {
           query: "/summary/pmpSummary/list",
-        }
+        },
       }
+    },
+    updated() {
+      this.$nextTick(function () {
+        this.addLListener();
+      })
     },
     methods: {
       show(time, record) {
@@ -78,13 +69,23 @@
 
         this.loadSummary(time, record.userName);
       },
+      addLListener() {
+        window.addEventListener('mousemove', this.globalMoveEvent);
+
+        let eles = document.getElementsByClassName('ant-modal-content');
+        if (eles.length > 0) {
+          eles[0].addEventListener('mousemove', this.mouseMoveEvent);
+          eles[0].addEventListener('mouseenter', this.mouseEnterEvent);
+          eles[0].addEventListener('mouseleave', this.mouseLeaveEvent);
+        }
+      },
       loadAnnex(annex) {
         let linkList = [];
 
         if ((null != annex) && (annex.length > 0)) {
           let annexList = annex.split(',');
 
-          for(let idx in annexList) {
+          for (let idx in annexList) {
             linkList.push({
               uid: -1,
               name: getFileName(annexList[idx]),
@@ -96,13 +97,13 @@
         return linkList;
       },
       loadTitle(result) {
-        return result.projectName + '-' + result.taskName + '[' +  result.createTime + ']';
+        return result.projectName + '-' + result.taskName + '[' + result.createTime + ']';
       },
       loadSummary(time, userName) {
         this.summaryData = [];
-        getAction(this.url.query, { summaryTime: time, owner: userName }).then((res) => {
+        getAction(this.url.query, {summaryTime: time, owner: userName}).then((res) => {
           if (res.success) {
-            for(let i = 0; i < res.result.total; ++i) {
+            for (let i = 0; i < res.result.total; ++i) {
               this.summaryData.push({
                 title: this.loadTitle(res.result.records[i]),
                 content: res.result.records[i].content,
@@ -112,9 +113,33 @@
           }
         })
       },
-      close () {
+      close() {
         this.visible = false;
-      }
+      },
+      globalMoveEvent(e) {
+        debug(e.y);
+        debug(this.curMousePos.y);
+        if ((e.y> this.curMousePos.y) && !this.isEnter)
+          this.visible = false;
+      },
+      mouseMoveEvent() {
+        if (!this.isEnter) {
+          this.isMove = true;
+        }
+      },
+      mouseEnterEvent() {
+        this.isEnter = true;
+      },
+      mouseLeaveEvent() {
+        if (this.isMove) {
+          this.visible = false;
+          this.curMousePos.x = 0;
+          this.curMousePos.y = 0;
+        }
+
+        this.isMove = false;
+        this.isEnter = false;
+      },
     }
   }
 
@@ -122,9 +147,9 @@
 
 <style>
   .ant-popover-title {
-    text-align: left;
     height: 30px;
     line-height: 30px;
+    text-align: left;
   }
 
   .ant-card-body {
@@ -136,18 +161,18 @@
   }
 
   .ant-list-vertical .ant-list-item-content {
-    display: block;
     margin: 0;
-    color: rgba(0, 0, 0, 0.65);
+    display: block;
     font-size: 14px;
+    color: rgba(0, 0, 0, 0.65);
   }
 
   .scroll-wrap {
-    width: 600px;
     margin: 0;
     padding: 0;
-    max-height: 300px;
+    width: 600px;
     overflow: hidden;
     overflow-y: scroll;
+    height: 300px;
   }
 </style>

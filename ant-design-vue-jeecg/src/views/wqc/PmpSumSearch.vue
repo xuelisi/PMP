@@ -12,6 +12,12 @@
             </a-form-item>
           </a-col>
 
+          <a-col :md="6" :sm="8">
+            <a-form-item label="姓名">
+              <a-input placeholder="请输入姓名" v-model="queryParam.createBy"></a-input>
+            </a-form-item>
+          </a-col>
+
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
               <a-form-item label="项目名称">
@@ -41,10 +47,6 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
-    <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-    </div>
 
     <!-- table区域-begin -->
     <div>
@@ -169,7 +171,7 @@
     data() {
       return {
         columns,
-        queryParam: {taskName: '', projectName: ''},
+        queryParam: {taskName: '', projectName: '', createBy: ''},
         rangeDate: [moment(this.date), moment(this.date)],
         url: {
           list: "/summary/pmpSummary/list",
@@ -212,6 +214,7 @@
       searchReset() {
         this.initRangeDate();
 
+        this.queryParam.createBy = '';
         this.queryParam.taskName = '';
         this.queryParam.projectName = '';
 

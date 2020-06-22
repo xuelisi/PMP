@@ -63,7 +63,7 @@
             <a-tag :key="first"
                    :style="getBodyStyle('01', first)"
                    :color="getBodyColor('01', first)"
-                   @mouseover="tagEnter('01', first, record)">
+                   @mouseover="tagEnter('01', first, record, $event)">
               {{ getState('01', first) }}
             </a-tag>
           </span>
@@ -81,7 +81,7 @@
             <a-tag :key="second"
                    :style="getBodyStyle('02', second)"
                    :color="getBodyColor('02', second)"
-                   @mouseover="tagEnter('02', second, record)">
+                   @mouseover="tagEnter('02', second, record, $event)">
               {{ getState('02', second) }}
             </a-tag>
           </span>
@@ -99,7 +99,7 @@
             <a-tag :key="third"
                    :style="getBodyStyle('03', third)"
                    :color="getBodyColor('03', third)"
-                   @mouseover="tagEnter('03', third, record)">
+                   @mouseover="tagEnter('03', third, record, $event)">
               {{ getState('03', third) }}
             </a-tag>
           </span>
@@ -117,7 +117,7 @@
             <a-tag :key="fourth"
                    :style="getBodyStyle('04', fourth)"
                    :color="getBodyColor('04', fourth)"
-                   @mouseover="tagEnter('04', fourth, record)">
+                   @mouseover="tagEnter('04', fourth, record, $event)">
               {{ getState('04', fourth) }}
             </a-tag>
           </span>
@@ -135,7 +135,7 @@
             <a-tag :key="fifth"
                    :style="getBodyStyle('05', fifth)"
                    :color="getBodyColor('05', fifth)"
-                   @mouseover="tagEnter('05', fifth, record)">
+                   @mouseover="tagEnter('05', fifth, record, $event)">
               {{ getState('05', fifth) }}
             </a-tag>
           </span>
@@ -153,7 +153,7 @@
             <a-tag :key="sixth"
                    :style="getBodyStyle('06', sixth)"
                    :color="getBodyColor('06', sixth)"
-                   @mouseover="tagEnter('06', sixth, record)">
+                   @mouseover="tagEnter('06', sixth, record, $event)">
               {{ getState('06', sixth) }}
             </a-tag>
           </span>
@@ -171,7 +171,7 @@
             <a-tag :key="seventh"
                    :style="getBodyStyle('07', seventh)"
                    :color="getBodyColor('07', seventh)"
-                   @mouseover="tagEnter('07', seventh, record)">
+                   @mouseover="tagEnter('07', seventh, record, $event)">
               {{ getState('07', seventh) }}
             </a-tag>
           </span>
@@ -189,7 +189,7 @@
             <a-tag :key="eighth"
                    :style="getBodyStyle('08', eighth)"
                    :color="getBodyColor('08', eighth)"
-                   @mouseover="tagEnter('08', eighth, record)">
+                   @mouseover="tagEnter('08', eighth, record, $event)">
               {{ getState('08', eighth) }}
             </a-tag>
           </span>
@@ -207,7 +207,7 @@
             <a-tag :key="ninth"
                    :style="getBodyStyle('09', ninth)"
                    :color="getBodyColor('09', ninth)"
-                   @mouseover="tagEnter('09', ninth, record)">
+                   @mouseover="tagEnter('09', ninth, record, $event)">
               {{ getState('09', ninth) }}
             </a-tag>
           </span>
@@ -225,7 +225,7 @@
             <a-tag :key="tenth"
                    :style="getBodyStyle('10', tenth)"
                    :color="getBodyColor('10', tenth)"
-                   @mouseover="tagEnter('10', tenth, record)">
+                   @mouseover="tagEnter('10', tenth, record, $event)">
               {{ getState('10', tenth) }}
             </a-tag>
           </span>
@@ -243,7 +243,7 @@
             <a-tag :key="eleventh"
                    :style="getBodyStyle('11', eleventh)"
                    :color="getBodyColor('11', eleventh)"
-                   @mouseover="tagEnter('11', eleventh, record)">
+                   @mouseover="tagEnter('11', eleventh, record, $event)">
               {{ getState('11', eleventh) }}
             </a-tag>
           </span>
@@ -261,7 +261,7 @@
             <a-tag :key="twelfth"
                    :style="getBodyStyle('12', twelfth)"
                    :color="getBodyColor('12', twelfth)"
-                   @mouseover="tagEnter('12', twelfth, record)">
+                   @mouseover="tagEnter('12', twelfth, record, $event)">
               {{ getState('12', twelfth) }}
             </a-tag>
           </span>
@@ -279,7 +279,7 @@
             <a-tag :key="thirteenth"
                    :style="getBodyStyle('13', thirteenth)"
                    :color="getBodyColor('13', thirteenth)"
-                   @mouseover="tagEnter('13', thirteenth, record)">
+                   @mouseover="tagEnter('13', thirteenth, record, $event)">
               {{ getState('13', thirteenth) }}
             </a-tag>
           </span>
@@ -297,7 +297,7 @@
             <a-tag :key="fourteenth"
                    :style="getBodyStyle('14', fourteenth)"
                    :color="getBodyColor('14', fourteenth)"
-                   @mouseover="tagEnter('14', fourteenth, record)">
+                   @mouseover="tagEnter('14', fourteenth, record, $event)">
               {{ getState('14', fourteenth) }}
             </a-tag>
           </span>
@@ -315,7 +315,7 @@
             <a-tag :key="fifteenth"
                    :style="getBodyStyle('15', fifteenth)"
                    :color="getBodyColor('15', fifteenth)"
-                   @mouseover="tagEnter('15', fifteenth, record)">
+                   @mouseover="tagEnter('15', fifteenth, record, $event)">
               {{ getState('15', fifteenth) }}
             </a-tag>
           </span>
@@ -333,7 +333,7 @@
             <a-tag :key="sixteenth"
                    :style="getBodyStyle('16', sixteenth)"
                    :color="getBodyColor('16', sixteenth)"
-                   @mouseover="tagEnter('16', sixteenth, record)">
+                   @mouseover="tagEnter('16', sixteenth, record, $event)">
               {{ getState('16', sixteenth) }}
             </a-tag>
           </span>
@@ -351,7 +351,7 @@
             <a-tag :key="seventeenth"
                    :style="getBodyStyle('17', seventeenth)"
                    :color="getBodyColor('17', seventeenth)"
-                   @mouseover="tagEnter('17', seventeenth, record)">
+                   @mouseover="tagEnter('17', seventeenth, record, $event)">
               {{ getState('17', seventeenth) }}
             </a-tag>
           </span>
@@ -369,7 +369,7 @@
             <a-tag :key="eighteenth"
                    :style="getBodyStyle('18', eighteenth)"
                    :color="getBodyColor('18', eighteenth)"
-                   @mouseover="tagEnter('18', eighteenth, record)">
+                   @mouseover="tagEnter('18', eighteenth, record, $event)">
               {{ getState('18', eighteenth) }}
             </a-tag>
           </span>
@@ -387,7 +387,7 @@
             <a-tag :key="nineteenth"
                    :style="getBodyStyle('19', nineteenth)"
                    :color="getBodyColor('19', nineteenth)"
-                   @mouseover="tagEnter('19', nineteenth, record)">
+                   @mouseover="tagEnter('19', nineteenth, record, $event)">
               {{ getState('19', nineteenth) }}
             </a-tag>
           </span>
@@ -405,7 +405,7 @@
             <a-tag :key="twentieth"
                    :style="getBodyStyle('20', twentieth)"
                    :color="getBodyColor('20', twentieth)"
-                   @mouseover="tagEnter('20', twentieth, record)">
+                   @mouseover="tagEnter('20', twentieth, record, $event)">
               {{ getState('20', twentieth) }}
             </a-tag>
           </span>
@@ -423,7 +423,7 @@
             <a-tag :key="twentyFirst"
                    :style="getBodyStyle('21', twentyFirst)"
                    :color="getBodyColor('21', twentyFirst)"
-                   @mouseover="tagEnter('21', twentyFirst, record)">
+                   @mouseover="tagEnter('21', twentyFirst, record, $event)">
               {{ getState('21', twentyFirst) }}
             </a-tag>
           </span>
@@ -441,7 +441,7 @@
             <a-tag :key="twentySecond"
                    :style="getBodyStyle('22', twentySecond)"
                    :color="getBodyColor('22', twentySecond)"
-                   @mouseover="tagEnter('22', twentySecond, record)">
+                   @mouseover="tagEnter('22', twentySecond, record, $event)">
               {{ getState('22', twentySecond) }}
             </a-tag>
           </span>
@@ -459,7 +459,7 @@
             <a-tag :key="twentyThird"
                    :style="getBodyStyle('23', twentyThird)"
                    :color="getBodyColor('23', twentyThird)"
-                   @mouseover="tagEnter('23', twentyThird, record)">
+                   @mouseover="tagEnter('23', twentyThird, record, $event)">
               {{ getState('23', twentyThird) }}
             </a-tag>
           </span>
@@ -477,7 +477,7 @@
             <a-tag :key="twentyFourth"
                    :style="getBodyStyle('24', twentyFourth)"
                    :color="getBodyColor('24', twentyFourth)"
-                   @mouseover="tagEnter('24', twentyFourth, record)">
+                   @mouseover="tagEnter('24', twentyFourth, record, $event)">
               {{ getState('24', twentyFourth) }}
             </a-tag>
           </span>
@@ -495,7 +495,7 @@
             <a-tag :key="twentyFifth"
                    :style="getBodyStyle('25', twentyFifth)"
                    :color="getBodyColor('25', twentyFifth)"
-                   @mouseover="tagEnter('25', twentyFifth, record)">
+                   @mouseover="tagEnter('25', twentyFifth, record, $event)">
               {{ getState('25', twentyFifth) }}
             </a-tag>
           </span>
@@ -513,7 +513,7 @@
             <a-tag :key="twentySixth"
                    :style="getBodyStyle('26', twentySixth)"
                    :color="getBodyColor('26', twentySixth)"
-                   @mouseover="tagEnter('26', twentySixth, record)">
+                   @mouseover="tagEnter('26', twentySixth, record, $event)">
               {{ getState('26', twentySixth) }}
             </a-tag>
           </span>
@@ -531,7 +531,7 @@
             <a-tag :key="twentySeventh"
                    :style="getBodyStyle('27', twentySeventh)"
                    :color="getBodyColor('27', twentySeventh)"
-                   @mouseover="tagEnter('27', twentySeventh, record)">
+                   @mouseover="tagEnter('27', twentySeventh, record, $event)">
               {{ getState('27', twentySeventh) }}
             </a-tag>
           </span>
@@ -549,7 +549,7 @@
             <a-tag :key="twentyEighth"
                    :style="getBodyStyle('28', twentyEighth)"
                    :color="getBodyColor('28', twentyEighth)"
-                   @mouseover="tagEnter('28', twentyEighth, record)">
+                   @mouseover="tagEnter('28', twentyEighth, record, $event)">
               {{ getState('28', twentyEighth) }}
             </a-tag>
           </span>
@@ -568,7 +568,7 @@
             <a-tag :key="twentyNinth"
                    :style="getBodyStyle('29', twentyNinth)"
                    :color="getBodyColor('29', twentyNinth)"
-                   @mouseover="tagEnter('29', twentyNinth, record)">
+                   @mouseover="tagEnter('29', twentyNinth, record, $event)">
               {{ getState('29', twentyNinth) }}
             </a-tag>
           </span>
@@ -587,7 +587,7 @@
             <a-tag :key="twentyTenth"
                    :style="getBodyStyle('30', twentyTenth)"
                    :color="getBodyColor('30', twentyTenth)"
-                   @mouseover="tagEnter('30', twentyTenth, record)">
+                   @mouseover="tagEnter('30', twentyTenth, record, $event)">
               {{ getState('30', twentyTenth) }}
             </a-tag>
           </span>
@@ -606,7 +606,7 @@
             <a-tag :key="thirtyFirst"
                    :style="getBodyStyle('31', thirtyFirst)"
                    :color="getBodyColor('31', thirtyFirst)"
-                   @mouseover="tagEnter('31', thirtyFirst, record)">
+                   @mouseover="tagEnter('31', thirtyFirst, record, $event)">
               {{ getState('31', thirtyFirst) }}
             </a-tag>
           </span>
@@ -619,7 +619,8 @@
     <!--<span>说明：<a-icon type="check-circle" />有日报</span>-->
     <!--</div>-->
 
-    <pmp-statistics-modal ref="modalForm" @ok="modalFormOk"></pmp-statistics-modal>
+    <pmp-statistics-modal ref="modalForm"
+                          @ok="modalFormOk"></pmp-statistics-modal>
   </a-card>
 </template>
 
@@ -686,7 +687,7 @@
       },
       getDay(title) {
         let dt = this.monthPickerValue.format("YYYY-MM") + '-' + title;
-        return title + ' ' + getDay(dt);
+        return title + '\r\n' + getDay(dt);
       },
       getState(title, data) {
         if (null === data)
@@ -704,7 +705,7 @@
       tableEnter() {
         this.hoverData = '';
       },
-      tagEnter(title, data, record) {
+      tagEnter(title, data, record, e) {
         if (null === data) {
           this.hoverData = '';
           return;
@@ -713,6 +714,8 @@
         let userName = record.userName + data;
         if ((userName !== this.hoverData)) {
           this.hoverData = userName;
+          this.$refs.modalForm.curMousePos.x = e.x;
+          this.$refs.modalForm.curMousePos.y = e.y + 15;
           let dt = this.monthPickerValue.format("YYYY-MM") + '-' + title;
           this.$refs.modalForm.show(dt, record);
         } else {
@@ -721,7 +724,7 @@
       },
       getHeaderStyle(title) {
         let now = new Date().getDate();
-        return 'font-size: 12px; border: ' + (title === now ? '1' : '0') + ';';
+        return 'border: ' + (title === now ? '1' : '0') + ';';
       },
       getHeaderColor(title) {
         title = this.monthPickerValue.format("YYYY-MM") + '-' + title;
@@ -729,9 +732,9 @@
       },
       getBodyStyle(title, data) {
         if ((null === data) || ('用户名' === title))
-          return 'font-size: 12px; border: 0';
+          return 'border: 0';
 
-        return 'font-size: 12px; border: 1';
+        return 'border: 1';
       },
       getBodyColor(title, data) {
         if ((null === data) || ('用户名' === title))
@@ -752,18 +755,27 @@
 
   .ant-table-thead tr th {
     padding: 0;
+    font-weight: bold;
+    font-size: 12px;
     overflow: hidden;
     text-align: center;
-    white-space: normal;
+    height: 40px;
+    line-height: 40px;
+  }
+
+  .ant-table-thead .ant-tag {
+    margin: 0;
+    padding: 0;
+    height: 15px;
+    line-height: 15px;
+    white-space: pre-line;
   }
 
   .ant-table-tbody .ant-table-row td {
+    font-size: 12px;
     text-align: center;
     white-space: normal;
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding: 15px 0 15px 0;
   }
 
   .ant-tag {
@@ -772,7 +784,7 @@
   }
 
   .ant-list-vertical .ant-list-item-meta {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   .ant-list-vertical .ant-list-item-content {

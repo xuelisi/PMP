@@ -43,6 +43,9 @@ public class PmpSummary implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+	/**小结类型*/
+	@Excel(name = "小结类型", width = 15)
+	private String type;
 	/**小结日期*/
 	@Excel(name = "小结日期", width = 15)
     private String summaryTime;
